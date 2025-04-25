@@ -1,0 +1,612 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AttechServer</name>
+    </assembly>
+    <members>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IPermissionService.CheckPermission(System.String[])">
+            <summary>
+            Check permission
+            </summary>
+            <param name="permissionKeys"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IPermissionService.GetPermissionsByCurrentUserId">
+            <summary>
+            Lấy tất cả quyền của user hiện tại
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IPermissionService.FindAll">
+            <summary>
+            Danh sách quyền fixed
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IPermissionService.GetAllPermissionKeyByApiEndpoint(System.String)">
+            <summary>
+            Lấy all permission dựa vào api path
+            </summary>
+            <param name="api"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IPostCategoryService.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Lấy danh sách danh mục bài viết với phân trang
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IPostCategoryService.FindById(System.Int32)">
+            <summary>
+            Lấy thông tin chi tiết danh mục bài viết
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IPostCategoryService.Create(AttechServer.Applications.UserModules.Dtos.PostCategory.CreatePostCategoryDto)">
+            <summary>
+            Thêm mới danh mục bài viết
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IPostCategoryService.Update(AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryDto)">
+            <summary>
+            Cập nhật danh mục bài viết
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IPostCategoryService.Delete(System.Int32)">
+            <summary>
+            Xóa nhóm bài viết
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IPostCategoryService.UpdateStatusPostCategory(System.Int32,System.Int32)">
+            <summary>
+            Khóa/Mở khóa nhóm bài viết
+            </summary>
+            <param name="id"></param>
+            <param name="status">Trạng thái mới</param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IPostService.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Lấy danh sách tất cả bài viết với phân trang
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IPostService.FindAllByCategoryId(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.Int32)">
+            <summary>
+            Lấy danh sách tất cả bài viết theo danh mục với phân trang
+            </summary>
+            <param name="input"></param>
+            <param name="categoryId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IPostService.Create(AttechServer.Applications.UserModules.Dtos.Post.CreatePostDto)">
+            <summary>
+            Thêm mới bài viết
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IPostService.Update(AttechServer.Applications.UserModules.Dtos.Post.UpdatePostDto)">
+            <summary>
+            Cập nhật bài viết
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IPostService.Delete(System.Int32)">
+            <summary>
+            Xóa nhóm bài viết
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IPostService.UpdateStatusPost(System.Int32,System.Int32)">
+            <summary>
+            Khóa/Mở khóa bài viết
+            </summary>
+            <param name="id"></param>
+            <param name="status">Trạng thái mới</param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IRoleService.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Danh sách nhóm quyền
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IRoleService.FindById(System.Int32)">
+            <summary>
+            Thông tin chi tiết nhóm quyền
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IRoleService.Create(AttechServer.Applications.UserModules.Dtos.Role.CreateRoleDto)">
+            <summary>
+            Thêm mới nhóm quyền
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IRoleService.Update(AttechServer.Applications.UserModules.Dtos.Role.UpdateRoleDto)">
+            <summary>
+            Cập nhật nhóm quyền
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IRoleService.Delete(System.Int32)">
+            <summary>
+            Xóa nhóm quyền
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IRoleService.UpdateStatusRole(System.Int32,System.Int32)">
+            <summary>
+            Khóa/Mở khóa nhóm quyền
+            </summary>
+            <param name="id"></param>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IUserService.AddRoleToUser(System.Int32,System.Int32)">
+            <summary>
+            Gán nhóm quyền cho tài khoản
+            </summary>
+            <param name="roleId"></param>
+            <param name="userId"></param>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IUserService.RemoveRoleFromUser(System.Int32,System.Int32)">
+            <summary>
+            Xóa quyền từ tài khoản
+            </summary>
+            <param name="roleId"></param>
+            <param name="userId"></param>
+        </member>
+        <member name="P:AttechServer.Applications.UserModules.Dtos.Permission.PermissionKeyDto.PermissionType">
+            <summary>
+            Loại permisison
+            <see cref="P:AttechServer.Applications.UserModules.Dtos.Permission.PermissionKeyDto.PermissionType"/>
+            </summary>
+        </member>
+        <member name="P:AttechServer.Applications.UserModules.Dtos.Permission.PermissionKeyDto.OrderPriority">
+            <summary>
+            Thứ tự sắp xếp
+            </summary>
+        </member>
+        <member name="P:AttechServer.Applications.UserModules.Dtos.Role.RoleDto.Status">
+            <summary>
+            Trạng thái role
+            <see cref="T:AttechServer.Shared.Consts.CommonStatus"/>
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.AuthController.Login(AttechServer.Applications.UserModules.Dtos.UserLoginDto)">
+            <summary>
+            Đăng nhập 
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.AuthController.Register(AttechServer.Applications.UserModules.Dtos.CreateUserDto)">
+            <summary>
+            Đăng ký tài khoản
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PermissionController.FindAll">
+            <summary>
+            Danh sách quyền 
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PermissionController.GetPermissionsByCurrentUserId">
+            <summary>
+            Lấy tất cả quyền của user hiện tại
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PermissionController.CheckPermission(System.String[])">
+            <summary>
+            Check quyền
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PermissionController.GetTree">
+            <summary>
+            Lấy cây phân quyền
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PermissionController.GetById(System.Int32)">
+            <summary>
+            Chi tiết quyền
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PermissionController.Create(AttechServer.Applications.UserModules.Dtos.Permission.KeyPermission.CreateKeyPermissionDto)">
+            <summary>
+            Thêm mới quyền
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PermissionController.Update(AttechServer.Applications.UserModules.Dtos.Permission.KeyPermission.UpdateKeyPermissionDto)">
+            <summary>
+            Cập nhật
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PermissionController.Delete(System.Int32)">
+            <summary>
+            Xóa quyền
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PermissionController.CreatePermissionForApi(AttechServer.Applications.UserModules.Dtos.ConfigPermission.CreatePermissionApiDto)">
+            <summary>
+            Thêm các quyền đi kèm với api endpoints
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PermissionController.UpdatePermissionForApi(AttechServer.Applications.UserModules.Dtos.ConfigPermission.UpdatePermissionConfigDto)">
+            <summary>
+            Cập nhật api endpoint kèm permission key
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PermissionController.GetAllPermissionOfApi(AttechServer.Applications.UserModules.Dtos.ConfigPermission.PermissionApiRequestDto)">
+            <summary>
+            Danh sách api endpoint
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PermissionController.GetPermissionOfApiById(System.Int32)">
+            <summary>
+            Chi tiết api endpoint
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PostCategoryController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Danh sách danh mục bài viết
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PostCategoryController.FindById(System.Int32)">
+            <summary>
+            Thông tin chi tiết danh mục bài viết
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PostCategoryController.Create(AttechServer.Applications.UserModules.Dtos.PostCategory.CreatePostCategoryDto)">
+            <summary>
+            Thêm mới danh mục bài viết
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PostCategoryController.Update(AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryDto)">
+            <summary>
+            Cập nhật danh mục bài viết
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PostCategoryController.Delete(System.Int32)">
+            <summary>
+            Xóa danh mục bài viết
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PostCategoryController.UpdateStatus(System.Int32,System.Int32)">
+            <summary>
+            Khóa/Mở khóa danh mục bài viết
+            </summary>
+            <param name="id"></param>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PostController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Danh sách bài viết
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PostController.FindAllByCategoryId(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.Int32)">
+            <summary>
+            Danh sách bài viết theo danh mục
+            </summary>
+            <param name="input"></param>
+            <param name="categoryId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PostController.Create(AttechServer.Applications.UserModules.Dtos.Post.CreatePostDto)">
+            <summary>
+            Thêm mới bài viết
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PostController.Update(AttechServer.Applications.UserModules.Dtos.Post.UpdatePostDto)">
+            <summary>
+            Cập nhật bài viết
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PostController.Delete(System.Int32)">
+            <summary>
+            Xóa bài viết
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PostController.UpdateStatus(System.Int32,System.Int32)">
+            <summary>
+            Khóa/Mở khóa bài viết
+            </summary>
+            <param name="id"></param>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.RoleController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Danh sách quyền
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.RoleController.FindById(System.Int32)">
+            <summary>
+            Thông tin chi tiết quyền
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.RoleController.Create(AttechServer.Applications.UserModules.Dtos.Role.CreateRoleDto)">
+            <summary>
+            Thêm mới quyền
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.RoleController.Update(AttechServer.Applications.UserModules.Dtos.Role.UpdateRoleDto)">
+            <summary>
+            Cập nhật quyền
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.RoleController.Delete(System.Int32)">
+            <summary>
+            Xóa quyền
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.RoleController.UpdateStatus(System.Int32,System.Int32)">
+            <summary>
+            Khóa/Mở khóa nhóm quyền
+            </summary>
+            <param name="id"></param>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.UserController.AddRoleToUser(System.Int32,System.Int32)">
+            <summary>
+            Thêm quyền
+            </summary>
+            <param name="roleId"></param>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.UserController.RemoveRoleToUser(System.Int32,System.Int32)">
+            <summary>
+            Gỡ quyền
+            </summary>
+            <param name="roleId"></param>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="P:AttechServer.Domains.Entities.Main.Post.Status">
+            <summary>
+            Trạng thái
+            <see cref="!:PostStatuses"/>
+            </summary>
+        </member>
+        <member name="P:AttechServer.Domains.Entities.Main.Post.PostCategoryId">
+            <summary>
+            Loại bài viết
+            </summary>
+        </member>
+        <member name="P:AttechServer.Domains.Entities.Role.Status">
+            <summary>
+            Trạng thái role
+            <see cref="!:CommonStatus"/>
+            </summary>
+        </member>
+        <member name="P:AttechServer.Domains.Entities.User.Status">
+            <summary>
+            Trạng thái
+            <see cref="!:CommonStatus"/>
+            </summary>
+        </member>
+        <member name="T:AttechServer.Migrations.InitialContext">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.InitialContext.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.InitialContext.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.InitialContext.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.RemoveDynamicDefaults">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.RemoveDynamicDefaults.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.RemoveDynamicDefaults.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.RemoveDynamicDefaults.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.addPostEntity">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.addPostEntity.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.addPostEntity.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.addPostEntity.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.editPostEntity">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.editPostEntity.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.editPostEntity.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.editPostEntity.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.editPostEntity3">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.editPostEntity3.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.editPostEntity3.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.editPostEntity3.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.update_tbl_PostCategory">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.update_tbl_PostCategory.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.update_tbl_PostCategory.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.update_tbl_PostCategory.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.AddFilesTable">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.AddFilesTable.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.AddFilesTable.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.AddFilesTable.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.fixFilesTable">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.fixFilesTable.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.fixFilesTable.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.fixFilesTable.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.fixEntityType">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.fixEntityType.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.fixEntityType.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.fixEntityType.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Shared.ApplicationBase.Common.Validations.IntegerRangeAttribute">
+            <summary>
+            Cho phép một trong các giá trị, nếu là null thì bỏ qua
+            </summary>
+        </member>
+        <member name="T:AttechServer.Shared.Consts.CommonStatus">
+            <summary>
+            Trạng thái 
+            </summary>
+        </member>
+        <member name="F:AttechServer.Shared.Consts.CommonStatus.ACTIVE">
+            <summary>
+            Hoạt động
+            </summary>
+        </member>
+        <member name="F:AttechServer.Shared.Consts.CommonStatus.DEACTIVE">
+            <summary>
+            Đang khóa
+            </summary>
+        </member>
+        <member name="P:AttechServer.Shared.Consts.Permissions.PermissionContent.ParentKey">
+            <summary>
+            Key cha
+            </summary>
+        </member>
+        <member name="P:AttechServer.Shared.Consts.Permissions.PermissionContent.PermissionKey">
+            <summary>
+            Key permission hiện tại
+            </summary>
+        </member>
+        <member name="M:AttechServer.Shared.Consts.Permissions.PermissionContent.#ctor(System.String,System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="permissionKey"></param>
+            <param name="parentKey"></param>
+        </member>
+        <member name="M:AttechServer.Shared.Utils.PasswordHasher.VerifyPassword(System.String,System.String)">
+            <summary>
+            Kiểm tra thông tin
+            </summary>
+            <param name="password">Mật khẩu chưa được mã hóa</param>
+            <param name="hashedPassword">Mật mã đã được mã hóa</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

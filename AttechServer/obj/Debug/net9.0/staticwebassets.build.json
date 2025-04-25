@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "pGmyKnUwe0G9aWo4uYEsYaC3F+S5iDO7yLjryRrU94s=",
+  "Source": "AttechServer",
+  "BasePath": "_content/AttechServer",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
