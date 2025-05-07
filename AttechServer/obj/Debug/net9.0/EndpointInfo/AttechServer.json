@@ -775,7 +775,7 @@
         }
       }
     },
-    "/api/Post/find-all": {
+    "/api/post/find-all": {
       "get": {
         "tags": [
           "Post"
@@ -848,7 +848,7 @@
         }
       }
     },
-    "/api/Post/find-by-categoryId": {
+    "/api/post/find-by-categoryId": {
       "get": {
         "tags": [
           "Post"
@@ -930,7 +930,7 @@
         }
       }
     },
-    "/api/Post/create": {
+    "/api/post/create": {
       "post": {
         "tags": [
           "Post"
@@ -990,7 +990,7 @@
         }
       }
     },
-    "/api/Post/update": {
+    "/api/post/update": {
       "put": {
         "tags": [
           "Post"
@@ -1050,7 +1050,7 @@
         }
       }
     },
-    "/api/Post/delete/{id}": {
+    "/api/post/delete/{id}": {
       "delete": {
         "tags": [
           "Post"
@@ -1100,7 +1100,7 @@
         }
       }
     },
-    "/api/Post/update-status": {
+    "/api/post/update-status": {
       "put": {
         "tags": [
           "Post"
@@ -1158,7 +1158,7 @@
         }
       }
     },
-    "/api/PostCategory/find-all": {
+    "/api/post-category/find-all": {
       "get": {
         "tags": [
           "PostCategory"
@@ -1231,7 +1231,7 @@
         }
       }
     },
-    "/api/PostCategory/find-by-id/{id}": {
+    "/api/post-category/find-by-id/{id}": {
       "get": {
         "tags": [
           "PostCategory"
@@ -1281,7 +1281,7 @@
         }
       }
     },
-    "/api/PostCategory/create": {
+    "/api/post-category/create": {
       "post": {
         "tags": [
           "PostCategory"
@@ -1341,7 +1341,7 @@
         }
       }
     },
-    "/api/PostCategory/update": {
+    "/api/post-category/update": {
       "put": {
         "tags": [
           "PostCategory"
@@ -1401,7 +1401,7 @@
         }
       }
     },
-    "/api/PostCategory/delete/{id}": {
+    "/api/post-category/delete/{id}": {
       "delete": {
         "tags": [
           "PostCategory"
@@ -1451,12 +1451,746 @@
         }
       }
     },
-    "/api/PostCategory/update-status": {
+    "/api/post-category/update-status": {
       "put": {
         "tags": [
           "PostCategory"
         ],
         "summary": "Khóa/Mở khóa danh mục bài viết",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/product/find-all": {
+      "get": {
+        "tags": [
+          "Product"
+        ],
+        "summary": "Danh sách sản phẩm",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Sort",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/product/find-by-categoryId": {
+      "get": {
+        "tags": [
+          "Product"
+        ],
+        "summary": "Danh sách sản phẩm theo danh mục",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Sort",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/product/create": {
+      "post": {
+        "tags": [
+          "Product"
+        ],
+        "summary": "Thêm mới sản phẩm",
+        "parameters": [
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/product/update": {
+      "put": {
+        "tags": [
+          "Product"
+        ],
+        "summary": "Cập nhật sản phẩm",
+        "parameters": [
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProductDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProductDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/product/delete/{id}": {
+      "delete": {
+        "tags": [
+          "Product"
+        ],
+        "summary": "Xóa sản phẩm",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/product/update-status": {
+      "put": {
+        "tags": [
+          "Product"
+        ],
+        "summary": "Khóa/Mở khóa sản phẩm",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/product-category/find-all": {
+      "get": {
+        "tags": [
+          "ProductCategory"
+        ],
+        "summary": "Danh sách danh mục sản phẩm",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Sort",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/product-category/find-by-id/{id}": {
+      "get": {
+        "tags": [
+          "ProductCategory"
+        ],
+        "summary": "Thông tin chi tiết danh mục sản phẩm",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/product-category/create": {
+      "post": {
+        "tags": [
+          "ProductCategory"
+        ],
+        "summary": "Thêm mới danh mục sản phẩm",
+        "parameters": [
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductCategoryDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductCategoryDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductCategoryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/product-category/update": {
+      "put": {
+        "tags": [
+          "ProductCategory"
+        ],
+        "summary": "Cập nhật danh mục sản phẩm",
+        "parameters": [
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProductCategoryDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProductCategoryDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProductCategoryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/product-category/delete/{id}": {
+      "delete": {
+        "tags": [
+          "ProductCategory"
+        ],
+        "summary": "Xóa danh mục sản phẩm",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/product-category/update-status": {
+      "put": {
+        "tags": [
+          "ProductCategory"
+        ],
+        "summary": "Khóa/Mở khóa danh mục sản phẩm",
         "parameters": [
           {
             "name": "id",
@@ -1860,7 +2594,358 @@
         }
       }
     },
-    "/api/Upload/multi-upload": {
+    "/api/service/find-all": {
+      "get": {
+        "tags": [
+          "Service"
+        ],
+        "summary": "Danh sách dịch vụ",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Sort",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/service/find-by-id/{id}": {
+      "get": {
+        "tags": [
+          "Service"
+        ],
+        "summary": "Thông tin chi tiết dịch vụ",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/service/create": {
+      "post": {
+        "tags": [
+          "Service"
+        ],
+        "summary": "Thêm mới dịch vụ",
+        "parameters": [
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateServiceDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateServiceDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateServiceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/service/update": {
+      "put": {
+        "tags": [
+          "Service"
+        ],
+        "summary": "Cập nhật dịch vụ",
+        "parameters": [
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateServiceDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateServiceDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateServiceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/service/delete/{id}": {
+      "delete": {
+        "tags": [
+          "Service"
+        ],
+        "summary": "Xóa dịch vụ",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/service/update-status": {
+      "put": {
+        "tags": [
+          "Service"
+        ],
+        "summary": "Khóa/Mở khóa dịch vụ",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/upload/multi-upload": {
       "post": {
         "tags": [
           "Upload"
@@ -1905,7 +2990,7 @@
         }
       }
     },
-    "/api/Upload/image": {
+    "/api/upload/image": {
       "post": {
         "tags": [
           "Upload"
@@ -1947,7 +3032,7 @@
         }
       }
     },
-    "/api/Upload/video": {
+    "/api/upload/video": {
       "post": {
         "tags": [
           "Upload"
@@ -1989,7 +3074,7 @@
         }
       }
     },
-    "/api/Upload/document": {
+    "/api/upload/document": {
       "post": {
         "tags": [
           "Upload"
@@ -2031,7 +3116,7 @@
         }
       }
     },
-    "/api/Upload/file/{subFolder}/{year}/{month}/{day}/{fileName}": {
+    "/api/upload/file/{subFolder}/{year}/{month}/{day}/{fileName}": {
       "get": {
         "tags": [
           "Upload"
@@ -2093,7 +3178,7 @@
         }
       }
     },
-    "/api/Upload/file/{subFolder}/{fileName}": {
+    "/api/upload/file/{subFolder}/{fileName}": {
       "get": {
         "tags": [
           "Upload"
@@ -2369,31 +3454,115 @@
         "additionalProperties": false
       },
       "CreatePostCategoryDto": {
+        "required": [
+          "name"
+        ],
         "type": "object",
         "properties": {
           "name": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 160,
+            "minLength": 0,
             "type": "string",
             "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
       },
       "CreatePostDto": {
+        "required": [
+          "content",
+          "description",
+          "timePosted",
+          "title"
+        ],
         "type": "object",
         "properties": {
           "title": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 200,
+            "minLength": 0,
+            "type": "string"
           },
           "description": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 160,
+            "minLength": 0,
+            "type": "string"
           },
           "content": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "postCategoryId": {
+            "maximum": 2147483647,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "timePosted": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateProductCategoryDto": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 160,
+            "minLength": 0,
             "type": "string",
             "nullable": true
           },
-          "postCategoryId": {
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateProductDto": {
+        "required": [
+          "content",
+          "description",
+          "name",
+          "timePosted"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 200,
+            "minLength": 0,
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 160,
+            "minLength": 0,
+            "type": "string"
+          },
+          "content": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "productCategoryId": {
+            "maximum": 2147483647,
+            "minimum": 1,
             "type": "integer",
             "format": "int32"
           },
@@ -2418,6 +3587,36 @@
               "type": "string"
             },
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateServiceDto": {
+        "required": [
+          "content",
+          "description",
+          "name",
+          "timePosted"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 200,
+            "minLength": 0,
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 160,
+            "minLength": 0,
+            "type": "string"
+          },
+          "content": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "timePosted": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false
@@ -2510,11 +3709,25 @@
         "additionalProperties": false
       },
       "UpdatePostCategoryDto": {
+        "required": [
+          "name"
+        ],
         "type": "object",
         "properties": {
           "name": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 160,
+            "minLength": 0,
             "type": "string",
             "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
           },
           "id": {
             "type": "integer",
@@ -2524,21 +3737,99 @@
         "additionalProperties": false
       },
       "UpdatePostDto": {
+        "required": [
+          "content",
+          "description",
+          "timePosted",
+          "title"
+        ],
         "type": "object",
         "properties": {
           "title": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 200,
+            "minLength": 0,
+            "type": "string"
           },
           "description": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 160,
+            "minLength": 0,
+            "type": "string"
           },
           "content": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "postCategoryId": {
+            "maximum": 2147483647,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "timePosted": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateProductCategoryDto": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 160,
+            "minLength": 0,
             "type": "string",
             "nullable": true
           },
-          "postCategoryId": {
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateProductDto": {
+        "required": [
+          "content",
+          "description",
+          "name",
+          "timePosted"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 200,
+            "minLength": 0,
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 160,
+            "minLength": 0,
+            "type": "string"
+          },
+          "content": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "productCategoryId": {
+            "maximum": 2147483647,
+            "minimum": 1,
             "type": "integer",
             "format": "int32"
           },
@@ -2568,6 +3859,40 @@
             },
             "nullable": true,
             "readOnly": true
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateServiceDto": {
+        "required": [
+          "content",
+          "description",
+          "name",
+          "timePosted"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 200,
+            "minLength": 0,
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 160,
+            "minLength": 0,
+            "type": "string"
+          },
+          "content": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "timePosted": {
+            "type": "string",
+            "format": "date-time"
           },
           "id": {
             "type": "integer",

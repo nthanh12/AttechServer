@@ -156,6 +156,7 @@ C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\obj\Debug\net9.0\A
 C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\obj\Debug\net9.0\AttechServer.csproj.CoreCompileInputs.cache
 C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\obj\Debug\net9.0\AttechServer.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\obj\Debug\net9.0\AttechServer.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\obj\Debug\net9.0\AttechServer.sourcelink.json
 C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\obj\Debug\net9.0\scopedcss\bundle\AttechServer.styles.css
 C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\obj\Debug\net9.0\staticwebassets.build.json
 C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\obj\Debug\net9.0\staticwebassets.development.json

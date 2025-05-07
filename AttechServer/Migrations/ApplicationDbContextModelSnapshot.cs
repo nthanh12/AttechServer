@@ -142,7 +142,8 @@ namespace AttechServer.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
 
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int");
@@ -155,7 +156,8 @@ namespace AttechServer.Migrations
 
                     b.Property<string>("Slug")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -165,11 +167,18 @@ namespace AttechServer.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("PostCategoryId");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.HasIndex("Id", "Deleted")
+                        .HasDatabaseName("IX_Post");
 
                     b.HasIndex(new[] { "Id", "Deleted" }, "IX_Post");
 
@@ -193,6 +202,11 @@ namespace AttechServer.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int");
 
@@ -201,19 +215,31 @@ namespace AttechServer.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.HasIndex("Id", "Deleted")
+                        .HasDatabaseName("IX_PostCategory");
+
                     b.HasIndex(new[] { "Id", "Deleted" }, "IX_PostCategory");
 
                     b.ToTable("PostCategory");
                 });
 
-            modelBuilder.Entity("AttechServer.Domains.Entities.Main.PostPCategory", b =>
+            modelBuilder.Entity("AttechServer.Domains.Entities.Main.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -221,21 +247,169 @@ namespace AttechServer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("PostCategoryId")
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CreatedBy")
                         .HasColumnType("int");
 
-                    b.Property<int>("PostId")
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("ProductCategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("TimePosted")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductCategoryId");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.HasIndex("Id", "Deleted")
+                        .HasDatabaseName("IX_Product");
+
+                    b.HasIndex(new[] { "Id", "Deleted" }, "IX_Product");
+
+                    b.ToTable("Product");
+                });
+
+            modelBuilder.Entity("AttechServer.Domains.Entities.Main.ProductCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PostCategoryId");
+                    b.HasIndex("Slug")
+                        .IsUnique();
 
-                    b.HasIndex("PostId");
+                    b.HasIndex(new[] { "Id", "Deleted" }, "IX_ProductCategory");
 
-                    b.HasIndex(new[] { "Id" }, "IX_PostPCategory");
+                    b.ToTable("ProductCategory");
+                });
 
-                    b.ToTable("PostPCategory");
+            modelBuilder.Entity("AttechServer.Domains.Entities.Main.Service", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("TimePosted")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.ToTable("Services");
                 });
 
             modelBuilder.Entity("AttechServer.Domains.Entities.PermissionForApiEndpoint", b =>
@@ -448,29 +622,21 @@ namespace AttechServer.Migrations
                     b.HasOne("AttechServer.Domains.Entities.Main.PostCategory", "PostCategory")
                         .WithMany("Posts")
                         .HasForeignKey("PostCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("PostCategory");
                 });
 
-            modelBuilder.Entity("AttechServer.Domains.Entities.Main.PostPCategory", b =>
+            modelBuilder.Entity("AttechServer.Domains.Entities.Main.Product", b =>
                 {
-                    b.HasOne("AttechServer.Domains.Entities.Main.PostCategory", "PostCategory")
-                        .WithMany()
-                        .HasForeignKey("PostCategoryId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                    b.HasOne("AttechServer.Domains.Entities.Main.ProductCategory", "ProductCategory")
+                        .WithMany("Products")
+                        .HasForeignKey("ProductCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("AttechServer.Domains.Entities.Main.Post", "Post")
-                        .WithMany()
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Post");
-
-                    b.Navigation("PostCategory");
+                    b.Navigation("ProductCategory");
                 });
 
             modelBuilder.Entity("AttechServer.Domains.Entities.PermissionForApiEndpoint", b =>
@@ -537,6 +703,11 @@ namespace AttechServer.Migrations
             modelBuilder.Entity("AttechServer.Domains.Entities.Main.PostCategory", b =>
                 {
                     b.Navigation("Posts");
+                });
+
+            modelBuilder.Entity("AttechServer.Domains.Entities.Main.ProductCategory", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("AttechServer.Domains.Entities.Role", b =>

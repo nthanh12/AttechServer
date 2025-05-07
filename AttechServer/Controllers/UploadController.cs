@@ -7,7 +7,7 @@ using AttechServer.Shared.ApplicationBase.Common;
 
 namespace AttechServer.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/upload")]
     [ApiController]
     public class UploadController : ApiControllerBase
     {

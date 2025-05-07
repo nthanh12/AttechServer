@@ -8,14 +8,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AttechServer.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/post")]
     [ApiController]
     public class PostController : ApiControllerBase
     {
         private readonly IPostService _postService;
-        public PostController (IPostService postService, ILogger<PostController> logger) : base (logger)
+        public PostController (IPostService PostService, ILogger<PostController> logger) : base (logger)
         {
-            _postService = postService;
+            _postService = PostService;
         }
 
         /// <summary>

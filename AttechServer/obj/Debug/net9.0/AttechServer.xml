@@ -118,6 +118,93 @@
             <param name="status">Trạng thái mới</param>
             <returns></returns>
         </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductCategoryService.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Lấy danh sách danh mục bài viết với phân trang
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductCategoryService.FindById(System.Int32)">
+            <summary>
+            Lấy thông tin chi tiết danh mục bài viết
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductCategoryService.Create(AttechServer.Applications.UserModules.Dtos.ProductCategory.CreateProductCategoryDto)">
+            <summary>
+            Thêm mới danh mục bài viết
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductCategoryService.Update(AttechServer.Applications.UserModules.Dtos.ProductCategory.UpdateProductCategoryDto)">
+            <summary>
+            Cập nhật danh mục bài viết
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductCategoryService.Delete(System.Int32)">
+            <summary>
+            Xóa nhóm bài viết
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductCategoryService.UpdateStatusProductCategory(System.Int32,System.Int32)">
+            <summary>
+            Khóa/Mở khóa nhóm bài viết
+            </summary>
+            <param name="id"></param>
+            <param name="status">Trạng thái mới</param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductService.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Lấy danh sách tất cả sản phẩm với phân trang
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductService.FindAllByCategoryId(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.Int32)">
+            <summary>
+            Lấy danh sách tất cả sản phẩm theo danh mục với phân trang
+            </summary>
+            <param name="input"></param>
+            <param name="categoryId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductService.Create(AttechServer.Applications.UserModules.Dtos.Product.CreateProductDto)">
+            <summary>
+            Thêm mới sản phẩm
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductService.Update(AttechServer.Applications.UserModules.Dtos.Product.UpdateProductDto)">
+            <summary>
+            Cập nhật sản phẩm
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductService.Delete(System.Int32)">
+            <summary>
+            Xóa nhóm sản phẩm
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductService.UpdateStatusProduct(System.Int32,System.Int32)">
+            <summary>
+            Khóa/Mở khóa sản phẩm
+            </summary>
+            <param name="id"></param>
+            <param name="status">Trạng thái mới</param>
+            <returns></returns>
+        </member>
         <member name="M:AttechServer.Applications.UserModules.Abstracts.IRoleService.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
             <summary>
             Danh sách nhóm quyền
@@ -159,6 +246,49 @@
             </summary>
             <param name="id"></param>
             <param name="status"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IServiceService.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Lấy danh sách tất cả dịch vụ với phân trang
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IServiceService.FindById(System.Int32)">
+            <summary>
+            Lấy thông tin chi tiết dịch vụ theo Id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IServiceService.Create(AttechServer.Applications.UserModules.Dtos.Service.CreateServiceDto)">
+            <summary>
+            Thêm mới dịch vụ
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IServiceService.Update(AttechServer.Applications.UserModules.Dtos.Service.UpdateServiceDto)">
+            <summary>
+            Cập nhật dịch vụ
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IServiceService.Delete(System.Int32)">
+            <summary>
+            Xóa nhóm dịch vụ
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IServiceService.UpdateStatusService(System.Int32,System.Int32)">
+            <summary>
+            Khóa/Mở khóa dịch vụ
+            </summary>
+            <param name="id"></param>
+            <param name="status">Trạng thái mới</param>
             <returns></returns>
         </member>
         <member name="M:AttechServer.Applications.UserModules.Abstracts.IUserService.AddRoleToUser(System.Int32,System.Int32)">
@@ -373,6 +503,93 @@
             <param name="status"></param>
             <returns></returns>
         </member>
+        <member name="M:AttechServer.Controllers.ProductCategoryController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Danh sách danh mục sản phẩm
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.ProductCategoryController.FindById(System.Int32)">
+            <summary>
+            Thông tin chi tiết danh mục sản phẩm
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.ProductCategoryController.Create(AttechServer.Applications.UserModules.Dtos.ProductCategory.CreateProductCategoryDto)">
+            <summary>
+            Thêm mới danh mục sản phẩm
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.ProductCategoryController.Update(AttechServer.Applications.UserModules.Dtos.ProductCategory.UpdateProductCategoryDto)">
+            <summary>
+            Cập nhật danh mục sản phẩm
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.ProductCategoryController.Delete(System.Int32)">
+            <summary>
+            Xóa danh mục sản phẩm
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.ProductCategoryController.UpdateStatus(System.Int32,System.Int32)">
+            <summary>
+            Khóa/Mở khóa danh mục sản phẩm
+            </summary>
+            <param name="id"></param>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.ProductController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Danh sách sản phẩm
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.ProductController.FindAllByCategoryId(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.Int32)">
+            <summary>
+            Danh sách sản phẩm theo danh mục
+            </summary>
+            <param name="input"></param>
+            <param name="categoryId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.ProductController.Create(AttechServer.Applications.UserModules.Dtos.Product.CreateProductDto)">
+            <summary>
+            Thêm mới sản phẩm
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.ProductController.Update(AttechServer.Applications.UserModules.Dtos.Product.UpdateProductDto)">
+            <summary>
+            Cập nhật sản phẩm
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.ProductController.Delete(System.Int32)">
+            <summary>
+            Xóa sản phẩm
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.ProductController.UpdateStatus(System.Int32,System.Int32)">
+            <summary>
+            Khóa/Mở khóa sản phẩm
+            </summary>
+            <param name="id"></param>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
         <member name="M:AttechServer.Controllers.RoleController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
             <summary>
             Danh sách quyền
@@ -416,6 +633,49 @@
             <param name="status"></param>
             <returns></returns>
         </member>
+        <member name="M:AttechServer.Controllers.ServiceController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Danh sách dịch vụ
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.ServiceController.FindById(System.Int32)">
+            <summary>
+            Thông tin chi tiết dịch vụ
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.ServiceController.Create(AttechServer.Applications.UserModules.Dtos.Service.CreateServiceDto)">
+            <summary>
+            Thêm mới dịch vụ
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.ServiceController.Update(AttechServer.Applications.UserModules.Dtos.Service.UpdateServiceDto)">
+            <summary>
+            Cập nhật dịch vụ
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.ServiceController.Delete(System.Int32)">
+            <summary>
+            Xóa dịch vụ
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.ServiceController.UpdateStatus(System.Int32,System.Int32)">
+            <summary>
+            Khóa/Mở khóa dịch vụ
+            </summary>
+            <param name="id"></param>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
         <member name="M:AttechServer.Controllers.UserController.AddRoleToUser(System.Int32,System.Int32)">
             <summary>
             Thêm quyền
@@ -438,9 +698,16 @@
             <see cref="!:PostStatuses"/>
             </summary>
         </member>
-        <member name="P:AttechServer.Domains.Entities.Main.Post.PostCategoryId">
+        <member name="P:AttechServer.Domains.Entities.Main.Product.Status">
             <summary>
-            Loại bài viết
+            Trạng thái
+            <see cref="!:ProductStatuses"/>
+            </summary>
+        </member>
+        <member name="P:AttechServer.Domains.Entities.Main.Service.Status">
+            <summary>
+            Trạng thái
+            <see cref="!:ServiceStatuses"/>
             </summary>
         </member>
         <member name="P:AttechServer.Domains.Entities.Role.Status">
@@ -561,6 +828,30 @@
             <inheritdoc />
         </member>
         <member name="M:AttechServer.Migrations.fixEntityType.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.addSlugToPostCategory">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.addSlugToPostCategory.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.addSlugToPostCategory.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.addSlugToPostCategory.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.addProductAndServiceEntity">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.addProductAndServiceEntity.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.addProductAndServiceEntity.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.addProductAndServiceEntity.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
         <member name="T:AttechServer.Shared.ApplicationBase.Common.Validations.IntegerRangeAttribute">

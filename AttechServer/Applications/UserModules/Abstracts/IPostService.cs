@@ -1,5 +1,4 @@
 ﻿using AttechServer.Applications.UserModules.Dtos.Post;
-using AttechServer.Applications.UserModules.Dtos.PostCategory;
 using AttechServer.Shared.ApplicationBase.Common;
 
 namespace AttechServer.Applications.UserModules.Abstracts

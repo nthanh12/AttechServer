@@ -1,7 +1,5 @@
 ﻿using AttechServer.Domains.EntityBase;
-using AttechServer.Shared.ApplicationBase.Common.Validations;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -14,25 +12,36 @@ namespace AttechServer.Domains.Entities.Main
         Name = $"IX_{nameof(Post)}",
         IsUnique = false
     )]
+    [Index(nameof(Slug), IsUnique = true)]
+    [Index(nameof(PostCategoryId))] 
     public class Post : IFullAudited
     {
         [Key]
         public int Id { get; set; }
+
+        [Required, StringLength(200)]
         public string Slug { get; set; } = string.Empty;
+
+        [Required, StringLength(200)]
         public string Title { get; set; } = null!;
+
+        [Required, StringLength(160)]
         public string Description { get; set; } = null!;
+
+        [Required]
         public string Content { get; set; } = string.Empty;
+
         public DateTime TimePosted { get; set; }
 
         /// <summary>
         /// Trạng thái
         /// <see cref="PostStatuses"/>
         /// </summary>
-        public int Status { get; set; }  
-        /// <summary>
-        /// Loại bài viết
-        /// </summary>
+        public int Status { get; set; }
+
+        [Range(1, int.MaxValue)]
         public int PostCategoryId { get; set; }
+
         public PostCategory PostCategory { get; set; } = null!;
 
         #region audit

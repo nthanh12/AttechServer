@@ -5,10 +5,10 @@ namespace AttechServer.Shared.ApplicationBase.Common
     public class PagingRequestBaseDto
     {
         [FromQuery(Name = "pageSize")]
-        public int PageSize { get; set; }
+        public int PageSize { get; set; } = 10;
 
         [FromQuery(Name = "pageNumber")]
-        public int PageNumber { get; set; }
+        public int PageNumber { get; set; } = 1;
 
         private string? _keyword { get; set; }
 

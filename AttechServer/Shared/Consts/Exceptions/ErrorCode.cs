@@ -24,6 +24,10 @@
         public const int ApiEndpointNotFound = 1013;
 
         public const int PostCategoryNotFound = 1014;
+        public const int PostNotFound = 1015;
+        public const int ProductCategoryNotFound = 1016;
+        public const int ProductNotFound = 1017;
+        public const int ServiceNotFound = 1018;
 
         //Từ điển lỗi
         public static readonly Dictionary<int, string> ErrorDict = new Dictionary<int, string>()

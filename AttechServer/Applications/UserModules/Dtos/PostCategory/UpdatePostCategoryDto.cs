@@ -1,4 +1,5 @@
-﻿namespace AttechServer.Applications.UserModules.Dtos.PostCategory
+﻿
+namespace AttechServer.Applications.UserModules.Dtos.PostCategory
 {
     public class UpdatePostCategoryDto : CreatePostCategoryDto
     {

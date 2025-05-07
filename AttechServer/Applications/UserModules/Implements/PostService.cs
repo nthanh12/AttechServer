@@ -1,6 +1,5 @@
 ﻿using AttechServer.Applications.UserModules.Abstracts;
 using AttechServer.Applications.UserModules.Dtos.Post;
-using AttechServer.Applications.UserModules.Dtos.PostCategory;
 using AttechServer.Domains.Entities.Main;
 using AttechServer.Infrastructures.Abstractions;
 using AttechServer.Infrastructures.Persistances;
@@ -10,6 +9,8 @@ using AttechServer.Shared.Consts.Exceptions;
 using AttechServer.Shared.Exceptions;
 using Ganss.Xss;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
+using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
@@ -36,19 +37,54 @@ namespace AttechServer.Applications.UserModules.Implements
             {
                 try
                 {
+                    // Validate input
+                    if (string.IsNullOrWhiteSpace(input.Title) || string.IsNullOrWhiteSpace(input.Content))
+                    {
+                        throw new ArgumentException("Tiêu đề và nội dung là bắt buộc.");
+                    }
+                    if (input.TimePosted > DateTime.UtcNow)
+                    {
+                        throw new ArgumentException("Thời gian đăng bài không phù hợp.");
+                    }
+                    if (input.Description.Length > 160)
+                    {
+                        input.Description = input.Description.Substring(0, 157) + "...";
+                    }
+
                     var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value, out var id) ? id : 0;
                     var sanitizer = new HtmlSanitizer();
                     var safeContent = sanitizer.Sanitize(input.Content);
 
+                    // Kiểm tra danh mục
+                    var category = await _dbContext.PostCategories
+                        .Where(c => c.Id == input.PostCategoryId && !c.Deleted)
+                        .Select(c => new { c.Id, c.Name, c.Slug })
+                        .FirstOrDefaultAsync();
+                    if (category == null)
+                    {
+                        throw new UserFriendlyException(ErrorCode.PostCategoryNotFound);
+                    }
+
+                    // Tạo slug
+                    var slug = GenerateSlug(input.Title);
+                    var slugExists = await _dbContext.Posts.AnyAsync(p => p.Slug == slug && !p.Deleted);
+                    if (slugExists)
+                    {
+                        slug = $"{slug}-{Guid.NewGuid().ToString("N").Substring(0, 4)}";
+                    }
+
                     var newPost = new Post
                     {
-                        Slug = GenerateSlug(input.Title),
+                        Slug = slug,
                         Title = input.Title,
                         Description = input.Description,
                         Content = safeContent,
+                        TimePosted = input.TimePosted,
                         Status = CommonStatus.ACTIVE,
-                        CreatedDate = DateTime.Now,
-                        CreatedBy = userId
+                        PostCategoryId = input.PostCategoryId,
+                        CreatedDate = DateTime.UtcNow,
+                        CreatedBy = userId,
+                        Deleted = false
                     };
 
                     _dbContext.Posts.Add(newPost);
@@ -63,9 +99,14 @@ namespace AttechServer.Applications.UserModules.Implements
                     return new PostDto
                     {
                         Id = newPost.Id,
+                        Title = newPost.Title,
                         Slug = newPost.Slug,
                         Description = newPost.Description,
-                        Status = newPost.Status
+                        TimePosted = newPost.TimePosted,
+                        Status = newPost.Status,
+                        PostCategoryId = newPost.PostCategoryId,
+                        PostCategoryName = category.Name,
+                        PostCategorySlug = category.Slug
                     };
                 }
                 catch (Exception ex)
@@ -76,7 +117,6 @@ namespace AttechServer.Applications.UserModules.Implements
                 }
             }
         }
-
         public async Task Delete(int id)
         {
             _logger.LogInformation($"{nameof(Delete)}: id = {id}");
@@ -119,26 +159,29 @@ namespace AttechServer.Applications.UserModules.Implements
 
         public async Task<PagingResult<PostDto>> FindAllByCategoryId(PagingRequestBaseDto input, int categoryId)
         {
-            _logger.LogInformation($"{nameof(FindAllByCategoryId)}: input = {JsonSerializer.Serialize(input)}");
+            _logger.LogInformation($"{nameof(FindAllByCategoryId)}: input = {JsonSerializer.Serialize(input)}, categoryId = {categoryId}");
 
             var baseQuery = _dbContext.Posts.AsNoTracking()
-                .Where(p => p.Id == categoryId && !p.Deleted && p.Status == CommonStatus.ACTIVE
+                .Where(p => p.PostCategoryId == categoryId && !p.Deleted && p.Status == CommonStatus.ACTIVE
                     && (string.IsNullOrEmpty(input.Keyword) || p.Title.Contains(input.Keyword)));
 
             var totalItems = await baseQuery.CountAsync();
 
             var pagedItems = await baseQuery
-                .OrderBy(p => p.Id)
+                .OrderByDescending(p => p.TimePosted)
                 .Skip(input.GetSkip())
                 .Take(input.PageSize)
                 .Select(p => new PostDto
                 {
                     Id = p.Id,
-                    Slug = p.Slug,
                     Title = p.Title,
+                    Slug = p.Slug,
                     Description = p.Description,
+                    TimePosted = p.TimePosted,
                     Status = p.Status,
-                    PostCategoryId = p.PostCategoryId
+                    PostCategoryId = p.PostCategoryId,
+                    PostCategoryName = p.PostCategory.Name,
+                    PostCategorySlug = p.PostCategory.Slug
                 })
                 .ToListAsync();
 
@@ -149,56 +192,144 @@ namespace AttechServer.Applications.UserModules.Implements
             };
         }
 
-        //public async Task<DetailPostDto> FindById(int id)
-        //{
-        //    _logger.LogInformation($"{nameof(FindById)}: id = {id}");
-
-        //    var postCategory = await _dbContext.Posts
-        //        .Where(p => !p.Deleted && p.Id == id && p.Status == CommonStatus.ACTIVE)
-        //        .Select(p => new DetailPostDto
-        //        {
-        //            Id = p.Id,
-        //            Slug = p.Slug,
-        //            Title = p.Title,
-        //            Description = p.Description,
-        //            Content = p.Content
-        //                .Where(p => !p.Deleted && p.Status == CommonStatus.ACTIVE)
-        //                .Select(p => new PostDto
-        //                {
-        //                    Id = p.Id,
-        //                    Slug = p.Slug,
-        //                    Title = p.Title,
-        //                    Description = p.Description,
-        //                    Status = p.Status,
-        //                    PostCategoryId = p.PostCategoryId
-        //                })
-        //                .ToList()
-        //        })
-        //        .FirstOrDefaultAsync();
-
-        //    if (postCategory == null)
-        //        throw new UserFriendlyException(ErrorCode.PostCategoryNotFound);
-
-        //    return postCategory;
-        //}
-
-        public Task<PostDto> Update(UpdatePostDto input)
+        public async Task<DetailPostDto> FindById(int id)
         {
-            throw new NotImplementedException();
+            _logger.LogInformation($"{nameof(FindById)}: id = {id}");
+
+            var post = await _dbContext.Posts
+                .Where(p => !p.Deleted && p.Id == id && p.Status == CommonStatus.ACTIVE)
+                .Select(p => new DetailPostDto
+                {
+                    Id = p.Id,
+                    Title = p.Title,
+                    Slug = p.Slug,
+                    Description = p.Description,
+                    Content = p.Content,
+                    TimePosted = p.TimePosted,
+                    Status = p.Status,
+                    PostCategoryId = p.PostCategoryId,
+                    PostCategoryName = p.PostCategory.Name,
+                    PostCategorySlug = p.PostCategory.Slug
+                })
+                .FirstOrDefaultAsync();
+
+            if (post == null)
+                throw new UserFriendlyException(ErrorCode.PostNotFound);
+
+            return post;
         }
 
-        public Task UpdateStatusPost(int id, int status)
+        public async Task<PostDto> Update(UpdatePostDto input)
         {
-            throw new NotImplementedException();
-        }
-        private string GenerateSlug(string title)
-        {
-            var slug = title.ToLowerInvariant();
-            slug = Regex.Replace(slug, @"[^a-z0-9\s-]", "");
-            slug = Regex.Replace(slug, @"\s+", "-").Trim('-');
+            _logger.LogInformation($"{nameof(Update)}: input = {JsonSerializer.Serialize(input)}");
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var post = await _dbContext.Posts.FirstOrDefaultAsync(p => p.Id == input.Id && !p.Deleted)
+                        ?? throw new UserFriendlyException(ErrorCode.PostNotFound);
 
-            var randomSuffix = Guid.NewGuid().ToString("N").Substring(0, 4);
-            slug = $"{slug}-{randomSuffix}";
+                    // Validate input
+                    if (string.IsNullOrWhiteSpace(input.Title) || string.IsNullOrWhiteSpace(input.Content))
+                    {
+                        throw new ArgumentException("Tiêu đề và nội dung là bắt buộc.");
+                    }
+                    if (input.TimePosted > DateTime.UtcNow)
+                    {
+                        throw new ArgumentException("Thời gian đăng bài không thể trong tương lai.");
+                    }
+                    if (input.Description.Length > 160)
+                    {
+                        input.Description = input.Description.Substring(0, 157) + "...";
+                    }
+
+                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value, out var id) ? id : 0;
+                    var sanitizer = new HtmlSanitizer();
+                    var safeContent = sanitizer.Sanitize(input.Content);
+
+                    // Kiểm tra danh mục
+                    var category = await _dbContext.PostCategories
+                        .Where(c => c.Id == input.PostCategoryId && !c.Deleted)
+                        .Select(c => new { c.Id, c.Name, c.Slug })
+                        .FirstOrDefaultAsync();
+                    if (category == null)
+                    {
+                        throw new UserFriendlyException(ErrorCode.PostCategoryNotFound);
+                    }
+
+                    // Cập nhật slug nếu tiêu đề thay đổi
+                    var slug = GenerateSlug(input.Title);
+                    if (slug != post.Slug)
+                    {
+                        var slugExists = await _dbContext.Posts.AnyAsync(p => p.Slug == slug && !p.Deleted && p.Id != input.Id);
+                        if (slugExists)
+                        {
+                            slug = $"{slug}-{DateTime.Now.Ticks}";
+                        }
+                        post.Slug = slug;
+                    }
+
+                    post.Title = input.Title;
+                    post.Description = input.Description;
+                    post.Content = safeContent;
+                    post.TimePosted = input.TimePosted;
+                    post.PostCategoryId = input.PostCategoryId;
+                    post.ModifiedDate = DateTime.UtcNow;
+                    post.ModifiedBy = userId;
+
+                    var (processedContent, _) = await _wysiwygFileProcessor.ProcessContentAsync(safeContent, EntityType.Post, post.Id);
+                    post.Content = processedContent;
+
+                    await _dbContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    return new PostDto
+                    {
+                        Id = post.Id,
+                        Title = post.Title,
+                        Slug = post.Slug,
+                        Description = post.Description,
+                        TimePosted = post.TimePosted,
+                        Status = post.Status,
+                        PostCategoryId = post.PostCategoryId,
+                        PostCategoryName = category.Name,
+                        PostCategorySlug = category.Slug
+                    };
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    _logger.LogError(ex, "Error updating post");
+                    throw;
+                }
+            }
+        }
+
+        public async Task UpdateStatusPost(int id, int status)
+        {
+            _logger.LogInformation($"{nameof(UpdateStatusPost)}: Id = {id}, status = {status}");
+            var post = await _dbContext.Posts.FirstOrDefaultAsync(p => p.Id == id && !p.Deleted)
+                ?? throw new UserFriendlyException(ErrorCode.PostNotFound);
+            post.Status = status;
+            await _dbContext.SaveChangesAsync();
+        }
+        private string GenerateSlug(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return string.Empty;
+
+            // Chuyển về chữ thường, loại bỏ dấu tiếng Việt
+            var slug = input.ToLowerInvariant()
+                .Normalize(NormalizationForm.FormD)
+                .Where(c => char.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                .Aggregate(new StringBuilder(), (sb, c) => sb.Append(c))
+                .ToString()
+                .Normalize(NormalizationForm.FormC);
+
+            // Thay khoảng trắng bằng dấu gạch ngang, loại bỏ ký tự không hợp lệ
+            slug = Regex.Replace(slug, @"\s+", "-");
+            slug = Regex.Replace(slug, @"[^a-z0-9-]", "");
+            slug = slug.Trim('-');
 
             return slug;
         }

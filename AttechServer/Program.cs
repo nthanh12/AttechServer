@@ -92,7 +92,10 @@ builder.Services.AddScoped<IKeyPermissionService, KeyPermissionService>();
 
 builder.Services.AddScoped<IWysiwygFileProcessor, WysiwygFileProcessor>();
 builder.Services.AddScoped<IPostCategoryService, PostCategoryService>();
+builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
 builder.Services.AddScoped<IPostService, PostService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IServiceService, ServiceService>();
 
 var app = builder.Build();
 var logger = app.Services.GetRequiredService<ILogger<Program>>();

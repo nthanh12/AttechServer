@@ -12,13 +12,24 @@ namespace AttechServer.Domains.Entities.Main
         Name = $"IX_{nameof(PostCategory)}",
         IsUnique = false
     )]
+    [Index(nameof(Slug), IsUnique = true)]
     public class PostCategory : IFullAudited
     {
         [Key]
         public int Id { get; set; }
+
+        [Required, StringLength(100)]
         public string Name { get; set; } = string.Empty;
-        public List<Post> Posts { get; set; } = new();
+
+        [Required, StringLength(100)]
+        public string Slug { get; set; } = string.Empty;
+
+        [StringLength(160)]
+        public string Description { get; set; } = string.Empty;
+
         public int Status { get; set; }
+
+        public List<Post> Posts { get; set; } = new List<Post>();
 
         #region audit
         public DateTime? CreatedDate { get; set; }

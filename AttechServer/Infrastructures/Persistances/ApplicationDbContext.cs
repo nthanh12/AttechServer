@@ -25,7 +25,10 @@ namespace AttechServer.Infrastructures.Persistances
 
         public DbSet<Post> Posts { get; set; }
         public DbSet<PostCategory> PostCategories { get; set; }
-        public DbSet<PostPCategory> PostPCategories { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<ProductCategory> ProductCategories { get; set; }
+        public DbSet<Service> Services { get; set; }
+
         public DbSet<FileUpload> FileUploads { get; set; }
         #endregion
 
@@ -155,34 +158,66 @@ namespace AttechServer.Infrastructures.Persistances
                 e.HasKey(c => c.Id);
             });
 
-             #region Main Configuration
+            #region Main Configuration
             modelBuilder.Entity<Post>(entity =>
             {
-                entity.HasKey(e => e.Id);
-                entity.HasOne(e => e.PostCategory)
-                    .WithMany(pc => pc.Posts)
-                    .HasForeignKey(e => e.PostCategoryId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                entity.HasIndex(e => e.Slug).IsUnique();
+                entity.HasIndex(e => e.PostCategoryId);
+                entity.Property(e => e.Title).HasMaxLength(200).IsRequired();
+                entity.Property(e => e.Slug).HasMaxLength(200).IsRequired();
+                entity.Property(e => e.Description).HasMaxLength(160).IsRequired();
+                entity.Property(e => e.Content).IsRequired();
+                entity.Property(e => e.TimePosted).IsRequired();
+                entity.HasIndex(e => e.Slug).IsUnique();
+                entity.HasIndex(e => e.PostCategoryId);
+                entity.HasIndex(e => new { e.Id, e.Deleted }).HasDatabaseName("IX_Post");
+                entity.HasOne(p => p.PostCategory)
+                .WithMany(c => c.Posts)
+                .HasForeignKey(p => p.PostCategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<PostCategory>(entity =>
             {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.Name);
+                entity.HasIndex(e => e.Slug).IsUnique();
+                entity.Property(e => e.Name).HasMaxLength(100).IsRequired();
+                entity.Property(e => e.Slug).HasMaxLength(100).IsRequired();
+                entity.Property(e => e.Description).HasMaxLength(160);
+                entity.HasIndex(e => new { e.Id, e.Deleted }).HasDatabaseName("IX_PostCategory");
             });
 
-            modelBuilder.Entity<PostPCategory>(entity =>
+            modelBuilder.Entity<Product>(entity =>
             {
-                entity.HasKey(e => e.Id);
-                entity.HasOne(e => e.Post)
-                      .WithMany()
-                      .HasForeignKey(e => e.PostId)
-                      .OnDelete(DeleteBehavior.Cascade);
+                entity.HasIndex(e => e.Slug).IsUnique();
+                entity.HasIndex(e => e.ProductCategoryId);
+                entity.Property(e => e.Name).HasMaxLength(200).IsRequired();
+                entity.Property(e => e.Slug).HasMaxLength(200).IsRequired();
+                entity.Property(e => e.Description).HasMaxLength(160).IsRequired();
+                entity.HasIndex(e => e.Slug).IsUnique();
+                entity.HasIndex(e => e.ProductCategoryId);
+                entity.HasIndex(e => new { e.Id, e.Deleted }).HasDatabaseName("IX_Product");
+                entity.HasOne(p => p.ProductCategory)
+                      .WithMany(c => c.Products)
+                      .HasForeignKey(p => p.ProductCategoryId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
 
-                entity.HasOne(e => e.PostCategory)
-                      .WithMany()
-                      .HasForeignKey(e => e.PostCategoryId)
-                      .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<ProductCategory>(entity =>
+            {
+                entity.HasIndex(e => e.Slug).IsUnique();
+                entity.Property(e => e.Name).HasMaxLength(100).IsRequired();
+                entity.Property(e => e.Slug).HasMaxLength(100).IsRequired();
+                entity.Property(e => e.Description).HasMaxLength(160);
+
+            });
+
+            modelBuilder.Entity<Service>(entity =>
+            {
+                entity.HasIndex(e => e.Slug).IsUnique();
+                entity.Property(e => e.Name).HasMaxLength(200).IsRequired();
+                entity.Property(e => e.Slug).HasMaxLength(200).IsRequired();
+                entity.Property(e => e.Description).HasMaxLength(160).IsRequired();
+                entity.HasIndex(e => e.Slug).IsUnique();
             });
 
             modelBuilder.Entity<FileUpload>(entity =>

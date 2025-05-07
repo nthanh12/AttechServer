@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AttechServer.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/post-category")]
     [ApiController]
     public class PostCategoryController : ApiControllerBase
     {
