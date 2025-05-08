@@ -116,11 +116,11 @@ namespace AttechServer.Controllers
         /// <param name="status"></param>
         /// <returns></returns>
         [HttpPut("update-status")]
-        public async Task<ApiResponse> UpdateStatus(int id, int status)
+        public async Task<ApiResponse> UpdateStatus([FromBody] UpdateProductCategoryStatusDto input)
         {
             try
             {
-                await _pcService.UpdateStatusProductCategory(id, status);
+                await _pcService.UpdateStatusProductCategory(input.Id, input.Status);
                 return new();
             }
             catch (Exception ex)
@@ -128,5 +128,6 @@ namespace AttechServer.Controllers
                 return OkException(ex);
             }
         }
+
     }
 }

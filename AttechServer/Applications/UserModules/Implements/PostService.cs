@@ -66,7 +66,7 @@ namespace AttechServer.Applications.UserModules.Implements
                     }
 
                     // Tạo slug
-                    var slug = GenerateSlug(input.Title);
+                    var slug = SlugHelper.GenerateSlug(input.Title);
                     var slugExists = await _dbContext.Posts.AnyAsync(p => p.Slug == slug && !p.Deleted);
                     if (slugExists)
                     {
@@ -258,7 +258,7 @@ namespace AttechServer.Applications.UserModules.Implements
                     }
 
                     // Cập nhật slug nếu tiêu đề thay đổi
-                    var slug = GenerateSlug(input.Title);
+                    var slug = SlugHelper.GenerateSlug(input.Title);
                     if (slug != post.Slug)
                     {
                         var slugExists = await _dbContext.Posts.AnyAsync(p => p.Slug == slug && !p.Deleted && p.Id != input.Id);
@@ -313,26 +313,5 @@ namespace AttechServer.Applications.UserModules.Implements
             post.Status = status;
             await _dbContext.SaveChangesAsync();
         }
-        private string GenerateSlug(string input)
-        {
-            if (string.IsNullOrWhiteSpace(input))
-                return string.Empty;
-
-            // Chuyển về chữ thường, loại bỏ dấu tiếng Việt
-            var slug = input.ToLowerInvariant()
-                .Normalize(NormalizationForm.FormD)
-                .Where(c => char.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
-                .Aggregate(new StringBuilder(), (sb, c) => sb.Append(c))
-                .ToString()
-                .Normalize(NormalizationForm.FormC);
-
-            // Thay khoảng trắng bằng dấu gạch ngang, loại bỏ ký tự không hợp lệ
-            slug = Regex.Replace(slug, @"\s+", "-");
-            slug = Regex.Replace(slug, @"[^a-z0-9-]", "");
-            slug = slug.Trim('-');
-
-            return slug;
-        }
-
     }
 }

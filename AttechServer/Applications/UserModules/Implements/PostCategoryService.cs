@@ -48,7 +48,7 @@ namespace AttechServer.Applications.UserModules.Implements
                     var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value, out var id) ? id : 0;
 
                     // Tạo slug tự động
-                    var slug = GenerateSlug(input.Name);
+                    var slug = SlugHelper.GenerateSlug(input.Name);
                     var slugExists = await _dbContext.PostCategories.AnyAsync(c => c.Slug == slug && !c.Deleted);
                     if (slugExists)
                     {
@@ -214,7 +214,7 @@ namespace AttechServer.Applications.UserModules.Implements
                     var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value, out var id) ? id : 0;
 
                     // Cập nhật slug nếu tên thay đổi
-                    var slug = GenerateSlug(input.Name);
+                    var slug = SlugHelper.GenerateSlug(input.Name);
                     if (slug != postCategory.Slug)
                     {
                         var slugExists = await _dbContext.PostCategories.AnyAsync(c => c.Slug == slug && !c.Deleted && c.Id != input.Id);
@@ -260,25 +260,5 @@ namespace AttechServer.Applications.UserModules.Implements
             await _dbContext.SaveChangesAsync();
         }
 
-        private string GenerateSlug(string input)
-        {
-            if (string.IsNullOrWhiteSpace(input))
-                return string.Empty;
-
-            // Chuyển về chữ thường, loại bỏ dấu tiếng Việt
-            var slug = input.ToLowerInvariant()
-                .Normalize(NormalizationForm.FormD)
-                .Where(c => char.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
-                .Aggregate(new StringBuilder(), (sb, c) => sb.Append(c))
-                .ToString()
-                .Normalize(NormalizationForm.FormC);
-
-            // Thay khoảng trắng bằng dấu gạch ngang, loại bỏ ký tự không hợp lệ
-            slug = Regex.Replace(slug, @"\s+", "-");
-            slug = Regex.Replace(slug, @"[^a-z0-9-]", "");
-            slug = slug.Trim('-');
-
-            return slug;
-        }
     }
 }

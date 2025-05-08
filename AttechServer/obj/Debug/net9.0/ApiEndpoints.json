@@ -514,14 +514,9 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "status",
-        "Type": "System.Int32",
-        "IsRequired": false
+        "Name": "input",
+        "Type": "AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryStatusDto",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": [
@@ -886,14 +881,9 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "status",
-        "Type": "System.Int32",
-        "IsRequired": false
+        "Name": "input",
+        "Type": "AttechServer.Applications.UserModules.Dtos.ProductCategory.UpdateProductCategoryStatusDto",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": [

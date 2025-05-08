@@ -451,7 +451,7 @@
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:AttechServer.Controllers.PostCategoryController.UpdateStatus(System.Int32,System.Int32)">
+        <member name="M:AttechServer.Controllers.PostCategoryController.UpdateStatus(AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryStatusDto)">
             <summary>
             Khóa/Mở khóa danh mục bài viết
             </summary>
@@ -538,7 +538,7 @@
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:AttechServer.Controllers.ProductCategoryController.UpdateStatus(System.Int32,System.Int32)">
+        <member name="M:AttechServer.Controllers.ProductCategoryController.UpdateStatus(AttechServer.Applications.UserModules.Dtos.ProductCategory.UpdateProductCategoryStatusDto)">
             <summary>
             Khóa/Mở khóa danh mục sản phẩm
             </summary>
