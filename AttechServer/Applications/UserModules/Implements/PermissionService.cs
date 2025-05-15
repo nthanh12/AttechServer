@@ -43,7 +43,7 @@ namespace AttechServer.Applications.UserModules.Implements
         {
             var query = (from apiEndpoint in _dbContext.ApiEndpoints
                          join permissionOfApi in _dbContext.PermissionForApiEndpoints on apiEndpoint.Id equals permissionOfApi.ApiEndpointId
-                         join permissionKey in _dbContext.KeyPermission on permissionOfApi.KeyPermissionId equals permissionKey.Id
+                         join permissionKey in _dbContext.KeyPermissions on permissionOfApi.KeyPermissionId equals permissionKey.Id
                          where api.ToLower().Contains(apiEndpoint.Path)
                          select permissionKey.PermissionKey).ToArray<string>();
             return query;

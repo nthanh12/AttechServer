@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using AttechServer.Domains.Entities.Main; // Đảm bảo đã thêm dòng này
 
 namespace AttechServer.Domains.Entities.Main
 {
@@ -28,6 +29,8 @@ namespace AttechServer.Domains.Entities.Main
         public string Description { get; set; } = string.Empty;
 
         public int Status { get; set; }
+
+        public PostType Type { get; set; }
 
         public List<Post> Posts { get; set; } = new List<Post>();
 

@@ -9,10 +9,7 @@ using AttechServer.Shared.Consts.Exceptions;
 using AttechServer.Shared.Exceptions;
 using Ganss.Xss;
 using Microsoft.EntityFrameworkCore;
-using System.Globalization;
-using System.Text;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 
 namespace AttechServer.Applications.UserModules.Implements
 {
@@ -30,9 +27,19 @@ namespace AttechServer.Applications.UserModules.Implements
             _httpContextAccessor = httpContextAccessor;
             _wysiwygFileProcessor = wysiwygFileProcessor;
         }
-        public async Task<PostDto> Create(CreatePostDto input)
+
+        private void ValidatePostType(PostType type)
         {
-            _logger.LogInformation($"{nameof(Create)}: input = {JsonSerializer.Serialize(input)}");
+            if (type != PostType.News && type != PostType.Notification)
+            {
+                throw new ArgumentException("Loại bài viết không hợp lệ. Chỉ chấp nhận News hoặc Notification.");
+            }
+        }
+
+        public async Task<PostDto> Create(CreatePostDto input, PostType type)
+        {
+            _logger.LogInformation($"{nameof(Create)}: input = {JsonSerializer.Serialize(input)}, type = {type}");
+            ValidatePostType(type);
             using (var transaction = await _dbContext.Database.BeginTransactionAsync())
             {
                 try
@@ -57,7 +64,7 @@ namespace AttechServer.Applications.UserModules.Implements
 
                     // Kiểm tra danh mục
                     var category = await _dbContext.PostCategories
-                        .Where(c => c.Id == input.PostCategoryId && !c.Deleted)
+                        .Where(c => c.Id == input.PostCategoryId && !c.Deleted && c.Type == type)
                         .Select(c => new { c.Id, c.Name, c.Slug })
                         .FirstOrDefaultAsync();
                     if (category == null)
@@ -67,7 +74,7 @@ namespace AttechServer.Applications.UserModules.Implements
 
                     // Tạo slug
                     var slug = SlugHelper.GenerateSlug(input.Title);
-                    var slugExists = await _dbContext.Posts.AnyAsync(p => p.Slug == slug && !p.Deleted);
+                    var slugExists = await _dbContext.Posts.AnyAsync(p => p.Slug == slug && !p.Deleted && p.Type == type);
                     if (slugExists)
                     {
                         slug = $"{slug}-{Guid.NewGuid().ToString("N").Substring(0, 4)}";
@@ -82,6 +89,7 @@ namespace AttechServer.Applications.UserModules.Implements
                         TimePosted = input.TimePosted,
                         Status = CommonStatus.ACTIVE,
                         PostCategoryId = input.PostCategoryId,
+                        Type = type,
                         CreatedDate = DateTime.UtcNow,
                         CreatedBy = userId,
                         Deleted = false
@@ -117,26 +125,45 @@ namespace AttechServer.Applications.UserModules.Implements
                 }
             }
         }
-        public async Task Delete(int id)
+
+        public async Task Delete(int id, PostType type)
         {
-            _logger.LogInformation($"{nameof(Delete)}: id = {id}");
-            var postCategory = _dbContext.Posts.FirstOrDefault(pc => pc.Id == id) ?? throw new UserFriendlyException(ErrorCode.PostCategoryNotFound);
-            postCategory.Deleted = true;
-            await _dbContext.SaveChangesAsync();
+            _logger.LogInformation($"{nameof(Delete)}: id = {id}, type = {type}");
+            ValidatePostType(type);
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var post = await _dbContext.Posts
+                        .FirstOrDefaultAsync(p => p.Id == id && !p.Deleted && p.Type == type)
+                        ?? throw new UserFriendlyException(ErrorCode.PostNotFound);
+
+                    post.Deleted = true;
+                    await _dbContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    _logger.LogError(ex, $"Error deleting post with id = {id}, type = {type}");
+                    throw;
+                }
+            }
         }
 
-        public async Task<PagingResult<PostDto>> FindAll(PagingRequestBaseDto input)
+        public async Task<PagingResult<PostDto>> FindAll(PagingRequestBaseDto input, PostType type)
         {
-            _logger.LogInformation($"{nameof(FindAll)}: input = {JsonSerializer.Serialize(input)}");
+            _logger.LogInformation($"{nameof(FindAll)}: input = {JsonSerializer.Serialize(input)}, type = {type}");
+            ValidatePostType(type);
 
             var baseQuery = _dbContext.Posts.AsNoTracking()
-                .Where(p => !p.Deleted && p.Status == CommonStatus.ACTIVE
+                .Where(p => !p.Deleted && p.Status == CommonStatus.ACTIVE && p.Type == type
                     && (string.IsNullOrEmpty(input.Keyword) || p.Title.Contains(input.Keyword)));
 
             var totalItems = await baseQuery.CountAsync();
 
             var pagedItems = await baseQuery
-                .OrderBy(pc => pc.Id)
+                .OrderBy(p => p.Id)
                 .Skip(input.GetSkip())
                 .Take(input.PageSize)
                 .Select(p => new PostDto
@@ -145,8 +172,11 @@ namespace AttechServer.Applications.UserModules.Implements
                     Slug = p.Slug,
                     Title = p.Title,
                     Description = p.Description,
+                    TimePosted = p.TimePosted,
                     Status = p.Status,
-                    PostCategoryId = p.PostCategoryId
+                    PostCategoryId = p.PostCategoryId,
+                    PostCategoryName = p.PostCategory.Name,
+                    PostCategorySlug = p.PostCategory.Slug
                 })
                 .ToListAsync();
 
@@ -157,12 +187,21 @@ namespace AttechServer.Applications.UserModules.Implements
             };
         }
 
-        public async Task<PagingResult<PostDto>> FindAllByCategoryId(PagingRequestBaseDto input, int categoryId)
+        public async Task<PagingResult<PostDto>> FindAllByCategoryId(PagingRequestBaseDto input, int categoryId, PostType type)
         {
-            _logger.LogInformation($"{nameof(FindAllByCategoryId)}: input = {JsonSerializer.Serialize(input)}, categoryId = {categoryId}");
+            _logger.LogInformation($"{nameof(FindAllByCategoryId)}: input = {JsonSerializer.Serialize(input)}, categoryId = {categoryId}, type = {type}");
+            ValidatePostType(type);
+
+            // Kiểm tra danh mục tồn tại và đúng Type
+            var categoryExists = await _dbContext.PostCategories
+                .AnyAsync(c => c.Id == categoryId && !c.Deleted && c.Type == type);
+            if (!categoryExists)
+            {
+                throw new UserFriendlyException(ErrorCode.PostCategoryNotFound);
+            }
 
             var baseQuery = _dbContext.Posts.AsNoTracking()
-                .Where(p => p.PostCategoryId == categoryId && !p.Deleted && p.Status == CommonStatus.ACTIVE
+                .Where(p => p.PostCategoryId == categoryId && !p.Deleted && p.Status == CommonStatus.ACTIVE && p.Type == type
                     && (string.IsNullOrEmpty(input.Keyword) || p.Title.Contains(input.Keyword)));
 
             var totalItems = await baseQuery.CountAsync();
@@ -192,12 +231,13 @@ namespace AttechServer.Applications.UserModules.Implements
             };
         }
 
-        public async Task<DetailPostDto> FindById(int id)
+        public async Task<DetailPostDto> FindById(int id, PostType type)
         {
-            _logger.LogInformation($"{nameof(FindById)}: id = {id}");
+            _logger.LogInformation($"{nameof(FindById)}: id = {id}, type = {type}");
+            ValidatePostType(type);
 
             var post = await _dbContext.Posts
-                .Where(p => !p.Deleted && p.Id == id && p.Status == CommonStatus.ACTIVE)
+                .Where(p => !p.Deleted && p.Id == id && p.Status == CommonStatus.ACTIVE && p.Type == type)
                 .Select(p => new DetailPostDto
                 {
                     Id = p.Id,
@@ -219,14 +259,16 @@ namespace AttechServer.Applications.UserModules.Implements
             return post;
         }
 
-        public async Task<PostDto> Update(UpdatePostDto input)
+        public async Task<PostDto> Update(UpdatePostDto input, PostType type)
         {
-            _logger.LogInformation($"{nameof(Update)}: input = {JsonSerializer.Serialize(input)}");
+            _logger.LogInformation($"{nameof(Update)}: input = {JsonSerializer.Serialize(input)}, type = {type}");
+            ValidatePostType(type);
             using (var transaction = await _dbContext.Database.BeginTransactionAsync())
             {
                 try
                 {
-                    var post = await _dbContext.Posts.FirstOrDefaultAsync(p => p.Id == input.Id && !p.Deleted)
+                    var post = await _dbContext.Posts
+                        .FirstOrDefaultAsync(p => p.Id == input.Id && !p.Deleted && p.Type == type)
                         ?? throw new UserFriendlyException(ErrorCode.PostNotFound);
 
                     // Validate input
@@ -249,7 +291,7 @@ namespace AttechServer.Applications.UserModules.Implements
 
                     // Kiểm tra danh mục
                     var category = await _dbContext.PostCategories
-                        .Where(c => c.Id == input.PostCategoryId && !c.Deleted)
+                        .Where(c => c.Id == input.PostCategoryId && !c.Deleted && c.Type == type)
                         .Select(c => new { c.Id, c.Name, c.Slug })
                         .FirstOrDefaultAsync();
                     if (category == null)
@@ -261,7 +303,7 @@ namespace AttechServer.Applications.UserModules.Implements
                     var slug = SlugHelper.GenerateSlug(input.Title);
                     if (slug != post.Slug)
                     {
-                        var slugExists = await _dbContext.Posts.AnyAsync(p => p.Slug == slug && !p.Deleted && p.Id != input.Id);
+                        var slugExists = await _dbContext.Posts.AnyAsync(p => p.Slug == slug && !p.Deleted && p.Id != input.Id && p.Type == type);
                         if (slugExists)
                         {
                             slug = $"{slug}-{DateTime.Now.Ticks}";
@@ -305,10 +347,12 @@ namespace AttechServer.Applications.UserModules.Implements
             }
         }
 
-        public async Task UpdateStatusPost(int id, int status)
+        public async Task UpdateStatusPost(int id, int status, PostType type)
         {
-            _logger.LogInformation($"{nameof(UpdateStatusPost)}: Id = {id}, status = {status}");
-            var post = await _dbContext.Posts.FirstOrDefaultAsync(p => p.Id == id && !p.Deleted)
+            _logger.LogInformation($"{nameof(UpdateStatusPost)}: id = {id}, status = {status}, type = {type}");
+            ValidatePostType(type);
+            var post = await _dbContext.Posts
+                .FirstOrDefaultAsync(p => p.Id == id && !p.Deleted && p.Type == type)
                 ?? throw new UserFriendlyException(ErrorCode.PostNotFound);
             post.Status = status;
             await _dbContext.SaveChangesAsync();

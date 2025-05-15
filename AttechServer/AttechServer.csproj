@@ -9,6 +9,18 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Shared\Consts\Main\**" />
+	  <Content Remove="Shared\Consts\Main\**" />
+	  <EmbeddedResource Remove="Shared\Consts\Main\**" />
+	  <None Remove="Shared\Consts\Main\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Controllers\PostCategoryController.cs" />
+	  <Compile Remove="Controllers\PostController.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="HtmlSanitizer" Version="9.0.884" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.4" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
@@ -29,7 +41,6 @@
 	<ItemGroup>
 		<Folder Include="Migrations\" />
 		<Folder Include="Uploads\" />
-		<Folder Include="Shared\Consts\Main\" />
 	</ItemGroup>
 
 </Project>

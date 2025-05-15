@@ -53,6 +53,10 @@
             {KeyPermissionOrderFailed, ErrorMessage.KeyPermissionOrderFailed },
             {ApiEndpointNotFound, ErrorMessage.ApiEndpointNotFound },
             {PostCategoryNotFound, ErrorMessage.PostCategoryNotFound },
+            {PostNotFound, ErrorMessage.PostNotFound },
+            {ProductCategoryNotFound, ErrorMessage.ProductCategoryNotFound },
+            {ProductNotFound, ErrorMessage.ProductNotFound },
+            {ServiceNotFound, ErrorMessage.ServiceNotFound },
         };
 
         public static string GetMessage(int errorCode)

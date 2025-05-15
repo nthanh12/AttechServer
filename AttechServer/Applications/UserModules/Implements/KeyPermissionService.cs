@@ -27,17 +27,17 @@ namespace AttechServer.Applications.UserModules.Implements
         public void Create(CreateKeyPermissionDto input)
         {
             _logger.LogInformation($"{nameof(Create)}: input = {JsonSerializer.Serialize(input)}");
-            if (_dbContext.KeyPermission.Any(k => k.PermissionKey == input.PermissionKey))
+            if (_dbContext.KeyPermissions.Any(k => k.PermissionKey == input.PermissionKey))
             {
                 throw new UserFriendlyException(ErrorCode.KeyPermissionHasBeenExist);
             }
             var transaction = _dbContext.Database.BeginTransaction();
-            var maxOrderPriority = _dbContext.KeyPermission.Where(k => k.ParentId == input.ParentId).Select(c => c.OrderPriority).Max();
+            var maxOrderPriority = _dbContext.KeyPermissions.Where(k => k.ParentId == input.ParentId).Select(c => c.OrderPriority).Max();
             if (input.OrderPriority > maxOrderPriority + 1)
             {
                 throw new UserFriendlyException(ErrorCode.KeyPermissionOrderFailed);
             }
-            _dbContext.KeyPermission.Where(k => k.ParentId == input.ParentId && k.OrderPriority >= input.OrderPriority)
+            _dbContext.KeyPermissions.Where(k => k.ParentId == input.ParentId && k.OrderPriority >= input.OrderPriority)
                                     .ExecuteUpdate(kp => kp.SetProperty(k => k.OrderPriority, k => k.OrderPriority + 1));
             _dbContext.SaveChanges();
 
@@ -49,7 +49,7 @@ namespace AttechServer.Applications.UserModules.Implements
                 ParentId = input.ParentId,
             };
 
-            _dbContext.KeyPermission.Add(newKeyPermission);
+            _dbContext.KeyPermissions.Add(newKeyPermission);
             _dbContext.SaveChanges();
 
             transaction.Commit();
@@ -57,15 +57,15 @@ namespace AttechServer.Applications.UserModules.Implements
 
         public void Delete(int id)
         {
-            var keyPermission = _dbContext.KeyPermission.FirstOrDefault(x => x.Id == id)
+            var keyPermission = _dbContext.KeyPermissions.FirstOrDefault(x => x.Id == id)
                                 ?? throw new UserFriendlyException(ErrorCode.KeyPermissionNotFound);
             var transaction = _dbContext.Database.BeginTransaction();
 
-            _dbContext.KeyPermission.Where(k => k.ParentId == keyPermission.ParentId && k.OrderPriority > keyPermission.OrderPriority)
+            _dbContext.KeyPermissions.Where(k => k.ParentId == keyPermission.ParentId && k.OrderPriority > keyPermission.OrderPriority)
                                         .ExecuteUpdate(kp => kp.SetProperty(k => k.OrderPriority, k => k.OrderPriority - 1));
             _dbContext.SaveChanges();
 
-            _dbContext.KeyPermission.Remove(keyPermission);
+            _dbContext.KeyPermissions.Remove(keyPermission);
             _dbContext.SaveChanges();
 
             transaction.Commit();
@@ -73,23 +73,23 @@ namespace AttechServer.Applications.UserModules.Implements
 
         public void Update(UpdateKeyPermissionDto input)
         {
-            var keyPermission = _dbContext.KeyPermission.FirstOrDefault(x => x.Id == input.Id)
+            var keyPermission = _dbContext.KeyPermissions.FirstOrDefault(x => x.Id == input.Id)
                               ?? throw new UserFriendlyException(ErrorCode.KeyPermissionNotFound);
             var transaction = _dbContext.Database.BeginTransaction();
-            var maxOrderPriority = _dbContext.KeyPermission.Where(k => k.Id == input.ParentId).Select(k => k.OrderPriority).Max();
+            var maxOrderPriority = _dbContext.KeyPermissions.Where(k => k.Id == input.ParentId).Select(k => k.OrderPriority).Max();
             if (input.OrderPriority > maxOrderPriority + 1)
             {
                 throw new UserFriendlyException(ErrorCode.KeyPermissionOrderFailed);
             }
             if (input.OrderPriority < keyPermission.OrderPriority)
             {
-                _dbContext.KeyPermission.Where(k => k.ParentId == input.ParentId && k.OrderPriority >= input.OrderPriority && k.OrderPriority < keyPermission.OrderPriority)
+                _dbContext.KeyPermissions.Where(k => k.ParentId == input.ParentId && k.OrderPriority >= input.OrderPriority && k.OrderPriority < keyPermission.OrderPriority)
                                         .ExecuteUpdate(kp => kp.SetProperty(k => k.OrderPriority, k => k.OrderPriority + 1));
                 _dbContext.SaveChanges();
             }
             else if (input.OrderPriority > keyPermission.OrderPriority)
             {
-                _dbContext.KeyPermission.Where(k => k.ParentId == input.ParentId && k.OrderPriority <= input.OrderPriority && k.OrderPriority > keyPermission.OrderPriority)
+                _dbContext.KeyPermissions.Where(k => k.ParentId == input.ParentId && k.OrderPriority <= input.OrderPriority && k.OrderPriority > keyPermission.OrderPriority)
                                         .ExecuteUpdate(kp => kp.SetProperty(k => k.OrderPriority, k => k.OrderPriority - 1));
                 _dbContext.SaveChanges();
             }
@@ -109,7 +109,7 @@ namespace AttechServer.Applications.UserModules.Implements
 
         public KeyPermissionDto FindById(int id)
         {
-            var keyPermission = _dbContext.KeyPermission.Select(k => new KeyPermissionDto
+            var keyPermission = _dbContext.KeyPermissions.Select(k => new KeyPermissionDto
             {
                 Id = k.Id,
                 ParentId = k.ParentId,
@@ -123,7 +123,7 @@ namespace AttechServer.Applications.UserModules.Implements
 
         public List<KeyPermissionDto> FindAll()
         {
-            var rootPermissions = _dbContext.KeyPermission
+            var rootPermissions = _dbContext.KeyPermissions
                             .Include(m => m.Children)
                             .Where(m => !m.Deleted && m.ParentId == null)
                             .Select(m => new KeyPermissionDto
@@ -148,7 +148,7 @@ namespace AttechServer.Applications.UserModules.Implements
 
         private void LoadChildRecursive(KeyPermissionDto permission)
         {
-            var childrenPermissions = _dbContext.KeyPermission
+            var childrenPermissions = _dbContext.KeyPermissions
                 .Include(k => k.Children)
                 .Select(k => new KeyPermissionDto
                 {
@@ -183,7 +183,7 @@ namespace AttechServer.Applications.UserModules.Implements
             _dbContext.ApiEndpoints.Add(newApiEndpoint);
             _dbContext.SaveChanges();
 
-            var existedPK = _dbContext.KeyPermission
+            var existedPK = _dbContext.KeyPermissions
                 .Where(kp => input.PermissionKeys.Select(pk => pk.PermissionKey).Contains(kp.PermissionKey))
                 .ToDictionary(kp => kp.PermissionKey, kp => kp);
 
@@ -203,7 +203,7 @@ namespace AttechServer.Applications.UserModules.Implements
                     {
                         PermissionKey = pkInput.PermissionKey,
                         PermissionLabel = pkInput.PermissionLabel,
-                        ParentId = pkInput.ParentId, // Có thể null cho permission key gốc
+                        ParentId = pkInput.ParentId,
                         OrderPriority = pkInput.OrderPriority
                     };
                     newKeyPermissions.Add(keyPermission);
@@ -220,16 +220,16 @@ namespace AttechServer.Applications.UserModules.Implements
             {
                 foreach (var newKeyPermission in newKeyPermissions)
                 {
-                    var maxOrderPriority = _dbContext.KeyPermission.Where(k => k.ParentId == newKeyPermission.ParentId).Select(k => k.OrderPriority).Max();
+                    var maxOrderPriority = _dbContext.KeyPermissions.Where(k => k.ParentId == newKeyPermission.ParentId).Select(k => k.OrderPriority).Max();
                     if (newKeyPermission.OrderPriority > maxOrderPriority + 1)
                     {
                         throw new UserFriendlyException(ErrorCode.KeyPermissionOrderFailed);
                     }
-                    _dbContext.KeyPermission.Where(k => k.ParentId == newKeyPermission.ParentId && k.OrderPriority >= newKeyPermission.OrderPriority)
+                    _dbContext.KeyPermissions.Where(k => k.ParentId == newKeyPermission.ParentId && k.OrderPriority >= newKeyPermission.OrderPriority)
                                    .ExecuteUpdate(kp => kp.SetProperty(k => k.OrderPriority, k => k.OrderPriority + 1));
                     _dbContext.SaveChanges();
                 }
-                _dbContext.KeyPermission.AddRange(newKeyPermissions);
+                _dbContext.KeyPermissions.AddRange(newKeyPermissions);
             }
 
             _dbContext.PermissionForApiEndpoints.AddRange(newPermissionForApi);
@@ -250,7 +250,7 @@ namespace AttechServer.Applications.UserModules.Implements
             apiEndpoint.Description = input.Description;
 
             // Lấy tất cả KeyPermission hiện có liên quan đến input
-            var existingKeyPermissions = _dbContext.KeyPermission
+            var existingKeyPermissions = _dbContext.KeyPermissions
                 .Where(kp => input.PermissionKeys.Select(pk => pk.Id).Contains(kp.Id) ||
                              input.PermissionKeys.Select(pk => pk.PermissionKey).Contains(kp.PermissionKey))
                 .ToDictionary(kp => kp.PermissionKey);
@@ -259,7 +259,7 @@ namespace AttechServer.Applications.UserModules.Implements
 
             foreach (var permissionKeyInput in input.PermissionKeys)
             {
-                var maxOrderPriority = _dbContext.KeyPermission.Where(k => k.ParentId == permissionKeyInput.ParentId).Select(k => k.OrderPriority).Max();
+                var maxOrderPriority = _dbContext.KeyPermissions.Where(k => k.ParentId == permissionKeyInput.ParentId).Select(k => k.OrderPriority).Max();
                 if (existingKeyPermissions.TryGetValue(permissionKeyInput.PermissionKey, out var existingKeyPermission))
                 {
                     if (permissionKeyInput.OrderPriority >= maxOrderPriority + 1)
@@ -270,12 +270,12 @@ namespace AttechServer.Applications.UserModules.Implements
                     // Cập nhật nếu đã tồn tại
                     if (permissionKeyInput.OrderPriority > existingKeyPermission.OrderPriority)
                     {
-                        _dbContext.KeyPermission.Where(k => k.ParentId == permissionKeyInput.ParentId && k.OrderPriority <= permissionKeyInput.OrderPriority && k.OrderPriority > existingKeyPermission.OrderPriority)
+                        _dbContext.KeyPermissions.Where(k => k.ParentId == permissionKeyInput.ParentId && k.OrderPriority <= permissionKeyInput.OrderPriority && k.OrderPriority > existingKeyPermission.OrderPriority)
                                                 .ExecuteUpdate(kp => kp.SetProperty(k => k.OrderPriority, k => k.OrderPriority - 1));
                     }
                     else if (permissionKeyInput.OrderPriority < existingKeyPermission.OrderPriority)
                     {
-                        _dbContext.KeyPermission.Where(k => k.ParentId == permissionKeyInput.ParentId && k.OrderPriority >= permissionKeyInput.OrderPriority && k.OrderPriority < existingKeyPermission.OrderPriority)
+                        _dbContext.KeyPermissions.Where(k => k.ParentId == permissionKeyInput.ParentId && k.OrderPriority >= permissionKeyInput.OrderPriority && k.OrderPriority < existingKeyPermission.OrderPriority)
                                                 .ExecuteUpdate(kp => kp.SetProperty(k => k.OrderPriority, k => k.OrderPriority + 1));
                     }
                     existingKeyPermission.PermissionLabel = permissionKeyInput.PermissionLabel;
@@ -298,9 +298,9 @@ namespace AttechServer.Applications.UserModules.Implements
                         OrderPriority = permissionKeyInput.OrderPriority,
                         ParentId = permissionKeyInput.ParentId // Có thể null cho permission key gốc
                     };
-                    _dbContext.KeyPermission.Where(k => k.ParentId == newKeyPermission.ParentId && k.OrderPriority >= newKeyPermission.OrderPriority)
+                    _dbContext.KeyPermissions.Where(k => k.ParentId == newKeyPermission.ParentId && k.OrderPriority >= newKeyPermission.OrderPriority)
                                   .ExecuteUpdate(kp => kp.SetProperty(k => k.OrderPriority, k => k.OrderPriority + 1));
-                    _dbContext.KeyPermission.Add(newKeyPermission);
+                    _dbContext.KeyPermissions.Add(newKeyPermission);
                     updatedOrNewKeyPermissions.Add(newKeyPermission);
                 }
             }

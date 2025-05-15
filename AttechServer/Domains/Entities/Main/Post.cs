@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using AttechServer.Domains.Entities.Main; // Thêm dòng này
 
 namespace AttechServer.Domains.Entities.Main
 {
@@ -13,7 +14,7 @@ namespace AttechServer.Domains.Entities.Main
         IsUnique = false
     )]
     [Index(nameof(Slug), IsUnique = true)]
-    [Index(nameof(PostCategoryId))] 
+    [Index(nameof(PostCategoryId))]
     public class Post : IFullAudited
     {
         [Key]
@@ -38,6 +39,8 @@ namespace AttechServer.Domains.Entities.Main
         /// <see cref="PostStatuses"/>
         /// </summary>
         public int Status { get; set; }
+
+        public PostType Type { get; set; }
 
         [Range(1, int.MaxValue)]
         public int PostCategoryId { get; set; }

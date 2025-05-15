@@ -27,6 +27,10 @@
         public const string ApiEndpointNotFound = "Api endpoint không tồn tại trong hệ thống";
 
         public const string PostCategoryNotFound = "Danh mục bài viết không tồn tại";
+        public const string PostNotFound = "Bài viết không tồn tại";
+        public const string ProductCategoryNotFound = "Danh mục sản phẩm không tồn tại";
+        public const string ProductNotFound = "Sản phẩm không tồn tại";
+        public const string ServiceNotFound = "Dịch vụ không tồn tại";
 
     }
 }
