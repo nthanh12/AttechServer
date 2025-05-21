@@ -4,6 +4,9 @@ using AttechServer.Shared.ApplicationBase.Common;
 using AttechServer.Shared.WebAPIBase;
 using Microsoft.AspNetCore.Mvc;
 using AttechServer.Domains.Entities.Main;
+using Microsoft.AspNetCore.Authorization;
+using AttechServer.Shared.Filters;
+using AttechServer.Shared.Consts.Permissions;
 
 namespace AttechServer.Controllers
 {
@@ -24,6 +27,7 @@ namespace AttechServer.Controllers
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpGet("find-all")]
+        [AllowAnonymous]
         public async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
         {
             try
@@ -43,6 +47,7 @@ namespace AttechServer.Controllers
         /// <param name="categoryId"></param>
         /// <returns></returns>
         [HttpGet("category/{categoryId}")]
+        [AllowAnonymous]
         public async Task<ApiResponse> FindAllByCategoryId([FromQuery] PagingRequestBaseDto input, int categoryId)
         {
             try
@@ -61,6 +66,7 @@ namespace AttechServer.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("find-by-id/{id}")]
+        [AllowAnonymous]
         public async Task<ApiResponse> FindById(int id)
         {
             try
@@ -79,6 +85,8 @@ namespace AttechServer.Controllers
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost("create")]
+        [Authorize]
+        [PermissionFilter(PermissionKeys.CreateNews)]
         public async Task<ApiResponse> Create([FromBody] CreatePostDto input)
         {
             try
@@ -98,6 +106,8 @@ namespace AttechServer.Controllers
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPut("update")]
+        [Authorize]
+        [PermissionFilter(PermissionKeys.EditNews)]
         public async Task<ApiResponse> Update([FromBody] UpdatePostDto input)
         {
             try
@@ -117,6 +127,8 @@ namespace AttechServer.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("delete/{id}")]
+        [Authorize]
+        [PermissionFilter(PermissionKeys.DeleteNews)]
         public async Task<ApiResponse> Delete(int id)
         {
             try
@@ -136,6 +148,8 @@ namespace AttechServer.Controllers
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPut("update-status")]
+        [Authorize]
+        [PermissionFilter(PermissionKeys.EditNews)]
         public async Task<ApiResponse> UpdateStatus([FromBody] UpdatePostStatusDto input)
         {
             try

@@ -6,18 +6,18 @@ namespace AttechServer.Applications.UserModules.Abstracts
 {
     public interface IKeyPermissionService
     {
-        public void Create(CreateKeyPermissionDto input);
-        public void Update(UpdateKeyPermissionDto input);
-        public void Delete(int id);
-        public KeyPermissionDto FindById(int id);
-        public List<KeyPermissionDto> FindAll();
-        public List<KeyPermissionDto> FindAllByCurrentUserId();
+        Task Create(CreateKeyPermissionDto input);
+        Task Delete(int id);
+        Task Update(UpdateKeyPermissionDto input);
+        Task<KeyPermissionDto> FindById(int id);
+        Task<List<KeyPermissionDto>> FindAll();
+        Task<List<KeyPermissionDto>> FindAllByCurrentUserId();
 
-        public void CreatePermissionConfig(CreatePermissionApiDto input);
+        Task CreatePermissionConfig(CreatePermissionApiDto input);
 
-        public void UpdatePermissionConfig(UpdatePermissionConfigDto input);
+        Task UpdatePermissionConfig(UpdatePermissionConfigDto input);
 
-        public PagingResult<PermissionApiDto> GetAllPermissionApi(PermissionApiRequestDto input);
-        public PermissionApiDetailDto GetPermissionApiById(int id);
+        Task<PagingResult<PermissionApiDto>> GetAllPermissionApi(PermissionApiRequestDto input);
+        Task<PermissionApiDetailDto> GetPermissionApiById(int id);
     }
 }

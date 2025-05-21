@@ -15,6 +15,7 @@ namespace AttechServer.Applications.UserModules.Implements
 {
     public class PostService : IPostService
     {
+        private const int MAX_CONTENT_LENGTH = 100000; // 100KB
         private readonly ILogger<PostService> _logger;
         private readonly ApplicationDbContext _dbContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -36,6 +37,60 @@ namespace AttechServer.Applications.UserModules.Implements
             }
         }
 
+        private string TruncateDescription(string description, int maxLength = 160)
+        {
+            if (string.IsNullOrEmpty(description)) return string.Empty;
+            return description.Length <= maxLength ? description : description.Substring(0, maxLength - 3) + "...";
+        }
+
+        private async Task<string> GenerateUniqueSlug(string title, PostType type, int? excludeId = null)
+        {
+            var slug = SlugHelper.GenerateSlug(title);
+            var query = _dbContext.Posts.Where(p => p.Slug == slug && !p.Deleted && p.Type == type);
+
+            if (excludeId.HasValue)
+            {
+                query = query.Where(p => p.Id != excludeId.Value);
+            }
+
+            var exists = await query.AnyAsync();
+            if (!exists) return slug;
+
+            return $"{slug}-{Guid.NewGuid().ToString("N").Substring(0, 4)}";
+        }
+
+        private async Task<string> ProcessContent(string content, int postId)
+        {
+            if (string.IsNullOrEmpty(content)) return string.Empty;
+            if (content.Length > MAX_CONTENT_LENGTH)
+            {
+                throw new ArgumentException($"Nội dung không được vượt quá {MAX_CONTENT_LENGTH} ký tự.");
+            }
+
+            try
+            {
+                // Sanitize HTML content
+                var sanitizer = new HtmlSanitizer();
+                var safeContent = sanitizer.Sanitize(content);
+
+                // Xử lý file trong content
+                var (processedContent, fileEntries) = await _wysiwygFileProcessor.ProcessContentAsync(safeContent, EntityType.Post, postId);
+
+                // Log thông tin về các file đã xử lý
+                if (fileEntries?.Any() == true)
+                {
+                    _logger.LogInformation($"Processed {fileEntries.Count} files for post {postId}: {JsonSerializer.Serialize(fileEntries)}");
+                }
+
+                return processedContent;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error processing content for post {postId}");
+                throw new UserFriendlyException(ErrorCode.InvalidClientRequest);
+            }
+        }
+
         public async Task<PostDto> Create(CreatePostDto input, PostType type)
         {
             _logger.LogInformation($"{nameof(Create)}: input = {JsonSerializer.Serialize(input)}, type = {type}");
@@ -53,14 +108,8 @@ namespace AttechServer.Applications.UserModules.Implements
                     {
                         throw new ArgumentException("Thời gian đăng bài không phù hợp.");
                     }
-                    if (input.Description.Length > 160)
-                    {
-                        input.Description = input.Description.Substring(0, 157) + "...";
-                    }
 
                     var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value, out var id) ? id : 0;
-                    var sanitizer = new HtmlSanitizer();
-                    var safeContent = sanitizer.Sanitize(input.Content);
 
                     // Kiểm tra danh mục
                     var category = await _dbContext.PostCategories
@@ -73,19 +122,14 @@ namespace AttechServer.Applications.UserModules.Implements
                     }
 
                     // Tạo slug
-                    var slug = SlugHelper.GenerateSlug(input.Title);
-                    var slugExists = await _dbContext.Posts.AnyAsync(p => p.Slug == slug && !p.Deleted && p.Type == type);
-                    if (slugExists)
-                    {
-                        slug = $"{slug}-{Guid.NewGuid().ToString("N").Substring(0, 4)}";
-                    }
+                    var slug = await GenerateUniqueSlug(input.Title, type);
 
                     var newPost = new Post
                     {
                         Slug = slug,
                         Title = input.Title,
-                        Description = input.Description,
-                        Content = safeContent,
+                        Description = TruncateDescription(input.Description),
+                        Content = input.Content, // Tạm thời lưu content gốc
                         TimePosted = input.TimePosted,
                         Status = CommonStatus.ACTIVE,
                         PostCategoryId = input.PostCategoryId,
@@ -98,8 +142,8 @@ namespace AttechServer.Applications.UserModules.Implements
                     _dbContext.Posts.Add(newPost);
                     await _dbContext.SaveChangesAsync();
 
-                    var (processedContent, _) = await _wysiwygFileProcessor.ProcessContentAsync(safeContent, EntityType.Post, newPost.Id);
-                    newPost.Content = processedContent;
+                    // Xử lý content và file sau khi có Id
+                    newPost.Content = await ProcessContent(input.Content, newPost.Id);
                     await _dbContext.SaveChangesAsync();
 
                     await transaction.CommitAsync();
@@ -123,6 +167,11 @@ namespace AttechServer.Applications.UserModules.Implements
                     _logger.LogError(ex, "Error creating post");
                     throw;
                 }
+                finally
+                {
+                    // Cleanup temp files
+                    await _wysiwygFileProcessor.CleanTempFilesAsync();
+                }
             }
         }
 
@@ -137,6 +186,9 @@ namespace AttechServer.Applications.UserModules.Implements
                     var post = await _dbContext.Posts
                         .FirstOrDefaultAsync(p => p.Id == id && !p.Deleted && p.Type == type)
                         ?? throw new UserFriendlyException(ErrorCode.PostNotFound);
+
+                    // Xóa các file trong content
+                    await _wysiwygFileProcessor.DeleteFilesAsync(EntityType.Post, post.Id);
 
                     post.Deleted = true;
                     await _dbContext.SaveChangesAsync();
@@ -157,13 +209,27 @@ namespace AttechServer.Applications.UserModules.Implements
             ValidatePostType(type);
 
             var baseQuery = _dbContext.Posts.AsNoTracking()
-                .Where(p => !p.Deleted && p.Status == CommonStatus.ACTIVE && p.Type == type
-                    && (string.IsNullOrEmpty(input.Keyword) || p.Title.Contains(input.Keyword)));
+                .Where(p => !p.Deleted && p.Status == CommonStatus.ACTIVE && p.Type == type);
+
+            // Tìm kiếm
+            if (!string.IsNullOrEmpty(input.Keyword))
+            {
+                baseQuery = baseQuery.Where(p =>
+                    p.Title.Contains(input.Keyword) ||
+                    p.Description.Contains(input.Keyword) ||
+                    p.Content.Contains(input.Keyword));
+            }
 
             var totalItems = await baseQuery.CountAsync();
 
-            var pagedItems = await baseQuery
-                .OrderBy(p => p.Id)
+            // Sắp xếp
+            var query = baseQuery.OrderByDescending(p => p.TimePosted);
+            if (input.Sort.Any())
+            {
+                // TODO: Implement dynamic sorting based on input.Sort
+            }
+
+            var pagedItems = await query
                 .Skip(input.GetSkip())
                 .Take(input.PageSize)
                 .Select(p => new PostDto
@@ -201,20 +267,34 @@ namespace AttechServer.Applications.UserModules.Implements
             }
 
             var baseQuery = _dbContext.Posts.AsNoTracking()
-                .Where(p => p.PostCategoryId == categoryId && !p.Deleted && p.Status == CommonStatus.ACTIVE && p.Type == type
-                    && (string.IsNullOrEmpty(input.Keyword) || p.Title.Contains(input.Keyword)));
+                .Where(p => !p.Deleted && p.Status == CommonStatus.ACTIVE && p.Type == type && p.PostCategoryId == categoryId);
+
+            // Tìm kiếm
+            if (!string.IsNullOrEmpty(input.Keyword))
+            {
+                baseQuery = baseQuery.Where(p =>
+                    p.Title.Contains(input.Keyword) ||
+                    p.Description.Contains(input.Keyword) ||
+                    p.Content.Contains(input.Keyword));
+            }
 
             var totalItems = await baseQuery.CountAsync();
 
-            var pagedItems = await baseQuery
-                .OrderByDescending(p => p.TimePosted)
+            // Sắp xếp
+            var query = baseQuery.OrderByDescending(p => p.TimePosted);
+            if (input.Sort.Any())
+            {
+                // TODO: Implement dynamic sorting based on input.Sort
+            }
+
+            var pagedItems = await query
                 .Skip(input.GetSkip())
                 .Take(input.PageSize)
                 .Select(p => new PostDto
                 {
                     Id = p.Id,
-                    Title = p.Title,
                     Slug = p.Slug,
+                    Title = p.Title,
                     Description = p.Description,
                     TimePosted = p.TimePosted,
                     Status = p.Status,
@@ -237,12 +317,12 @@ namespace AttechServer.Applications.UserModules.Implements
             ValidatePostType(type);
 
             var post = await _dbContext.Posts
-                .Where(p => !p.Deleted && p.Id == id && p.Status == CommonStatus.ACTIVE && p.Type == type)
+                .Where(p => p.Id == id && !p.Deleted && p.Type == type)
                 .Select(p => new DetailPostDto
                 {
                     Id = p.Id,
-                    Title = p.Title,
                     Slug = p.Slug,
+                    Title = p.Title,
                     Description = p.Description,
                     Content = p.Content,
                     TimePosted = p.TimePosted,
@@ -254,7 +334,9 @@ namespace AttechServer.Applications.UserModules.Implements
                 .FirstOrDefaultAsync();
 
             if (post == null)
+            {
                 throw new UserFriendlyException(ErrorCode.PostNotFound);
+            }
 
             return post;
         }
@@ -267,10 +349,6 @@ namespace AttechServer.Applications.UserModules.Implements
             {
                 try
                 {
-                    var post = await _dbContext.Posts
-                        .FirstOrDefaultAsync(p => p.Id == input.Id && !p.Deleted && p.Type == type)
-                        ?? throw new UserFriendlyException(ErrorCode.PostNotFound);
-
                     // Validate input
                     if (string.IsNullOrWhiteSpace(input.Title) || string.IsNullOrWhiteSpace(input.Content))
                     {
@@ -278,16 +356,15 @@ namespace AttechServer.Applications.UserModules.Implements
                     }
                     if (input.TimePosted > DateTime.UtcNow)
                     {
-                        throw new ArgumentException("Thời gian đăng bài không thể trong tương lai.");
-                    }
-                    if (input.Description.Length > 160)
-                    {
-                        input.Description = input.Description.Substring(0, 157) + "...";
+                        throw new ArgumentException("Thời gian đăng bài không phù hợp.");
                     }
 
                     var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value, out var id) ? id : 0;
-                    var sanitizer = new HtmlSanitizer();
-                    var safeContent = sanitizer.Sanitize(input.Content);
+
+                    // Kiểm tra bài viết tồn tại
+                    var post = await _dbContext.Posts
+                        .FirstOrDefaultAsync(p => p.Id == input.Id && !p.Deleted && p.Type == type)
+                        ?? throw new UserFriendlyException(ErrorCode.PostNotFound);
 
                     // Kiểm tra danh mục
                     var category = await _dbContext.PostCategories
@@ -299,28 +376,25 @@ namespace AttechServer.Applications.UserModules.Implements
                         throw new UserFriendlyException(ErrorCode.PostCategoryNotFound);
                     }
 
-                    // Cập nhật slug nếu tiêu đề thay đổi
-                    var slug = SlugHelper.GenerateSlug(input.Title);
-                    if (slug != post.Slug)
+                    // Tạo slug mới nếu title thay đổi
+                    if (post.Title != input.Title)
                     {
-                        var slugExists = await _dbContext.Posts.AnyAsync(p => p.Slug == slug && !p.Deleted && p.Id != input.Id && p.Type == type);
-                        if (slugExists)
-                        {
-                            slug = $"{slug}-{DateTime.Now.Ticks}";
-                        }
-                        post.Slug = slug;
+                        post.Slug = await GenerateUniqueSlug(input.Title, type, post.Id);
+                    }
+
+                    // Xóa các file cũ trong content nếu content thay đổi
+                    if (post.Content != input.Content)
+                    {
+                        await _wysiwygFileProcessor.DeleteFilesAsync(EntityType.Post, post.Id);
                     }
 
                     post.Title = input.Title;
-                    post.Description = input.Description;
-                    post.Content = safeContent;
+                    post.Description = TruncateDescription(input.Description);
+                    post.Content = await ProcessContent(input.Content, post.Id);
                     post.TimePosted = input.TimePosted;
                     post.PostCategoryId = input.PostCategoryId;
                     post.ModifiedDate = DateTime.UtcNow;
                     post.ModifiedBy = userId;
-
-                    var (processedContent, _) = await _wysiwygFileProcessor.ProcessContentAsync(safeContent, EntityType.Post, post.Id);
-                    post.Content = processedContent;
 
                     await _dbContext.SaveChangesAsync();
                     await transaction.CommitAsync();
@@ -341,8 +415,13 @@ namespace AttechServer.Applications.UserModules.Implements
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    _logger.LogError(ex, "Error updating post");
+                    _logger.LogError(ex, $"Error updating post with id = {input.Id}, type = {type}");
                     throw;
+                }
+                finally
+                {
+                    // Cleanup temp files
+                    await _wysiwygFileProcessor.CleanTempFilesAsync();
                 }
             }
         }
@@ -351,10 +430,17 @@ namespace AttechServer.Applications.UserModules.Implements
         {
             _logger.LogInformation($"{nameof(UpdateStatusPost)}: id = {id}, status = {status}, type = {type}");
             ValidatePostType(type);
+
             var post = await _dbContext.Posts
                 .FirstOrDefaultAsync(p => p.Id == id && !p.Deleted && p.Type == type)
                 ?? throw new UserFriendlyException(ErrorCode.PostNotFound);
+
+            var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value, out var userIdValue) ? userIdValue : 0;
+
             post.Status = status;
+            post.ModifiedDate = DateTime.UtcNow;
+            post.ModifiedBy = userId;
+
             await _dbContext.SaveChangesAsync();
         }
     }

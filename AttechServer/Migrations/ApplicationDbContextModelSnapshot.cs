@@ -30,16 +30,47 @@ namespace AttechServer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Deleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<string>("Description")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<string>("HttpMethod")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(10)");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Path")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<bool>("RequireAuthentication")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.HasKey("Id");
+
+                    b.HasIndex(new[] { "Deleted", "Path", "HttpMethod" }, "IX_ApiEndpoint");
 
                     b.ToTable("ApiEndpoints", (string)null);
                 });
@@ -434,6 +465,61 @@ namespace AttechServer.Migrations
                     b.ToTable("Services", (string)null);
                 });
 
+            modelBuilder.Entity("AttechServer.Domains.Entities.Permission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Deleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OrderPriority")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PermissionKey")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(128)");
+
+                    b.Property<string>("PermissionLabel")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentId");
+
+                    b.HasIndex(new[] { "Deleted", "PermissionKey" }, "IX_Permission");
+
+                    b.ToTable("Permissions", (string)null);
+                });
+
             modelBuilder.Entity("AttechServer.Domains.Entities.PermissionForApiEndpoint", b =>
                 {
                     b.Property<int>("Id")
@@ -445,10 +531,35 @@ namespace AttechServer.Migrations
                     b.Property<int>("ApiEndpointId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsAuthenticate")
-                        .HasColumnType("bit");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
 
-                    b.Property<int>("KeyPermissionId")
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Deleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsRequired")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<int?>("KeyPermissionId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PermissionId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PermissionId1")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -456,6 +567,12 @@ namespace AttechServer.Migrations
                     b.HasIndex("ApiEndpointId");
 
                     b.HasIndex("KeyPermissionId");
+
+                    b.HasIndex("PermissionId");
+
+                    b.HasIndex("PermissionId1");
+
+                    b.HasIndex(new[] { "Deleted", "ApiEndpointId", "PermissionId" }, "IX_PermissionForApiEndpoint");
 
                     b.ToTable("PermissionForApiEndpoints", (string)null);
                 });
@@ -524,20 +641,19 @@ namespace AttechServer.Migrations
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("PermissionKey")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(128)");
+                    b.Property<int>("PermissionId")
+                        .HasColumnType("int");
 
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PermissionId");
+
                     b.HasIndex("RoleId");
 
-                    b.HasIndex(new[] { "Deleted", "RoleId", "PermissionKey" }, "IX_RolePermission");
+                    b.HasIndex(new[] { "Deleted", "RoleId", "PermissionId" }, "IX_RolePermission");
 
                     b.ToTable("RolePermissions", (string)null);
                 });
@@ -571,6 +687,13 @@ namespace AttechServer.Migrations
                         .IsRequired()
                         .HasMaxLength(512)
                         .HasColumnType("nvarchar(512)");
+
+                    b.Property<string>("RefreshToken")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.Property<DateTime?>("RefreshTokenExpiryTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -663,32 +786,58 @@ namespace AttechServer.Migrations
                     b.Navigation("ProductCategory");
                 });
 
+            modelBuilder.Entity("AttechServer.Domains.Entities.Permission", b =>
+                {
+                    b.HasOne("AttechServer.Domains.Entities.Permission", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Parent");
+                });
+
             modelBuilder.Entity("AttechServer.Domains.Entities.PermissionForApiEndpoint", b =>
                 {
                     b.HasOne("AttechServer.Domains.Entities.ApiEndpoint", "ApiEndpoint")
                         .WithMany("PermissionForApiEndpoints")
                         .HasForeignKey("ApiEndpointId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("AttechServer.Domains.Entities.KeyPermission", "KeyPermission")
+                    b.HasOne("AttechServer.Domains.Entities.KeyPermission", null)
                         .WithMany("PermissionForApiEndpoints")
-                        .HasForeignKey("KeyPermissionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("KeyPermissionId");
+
+                    b.HasOne("AttechServer.Domains.Entities.Permission", "Permission")
+                        .WithMany()
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("AttechServer.Domains.Entities.Permission", null)
+                        .WithMany("PermissionForApiEndpoints")
+                        .HasForeignKey("PermissionId1");
 
                     b.Navigation("ApiEndpoint");
 
-                    b.Navigation("KeyPermission");
+                    b.Navigation("Permission");
                 });
 
             modelBuilder.Entity("AttechServer.Domains.Entities.RolePermission", b =>
                 {
+                    b.HasOne("AttechServer.Domains.Entities.Permission", "Permission")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("AttechServer.Domains.Entities.Role", "Role")
                         .WithMany("RolePermissions")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Permission");
 
                     b.Navigation("Role");
                 });
@@ -732,6 +881,15 @@ namespace AttechServer.Migrations
             modelBuilder.Entity("AttechServer.Domains.Entities.Main.ProductCategory", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("AttechServer.Domains.Entities.Permission", b =>
+                {
+                    b.Navigation("Children");
+
+                    b.Navigation("PermissionForApiEndpoints");
+
+                    b.Navigation("RolePermissions");
                 });
 
             modelBuilder.Entity("AttechServer.Domains.Entities.Role", b =>

@@ -29,6 +29,10 @@
         public const int ProductNotFound = 1017;
         public const int ServiceNotFound = 1018;
 
+        public const int InvalidClientRequest = 1019;
+        public const int InvalidRefreshToken = 1020;
+
+
         //Từ điển lỗi
         public static readonly Dictionary<int, string> ErrorDict = new Dictionary<int, string>()
         {
@@ -57,6 +61,8 @@
             {ProductCategoryNotFound, ErrorMessage.ProductCategoryNotFound },
             {ProductNotFound, ErrorMessage.ProductNotFound },
             {ServiceNotFound, ErrorMessage.ServiceNotFound },
+            {InvalidClientRequest, ErrorMessage.InvalidClientRequest },
+            {InvalidRefreshToken, ErrorMessage.InvalidRefreshToken },
         };
 
         public static string GetMessage(int errorCode)

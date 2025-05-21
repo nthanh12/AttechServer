@@ -1,5 +1,129 @@
 [
   {
+    "ContainingType": "AttechServer.Controllers.ApiEndpointController",
+    "Method": "Create",
+    "RelativePath": "api/api-endpoint/create",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "input",
+        "Type": "CreateApiEndpointDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.ApiEndpointController",
+    "Method": "Delete",
+    "RelativePath": "api/api-endpoint/delete/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.ApiEndpointController",
+    "Method": "FindAll",
+    "RelativePath": "api/api-endpoint/find-all",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.ApiEndpointController",
+    "Method": "FindById",
+    "RelativePath": "api/api-endpoint/find-by-id/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.ApiEndpointController",
+    "Method": "Update",
+    "RelativePath": "api/api-endpoint/update",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "input",
+        "Type": "UpdateApiEndpointDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "AttechServer.Controllers.AuthController",
     "Method": "Login",
     "RelativePath": "api/auth/login",
@@ -10,6 +134,32 @@
       {
         "Name": "input",
         "Type": "AttechServer.Applications.UserModules.Dtos.UserLoginDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.AuthController",
+    "Method": "RefreshToken",
+    "RelativePath": "api/auth/refresh-token",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "input",
+        "Type": "AttechServer.Applications.UserModules.Dtos.TokenApiDto",
         "IsRequired": true
       }
     ],
@@ -829,34 +979,8 @@
   },
   {
     "ContainingType": "AttechServer.Controllers.PermissionController",
-    "Method": "CheckPermission",
-    "RelativePath": "api/permission/check-permission",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "permissionKeys",
-        "Type": "System.String[]",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "AttechServer.Controllers.PermissionController",
     "Method": "Create",
-    "RelativePath": "api/permission/create",
+    "RelativePath": "api/permission",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -881,8 +1005,86 @@
   },
   {
     "ContainingType": "AttechServer.Controllers.PermissionController",
+    "Method": "Update",
+    "RelativePath": "api/permission",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "input",
+        "Type": "AttechServer.Applications.UserModules.Dtos.Permission.KeyPermission.UpdateKeyPermissionDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.PermissionController",
+    "Method": "GetById",
+    "RelativePath": "api/permission/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.PermissionController",
+    "Method": "Delete",
+    "RelativePath": "api/permission/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.PermissionController",
     "Method": "CreatePermissionForApi",
-    "RelativePath": "api/permission/create-permission-for-api",
+    "RelativePath": "api/permission/api-endpoint",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -907,61 +1109,15 @@
   },
   {
     "ContainingType": "AttechServer.Controllers.PermissionController",
-    "Method": "Delete",
-    "RelativePath": "api/permission/delete",
-    "HttpMethod": "DELETE",
+    "Method": "UpdatePermissionForApi",
+    "RelativePath": "api/permission/api-endpoint",
+    "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "AttechServer.Controllers.PermissionController",
-    "Method": "FindAll",
-    "RelativePath": "api/permission/find-all",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "AttechServer.Controllers.PermissionController",
-    "Method": "GetById",
-    "RelativePath": "api/permission/find-by-id/{id}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
+        "Name": "input",
+        "Type": "AttechServer.Applications.UserModules.Dtos.ConfigPermission.UpdatePermissionConfigDto",
         "IsRequired": true
       }
     ],
@@ -980,7 +1136,7 @@
   {
     "ContainingType": "AttechServer.Controllers.PermissionController",
     "Method": "GetAllPermissionOfApi",
-    "RelativePath": "api/permission/get-all-permission-of-api",
+    "RelativePath": "api/permission/api-endpoints",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1021,7 +1177,7 @@
   {
     "ContainingType": "AttechServer.Controllers.PermissionController",
     "Method": "GetPermissionOfApiById",
-    "RelativePath": "api/permission/get-permission-of-api-by-id/{id}",
+    "RelativePath": "api/permission/api-endpoints/{id}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1046,12 +1202,18 @@
   },
   {
     "ContainingType": "AttechServer.Controllers.PermissionController",
-    "Method": "GetTree",
-    "RelativePath": "api/permission/get-permission-tree",
-    "HttpMethod": "GET",
+    "Method": "CheckPermission",
+    "RelativePath": "api/permission/check",
+    "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "permissionKeys",
+        "Type": "System.String[]",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": [
       {
         "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
@@ -1067,7 +1229,7 @@
   {
     "ContainingType": "AttechServer.Controllers.PermissionController",
     "Method": "GetPermissionsByCurrentUserId",
-    "RelativePath": "api/permission/get-permissions-by-user",
+    "RelativePath": "api/permission/current-user",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1086,18 +1248,12 @@
   },
   {
     "ContainingType": "AttechServer.Controllers.PermissionController",
-    "Method": "Update",
-    "RelativePath": "api/permission/update",
-    "HttpMethod": "PUT",
+    "Method": "FindAll",
+    "RelativePath": "api/permission/list",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [
-      {
-        "Name": "input",
-        "Type": "AttechServer.Applications.UserModules.Dtos.Permission.KeyPermission.UpdateKeyPermissionDto",
-        "IsRequired": true
-      }
-    ],
+    "Parameters": [],
     "ReturnTypes": [
       {
         "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
@@ -1112,18 +1268,12 @@
   },
   {
     "ContainingType": "AttechServer.Controllers.PermissionController",
-    "Method": "UpdatePermissionForApi",
-    "RelativePath": "api/permission/update-permission-for-api",
-    "HttpMethod": "PUT",
+    "Method": "GetTree",
+    "RelativePath": "api/permission/tree",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [
-      {
-        "Name": "input",
-        "Type": "AttechServer.Applications.UserModules.Dtos.ConfigPermission.UpdatePermissionConfigDto",
-        "IsRequired": true
-      }
-    ],
+    "Parameters": [],
     "ReturnTypes": [
       {
         "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
@@ -1432,6 +1582,32 @@
         "Name": "categoryId",
         "Type": "System.Int32",
         "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.ProductController",
+    "Method": "FindById",
+    "RelativePath": "api/product/find-by-id/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": [
@@ -1978,20 +2154,56 @@
   },
   {
     "ContainingType": "AttechServer.Controllers.UserController",
-    "Method": "AddRoleToUser",
-    "RelativePath": "api/user/add-role-to-user",
+    "Method": "Create",
+    "RelativePath": "api/user",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "roleId",
+        "Name": "input",
+        "Type": "AttechServer.Applications.UserModules.Dtos.CreateUserDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.UserController",
+    "Method": "FindAll",
+    "RelativePath": "api/user",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "pageSize",
         "Type": "System.Int32",
         "IsRequired": false
       },
       {
-        "Name": "userId",
+        "Name": "pageNumber",
         "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "keyword",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Sort",
+        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
       }
     ],
@@ -2009,21 +2221,130 @@
   },
   {
     "ContainingType": "AttechServer.Controllers.UserController",
-    "Method": "RemoveRoleToUser",
-    "RelativePath": "api/user/remove-role-to-user",
+    "Method": "Update",
+    "RelativePath": "api/user",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "input",
+        "Type": "AttechServer.Applications.UserModules.Dtos.User.UpdateUserDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.UserController",
+    "Method": "FindById",
+    "RelativePath": "api/user/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.UserController",
+    "Method": "Delete",
+    "RelativePath": "api/user/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.UserController",
+    "Method": "AddRoleToUser",
+    "RelativePath": "api/user/{userId}/roles/{roleId}",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
         "Name": "roleId",
         "Type": "System.Int32",
-        "IsRequired": false
-      },
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.UserController",
+    "Method": "RemoveRoleFromUser",
+    "RelativePath": "api/user/{userId}/roles/{roleId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
       {
         "Name": "userId",
         "Type": "System.Int32",
-        "IsRequired": false
+        "IsRequired": true
+      },
+      {
+        "Name": "roleId",
+        "Type": "System.Int32",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": [

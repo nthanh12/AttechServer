@@ -4,6 +4,9 @@ using AttechServer.Shared.ApplicationBase.Common;
 using AttechServer.Shared.WebAPIBase;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using AttechServer.Shared.Filters;
+using AttechServer.Shared.Consts.Permissions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AttechServer.Controllers
 {
@@ -12,7 +15,7 @@ namespace AttechServer.Controllers
     public class ProductController : ApiControllerBase
     {
         private readonly IProductService _productService;
-        public ProductController(IProductService productService, ILogger<ProductController> logger) : base (logger)
+        public ProductController(IProductService productService, ILogger<ProductController> logger) : base(logger)
         {
             _productService = productService;
         }
@@ -23,6 +26,7 @@ namespace AttechServer.Controllers
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpGet("find-all")]
+        [AllowAnonymous]
         public async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
         {
             try
@@ -42,6 +46,7 @@ namespace AttechServer.Controllers
         /// <param name="categoryId"></param>
         /// <returns></returns>
         [HttpGet("find-by-categoryId")]
+        [AllowAnonymous]
         public async Task<ApiResponse> FindAllByCategoryId(PagingRequestBaseDto input, int categoryId)
         {
             try
@@ -59,18 +64,19 @@ namespace AttechServer.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        //[HttpGet("find-by-id/{id}")]
-        //public async Task<ApiResponse> FindById(int id)
-        //{
-        //    try
-        //    {
-        //        return new(await _productService.FindById(id));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return OkException(ex);
-        //    }
-        //}
+        [HttpGet("find-by-id/{id}")]
+        [AllowAnonymous]
+        public async Task<ApiResponse> FindById(int id)
+        {
+            try
+            {
+                return new(await _productService.FindById(id));
+            }
+            catch (Exception ex)
+            {
+                return OkException(ex);
+            }
+        }
 
         /// <summary>
         /// Thêm mới sản phẩm
@@ -78,6 +84,8 @@ namespace AttechServer.Controllers
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost("create")]
+        [Authorize]
+        [PermissionFilter(PermissionKeys.CreateProduct)]
         public async Task<ApiResponse> Create([FromBody] CreateProductDto input)
         {
             try
@@ -97,6 +105,8 @@ namespace AttechServer.Controllers
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPut("update")]
+        [Authorize]
+        [PermissionFilter(PermissionKeys.EditProduct)]
         public async Task<ApiResponse> Update([FromBody] UpdateProductDto input)
         {
             try
@@ -116,6 +126,8 @@ namespace AttechServer.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("delete/{id}")]
+        [Authorize]
+        [PermissionFilter(PermissionKeys.DeleteProduct)]
         public async Task<ApiResponse> Delete(int id)
         {
             try
@@ -136,6 +148,8 @@ namespace AttechServer.Controllers
         /// <param name="status"></param>
         /// <returns></returns>
         [HttpPut("update-status")]
+        [Authorize]
+        [PermissionFilter(PermissionKeys.EditProduct)]
         public async Task<ApiResponse> UpdateStatus(int id, int status)
         {
             try

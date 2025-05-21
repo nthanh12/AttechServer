@@ -5,28 +5,31 @@ using AttechServer.Shared.WebAPIBase;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using AttechServer.Shared.Filters;
+using AttechServer.Shared.Consts.Permissions;
 
 namespace AttechServer.Controllers
 {
     [Route("api/permission")]
     [ApiController]
+    [Authorize]
     public class PermissionController : ApiControllerBase
     {
         private readonly IPermissionService _permissionService;
-        private readonly IKeyPermissionService _keyPermissionModuleService;
+        private readonly IKeyPermissionService _keyPermissionService;
 
-        public PermissionController(ILogger<PermissionController> logger, IKeyPermissionService keyPermissionModuleService, IPermissionService permissionService) : base(logger)
+        public PermissionController(ILogger<PermissionController> logger, IKeyPermissionService keyPermissionService, IPermissionService permissionService) : base(logger)
         {
             _permissionService = permissionService;
-            _keyPermissionModuleService = keyPermissionModuleService;
+            _keyPermissionService = keyPermissionService;
         }
 
         /// <summary>
         /// Danh sách quyền 
         /// </summary>
         /// <returns></returns>
-        [AllowAnonymous]
-        [HttpGet("find-all")]
+        [HttpGet("list")]
+        [PermissionFilter(PermissionKeys.ViewPermissions)]
         public ApiResponse FindAll()
         {
             try
@@ -43,7 +46,8 @@ namespace AttechServer.Controllers
         /// Lấy tất cả quyền của user hiện tại
         /// </summary>
         /// <returns></returns>
-        [HttpGet("get-permissions-by-user")]
+        [HttpGet("current-user")]
+        [PermissionFilter(PermissionKeys.ViewPermissions)]
         public ApiResponse GetPermissionsByCurrentUserId()
         {
             try
@@ -60,7 +64,7 @@ namespace AttechServer.Controllers
         /// Check quyền
         /// </summary>
         /// <returns></returns>
-        [HttpPost("check-permission")]
+        [HttpPost("check")]
         public ApiResponse CheckPermission([FromBody] string[] permissionKeys)
         {
             try
@@ -77,12 +81,12 @@ namespace AttechServer.Controllers
         /// Lấy cây phân quyền
         /// </summary>
         /// <returns></returns>
-        [HttpGet("get-permission-tree")]
+        [HttpGet("tree")]
         public ApiResponse GetTree()
         {
             try
             {
-                return new(_keyPermissionModuleService.FindAll());
+                return new(_keyPermissionService.FindAll());
             }
             catch (Exception ex)
             {
@@ -95,12 +99,13 @@ namespace AttechServer.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("find-by-id/{id}")]
-        public ApiResponse GetById(int id)
+        [HttpGet("{id}")]
+        [PermissionFilter(PermissionKeys.ViewPermissions)]
+        public async Task<ApiResponse> GetById(int id)
         {
             try
             {
-                return new(_keyPermissionModuleService.FindById(id));
+                return new(await _keyPermissionService.FindById(id));
             }
             catch (Exception ex)
             {
@@ -113,12 +118,13 @@ namespace AttechServer.Controllers
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [HttpPost("create")]
-        public ApiResponse Create([FromBody] CreateKeyPermissionDto input)
+        [HttpPost]
+        [PermissionFilter(PermissionKeys.CreatePermission)]
+        public async Task<ApiResponse> Create([FromBody] CreateKeyPermissionDto input)
         {
             try
             {
-                _keyPermissionModuleService.Create(input);
+                await _keyPermissionService.Create(input);
                 return new();
             }
             catch (Exception ex)
@@ -132,12 +138,13 @@ namespace AttechServer.Controllers
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [HttpPut("update")]
-        public ApiResponse Update([FromBody] UpdateKeyPermissionDto input)
+        [HttpPut]
+        [PermissionFilter(PermissionKeys.EditPermission)]
+        public async Task<ApiResponse> Update([FromBody] UpdateKeyPermissionDto input)
         {
             try
             {
-                _keyPermissionModuleService.Update(input);
+                await _keyPermissionService.Update(input);
                 return new();
             }
             catch (Exception ex)
@@ -151,12 +158,13 @@ namespace AttechServer.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpDelete("delete")]
-        public ApiResponse Delete(int id)
+        [HttpDelete("{id}")]
+        [PermissionFilter(PermissionKeys.DeletePermission)]
+        public async Task<ApiResponse> Delete(int id)
         {
             try
             {
-                _keyPermissionModuleService.Delete(id);
+                await _keyPermissionService.Delete(id);
                 return new();
             }
             catch (Exception ex)
@@ -170,12 +178,13 @@ namespace AttechServer.Controllers
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [HttpPost("create-permission-for-api")]
-        public ApiResponse CreatePermissionForApi([FromBody] CreatePermissionApiDto input)
+        [HttpPost("api-endpoint")]
+        [PermissionFilter(PermissionKeys.CreatePermission)]
+        public async Task<ApiResponse> CreatePermissionForApi([FromBody] CreatePermissionApiDto input)
         {
             try
             {
-                _keyPermissionModuleService.CreatePermissionConfig(input);
+                await _keyPermissionService.CreatePermissionConfig(input);
                 return new();
             }
             catch (Exception ex)
@@ -189,12 +198,13 @@ namespace AttechServer.Controllers
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [HttpPut("update-permission-for-api")]
-        public ApiResponse UpdatePermissionForApi([FromBody] UpdatePermissionConfigDto input)
+        [HttpPut("api-endpoint")]
+        [PermissionFilter(PermissionKeys.EditPermission)]
+        public async Task<ApiResponse> UpdatePermissionForApi([FromBody] UpdatePermissionConfigDto input)
         {
             try
             {
-                _keyPermissionModuleService.UpdatePermissionConfig(input);
+                await _keyPermissionService.UpdatePermissionConfig(input);
                 return new();
             }
             catch (Exception ex)
@@ -208,13 +218,13 @@ namespace AttechServer.Controllers
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [HttpGet("get-all-permission-of-api")]
-        public ApiResponse GetAllPermissionOfApi([FromQuery] PermissionApiRequestDto input)
+        [HttpGet("api-endpoints")]
+        [PermissionFilter(PermissionKeys.ViewPermissions)]
+        public async Task<ApiResponse> GetAllPermissionOfApi([FromQuery] PermissionApiRequestDto input)
         {
             try
             {
-
-                return new(_keyPermissionModuleService.GetAllPermissionApi(input));
+                return new(await _keyPermissionService.GetAllPermissionApi(input));
             }
             catch (Exception ex)
             {
@@ -227,13 +237,13 @@ namespace AttechServer.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("get-permission-of-api-by-id/{id}")]
-        public ApiResponse GetPermissionOfApiById(int id)
+        [HttpGet("api-endpoints/{id}")]
+        [PermissionFilter(PermissionKeys.ViewPermissions)]
+        public async Task<ApiResponse> GetPermissionOfApiById(int id)
         {
             try
             {
-
-                return new(_keyPermissionModuleService.GetPermissionApiById(id));
+                return new(await _keyPermissionService.GetPermissionApiById(id));
             }
             catch (Exception ex)
             {

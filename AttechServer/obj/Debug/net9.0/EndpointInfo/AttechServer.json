@@ -5,6 +5,262 @@
     "version": "v1"
   },
   "paths": {
+    "/api/api-endpoint/find-all": {
+      "get": {
+        "tags": [
+          "ApiEndpoint"
+        ],
+        "summary": "Lấy danh sách tất cả API Endpoint",
+        "parameters": [
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/api-endpoint/find-by-id/{id}": {
+      "get": {
+        "tags": [
+          "ApiEndpoint"
+        ],
+        "summary": "Lấy thông tin API Endpoint theo ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/api-endpoint/create": {
+      "post": {
+        "tags": [
+          "ApiEndpoint"
+        ],
+        "summary": "Tạo mới API Endpoint",
+        "parameters": [
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateApiEndpointDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateApiEndpointDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateApiEndpointDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/api-endpoint/update": {
+      "put": {
+        "tags": [
+          "ApiEndpoint"
+        ],
+        "summary": "Cập nhật API Endpoint",
+        "parameters": [
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateApiEndpointDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateApiEndpointDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateApiEndpointDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/api-endpoint/delete/{id}": {
+      "delete": {
+        "tags": [
+          "ApiEndpoint"
+        ],
+        "summary": "Xóa API Endpoint",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/auth/login": {
       "post": {
         "tags": [
@@ -125,6 +381,66 @@
         }
       }
     },
+    "/api/auth/refresh-token": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Refresh token",
+        "parameters": [
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenApiDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenApiDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenApiDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/news/find-all": {
       "get": {
         "tags": [
@@ -135,7 +451,10 @@
           {
             "name": "pageSize",
             "in": "query",
+            "description": "Number of items per page. Use -1 to get all items",
             "schema": {
+              "maximum": 100,
+              "minimum": -1,
               "type": "integer",
               "format": "int32"
             }
@@ -143,7 +462,10 @@
           {
             "name": "pageNumber",
             "in": "query",
+            "description": "Page number (1-based)",
             "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
               "type": "integer",
               "format": "int32"
             }
@@ -151,6 +473,7 @@
           {
             "name": "keyword",
             "in": "query",
+            "description": "Search keyword",
             "schema": {
               "type": "string"
             }
@@ -158,6 +481,7 @@
           {
             "name": "Sort",
             "in": "query",
+            "description": "Sort parameters",
             "schema": {
               "type": "array",
               "items": {
@@ -208,7 +532,10 @@
           {
             "name": "pageSize",
             "in": "query",
+            "description": "Number of items per page. Use -1 to get all items",
             "schema": {
+              "maximum": 100,
+              "minimum": -1,
               "type": "integer",
               "format": "int32"
             }
@@ -216,7 +543,10 @@
           {
             "name": "pageNumber",
             "in": "query",
+            "description": "Page number (1-based)",
             "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
               "type": "integer",
               "format": "int32"
             }
@@ -224,6 +554,7 @@
           {
             "name": "keyword",
             "in": "query",
+            "description": "Search keyword",
             "schema": {
               "type": "string"
             }
@@ -231,6 +562,7 @@
           {
             "name": "Sort",
             "in": "query",
+            "description": "Sort parameters",
             "schema": {
               "type": "array",
               "items": {
@@ -571,7 +903,10 @@
           {
             "name": "pageSize",
             "in": "query",
+            "description": "Number of items per page. Use -1 to get all items",
             "schema": {
+              "maximum": 100,
+              "minimum": -1,
               "type": "integer",
               "format": "int32"
             }
@@ -579,7 +914,10 @@
           {
             "name": "pageNumber",
             "in": "query",
+            "description": "Page number (1-based)",
             "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
               "type": "integer",
               "format": "int32"
             }
@@ -587,6 +925,7 @@
           {
             "name": "keyword",
             "in": "query",
+            "description": "Search keyword",
             "schema": {
               "type": "string"
             }
@@ -594,6 +933,7 @@
           {
             "name": "Sort",
             "in": "query",
+            "description": "Sort parameters",
             "schema": {
               "type": "array",
               "items": {
@@ -924,7 +1264,10 @@
           {
             "name": "pageSize",
             "in": "query",
+            "description": "Number of items per page. Use -1 to get all items",
             "schema": {
+              "maximum": 100,
+              "minimum": -1,
               "type": "integer",
               "format": "int32"
             }
@@ -932,7 +1275,10 @@
           {
             "name": "pageNumber",
             "in": "query",
+            "description": "Page number (1-based)",
             "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
               "type": "integer",
               "format": "int32"
             }
@@ -940,6 +1286,7 @@
           {
             "name": "keyword",
             "in": "query",
+            "description": "Search keyword",
             "schema": {
               "type": "string"
             }
@@ -947,6 +1294,7 @@
           {
             "name": "Sort",
             "in": "query",
+            "description": "Sort parameters",
             "schema": {
               "type": "array",
               "items": {
@@ -997,7 +1345,10 @@
           {
             "name": "pageSize",
             "in": "query",
+            "description": "Number of items per page. Use -1 to get all items",
             "schema": {
+              "maximum": 100,
+              "minimum": -1,
               "type": "integer",
               "format": "int32"
             }
@@ -1005,7 +1356,10 @@
           {
             "name": "pageNumber",
             "in": "query",
+            "description": "Page number (1-based)",
             "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
               "type": "integer",
               "format": "int32"
             }
@@ -1013,6 +1367,7 @@
           {
             "name": "keyword",
             "in": "query",
+            "description": "Search keyword",
             "schema": {
               "type": "string"
             }
@@ -1020,6 +1375,7 @@
           {
             "name": "Sort",
             "in": "query",
+            "description": "Sort parameters",
             "schema": {
               "type": "array",
               "items": {
@@ -1030,7 +1386,6 @@
           {
             "name": "categoryId",
             "in": "path",
-            "description": "",
             "required": true,
             "schema": {
               "type": "integer",
@@ -1080,7 +1435,6 @@
           {
             "name": "id",
             "in": "path",
-            "description": "",
             "required": true,
             "schema": {
               "type": "integer",
@@ -1137,7 +1491,6 @@
           }
         ],
         "requestBody": {
-          "description": "",
           "content": {
             "application/json": {
               "schema": {
@@ -1197,7 +1550,6 @@
           }
         ],
         "requestBody": {
-          "description": "",
           "content": {
             "application/json": {
               "schema": {
@@ -1250,7 +1602,6 @@
           {
             "name": "id",
             "in": "path",
-            "description": "",
             "required": true,
             "schema": {
               "type": "integer",
@@ -1307,7 +1658,6 @@
           }
         ],
         "requestBody": {
-          "description": "",
           "content": {
             "application/json": {
               "schema": {
@@ -1360,7 +1710,10 @@
           {
             "name": "pageSize",
             "in": "query",
+            "description": "Number of items per page. Use -1 to get all items",
             "schema": {
+              "maximum": 100,
+              "minimum": -1,
               "type": "integer",
               "format": "int32"
             }
@@ -1368,7 +1721,10 @@
           {
             "name": "pageNumber",
             "in": "query",
+            "description": "Page number (1-based)",
             "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
               "type": "integer",
               "format": "int32"
             }
@@ -1376,6 +1732,7 @@
           {
             "name": "keyword",
             "in": "query",
+            "description": "Search keyword",
             "schema": {
               "type": "string"
             }
@@ -1383,6 +1740,7 @@
           {
             "name": "Sort",
             "in": "query",
+            "description": "Sort parameters",
             "schema": {
               "type": "array",
               "items": {
@@ -1703,7 +2061,7 @@
         }
       }
     },
-    "/api/permission/find-all": {
+    "/api/permission/list": {
       "get": {
         "tags": [
           "Permission"
@@ -1743,7 +2101,7 @@
         }
       }
     },
-    "/api/permission/get-permissions-by-user": {
+    "/api/permission/current-user": {
       "get": {
         "tags": [
           "Permission"
@@ -1783,7 +2141,7 @@
         }
       }
     },
-    "/api/permission/check-permission": {
+    "/api/permission/check": {
       "post": {
         "tags": [
           "Permission"
@@ -1851,7 +2209,7 @@
         }
       }
     },
-    "/api/permission/get-permission-tree": {
+    "/api/permission/tree": {
       "get": {
         "tags": [
           "Permission"
@@ -1891,7 +2249,7 @@
         }
       }
     },
-    "/api/permission/find-by-id/{id}": {
+    "/api/permission/{id}": {
       "get": {
         "tags": [
           "Permission"
@@ -1939,9 +2297,57 @@
             }
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "Permission"
+        ],
+        "summary": "Xóa quyền",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
       }
     },
-    "/api/permission/create": {
+    "/api/permission": {
       "post": {
         "tags": [
           "Permission"
@@ -1999,9 +2405,7 @@
             }
           }
         }
-      }
-    },
-    "/api/permission/update": {
+      },
       "put": {
         "tags": [
           "Permission"
@@ -2061,56 +2465,7 @@
         }
       }
     },
-    "/api/permission/delete": {
-      "delete": {
-        "tags": [
-          "Permission"
-        ],
-        "summary": "Xóa quyền",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "query",
-            "description": "",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "permission",
-            "in": "query",
-            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/permission/create-permission-for-api": {
+    "/api/permission/api-endpoint": {
       "post": {
         "tags": [
           "Permission"
@@ -2168,9 +2523,7 @@
             }
           }
         }
-      }
-    },
-    "/api/permission/update-permission-for-api": {
+      },
       "put": {
         "tags": [
           "Permission"
@@ -2230,7 +2583,7 @@
         }
       }
     },
-    "/api/permission/get-all-permission-of-api": {
+    "/api/permission/api-endpoints": {
       "get": {
         "tags": [
           "Permission"
@@ -2240,7 +2593,10 @@
           {
             "name": "pageSize",
             "in": "query",
+            "description": "Number of items per page. Use -1 to get all items",
             "schema": {
+              "maximum": 100,
+              "minimum": -1,
               "type": "integer",
               "format": "int32"
             }
@@ -2248,7 +2604,10 @@
           {
             "name": "pageNumber",
             "in": "query",
+            "description": "Page number (1-based)",
             "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
               "type": "integer",
               "format": "int32"
             }
@@ -2256,6 +2615,7 @@
           {
             "name": "keyword",
             "in": "query",
+            "description": "Search keyword",
             "schema": {
               "type": "string"
             }
@@ -2263,6 +2623,7 @@
           {
             "name": "Sort",
             "in": "query",
+            "description": "Sort parameters",
             "schema": {
               "type": "array",
               "items": {
@@ -2303,7 +2664,7 @@
         }
       }
     },
-    "/api/permission/get-permission-of-api-by-id/{id}": {
+    "/api/permission/api-endpoints/{id}": {
       "get": {
         "tags": [
           "Permission"
@@ -2363,7 +2724,10 @@
           {
             "name": "pageSize",
             "in": "query",
+            "description": "Number of items per page. Use -1 to get all items",
             "schema": {
+              "maximum": 100,
+              "minimum": -1,
               "type": "integer",
               "format": "int32"
             }
@@ -2371,7 +2735,10 @@
           {
             "name": "pageNumber",
             "in": "query",
+            "description": "Page number (1-based)",
             "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
               "type": "integer",
               "format": "int32"
             }
@@ -2379,6 +2746,7 @@
           {
             "name": "keyword",
             "in": "query",
+            "description": "Search keyword",
             "schema": {
               "type": "string"
             }
@@ -2386,6 +2754,7 @@
           {
             "name": "Sort",
             "in": "query",
+            "description": "Sort parameters",
             "schema": {
               "type": "array",
               "items": {
@@ -2436,7 +2805,10 @@
           {
             "name": "pageSize",
             "in": "query",
+            "description": "Number of items per page. Use -1 to get all items",
             "schema": {
+              "maximum": 100,
+              "minimum": -1,
               "type": "integer",
               "format": "int32"
             }
@@ -2444,7 +2816,10 @@
           {
             "name": "pageNumber",
             "in": "query",
+            "description": "Page number (1-based)",
             "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
               "type": "integer",
               "format": "int32"
             }
@@ -2452,6 +2827,7 @@
           {
             "name": "keyword",
             "in": "query",
+            "description": "Search keyword",
             "schema": {
               "type": "string"
             }
@@ -2459,6 +2835,7 @@
           {
             "name": "Sort",
             "in": "query",
+            "description": "Sort parameters",
             "schema": {
               "type": "array",
               "items": {
@@ -2470,6 +2847,56 @@
             "name": "categoryId",
             "in": "query",
             "description": "",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/product/find-by-id/{id}": {
+      "get": {
+        "tags": [
+          "Product"
+        ],
+        "summary": "Thông tin chi tiết sản phẩm",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -2746,7 +3173,10 @@
           {
             "name": "pageSize",
             "in": "query",
+            "description": "Number of items per page. Use -1 to get all items",
             "schema": {
+              "maximum": 100,
+              "minimum": -1,
               "type": "integer",
               "format": "int32"
             }
@@ -2754,7 +3184,10 @@
           {
             "name": "pageNumber",
             "in": "query",
+            "description": "Page number (1-based)",
             "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
               "type": "integer",
               "format": "int32"
             }
@@ -2762,6 +3195,7 @@
           {
             "name": "keyword",
             "in": "query",
+            "description": "Search keyword",
             "schema": {
               "type": "string"
             }
@@ -2769,6 +3203,7 @@
           {
             "name": "Sort",
             "in": "query",
+            "description": "Sort parameters",
             "schema": {
               "type": "array",
               "items": {
@@ -3098,7 +3533,10 @@
           {
             "name": "pageSize",
             "in": "query",
+            "description": "Number of items per page. Use -1 to get all items",
             "schema": {
+              "maximum": 100,
+              "minimum": -1,
               "type": "integer",
               "format": "int32"
             }
@@ -3106,7 +3544,10 @@
           {
             "name": "pageNumber",
             "in": "query",
+            "description": "Page number (1-based)",
             "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
               "type": "integer",
               "format": "int32"
             }
@@ -3114,6 +3555,7 @@
           {
             "name": "keyword",
             "in": "query",
+            "description": "Search keyword",
             "schema": {
               "type": "string"
             }
@@ -3121,6 +3563,7 @@
           {
             "name": "Sort",
             "in": "query",
+            "description": "Sort parameters",
             "schema": {
               "type": "array",
               "items": {
@@ -3449,7 +3892,10 @@
           {
             "name": "pageSize",
             "in": "query",
+            "description": "Number of items per page. Use -1 to get all items",
             "schema": {
+              "maximum": 100,
+              "minimum": -1,
               "type": "integer",
               "format": "int32"
             }
@@ -3457,7 +3903,10 @@
           {
             "name": "pageNumber",
             "in": "query",
+            "description": "Page number (1-based)",
             "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
               "type": "integer",
               "format": "int32"
             }
@@ -3465,6 +3914,7 @@
           {
             "name": "keyword",
             "in": "query",
+            "description": "Search keyword",
             "schema": {
               "type": "string"
             }
@@ -3472,6 +3922,7 @@
           {
             "name": "Sort",
             "in": "query",
+            "description": "Sort parameters",
             "schema": {
               "type": "array",
               "items": {
@@ -4061,26 +4512,259 @@
         }
       }
     },
-    "/api/user/add-role-to-user": {
+    "/api/user": {
       "post": {
         "tags": [
           "User"
         ],
-        "summary": "Thêm quyền",
+        "summary": "Tạo tài khoản mới (chỉ dành cho Admin)",
         "parameters": [
           {
-            "name": "roleId",
+            "name": "permission",
             "in": "query",
-            "description": "",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Lấy danh sách người dùng",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Number of items per page. Use -1 to get all items",
+            "schema": {
+              "maximum": 100,
+              "minimum": -1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "description": "Page number (1-based)",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "Search keyword",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Sort",
+            "in": "query",
+            "description": "Sort parameters",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Cập nhật thông tin người dùng",
+        "parameters": [
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{id}": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Lấy thông tin người dùng theo ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32"
             }
           },
           {
-            "name": "userId",
+            "name": "permission",
             "in": "query",
-            "description": "",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Xóa người dùng",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -4119,26 +4803,82 @@
         }
       }
     },
-    "/api/user/remove-role-to-user": {
+    "/api/user/{userId}/roles/{roleId}": {
       "post": {
         "tags": [
           "User"
         ],
-        "summary": "Gỡ quyền",
+        "summary": "Thêm role cho người dùng",
         "parameters": [
           {
-            "name": "roleId",
-            "in": "query",
-            "description": "",
+            "name": "userId",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32"
             }
           },
           {
-            "name": "userId",
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
             "in": "query",
-            "description": "",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Xóa role của người dùng",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -4244,6 +4984,42 @@
           },
           "message": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateApiEndpointDto": {
+        "required": [
+          "httpMethod",
+          "path"
+        ],
+        "type": "object",
+        "properties": {
+          "path": {
+            "maxLength": 500,
+            "minLength": 1,
+            "type": "string"
+          },
+          "httpMethod": {
+            "maxLength": 10,
+            "minLength": 1,
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 500,
+            "type": "string",
+            "nullable": true
+          },
+          "requireAuthentication": {
+            "type": "boolean"
+          },
+          "permissionIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
             "nullable": true
           }
         },
@@ -4422,14 +5198,15 @@
         "type": "object",
         "properties": {
           "name": {
-            "maxLength": 50,
+            "maxLength": 256,
             "type": "string",
             "nullable": true
           },
-          "permissionKeys": {
+          "permissionIds": {
             "type": "array",
             "items": {
-              "type": "string"
+              "type": "integer",
+              "format": "int32"
             },
             "nullable": true
           }
@@ -4496,6 +5273,60 @@
         "type": "integer",
         "format": "int32"
       },
+      "TokenApiDto": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "refreshToken": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateApiEndpointDto": {
+        "required": [
+          "httpMethod",
+          "path"
+        ],
+        "type": "object",
+        "properties": {
+          "path": {
+            "maxLength": 500,
+            "minLength": 1,
+            "type": "string"
+          },
+          "httpMethod": {
+            "maxLength": 10,
+            "minLength": 1,
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 500,
+            "type": "string",
+            "nullable": true
+          },
+          "requireAuthentication": {
+            "type": "boolean"
+          },
+          "permissionIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "UpdateKeyPermissionDto": {
         "type": "object",
         "properties": {
@@ -4547,6 +5378,14 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/UpdateKeyPermissionDto"
+            },
+            "nullable": true
+          },
+          "permissionIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
             },
             "nullable": true
           }
@@ -4734,22 +5573,22 @@
       "UpdateRoleDto": {
         "type": "object",
         "properties": {
-          "name": {
-            "maxLength": 50,
-            "type": "string",
-            "nullable": true
-          },
-          "permissionKeys": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true,
-            "readOnly": true
-          },
           "id": {
             "type": "integer",
             "format": "int32"
+          },
+          "name": {
+            "maxLength": 256,
+            "type": "string",
+            "nullable": true
+          },
+          "permissionIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -4784,6 +5623,36 @@
           "id": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateUserDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "username": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userType": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "roleIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false

@@ -3,20 +3,24 @@
   "WorkspaceRootPath": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\shared\\consts\\exceptions\\errorcode.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\shared\\consts\\exceptions\\errorcode.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\infrastructures\\persistances\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\infrastructures\\persistances\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\shared\\consts\\exceptions\\errormessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\shared\\consts\\exceptions\\errormessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\applications\\usermodules\\implements\\permissionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\applications\\usermodules\\implements\\permissionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\applications\\usermodules\\implements\\postservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\applications\\usermodules\\implements\\postservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\controllers\\permissioncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\controllers\\permissioncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\controllers\\newscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\controllers\\newscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\infrastructures\\contentprocessing\\wysiwygfileprocessor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\infrastructures\\contentprocessing\\wysiwygfileprocessor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\infrastructures\\persistances\\dbinitializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\infrastructures\\persistances\\dbinitializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,19 +30,19 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "ErrorMessage.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Shared\\Consts\\Exceptions\\ErrorMessage.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Shared\\Consts\\Exceptions\\ErrorMessage.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Shared\\Consts\\Exceptions\\ErrorMessage.cs",
-              "RelativeToolTip": "AttechServer\\Shared\\Consts\\Exceptions\\ErrorMessage.cs",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAAACAAAAA2AAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "ApplicationDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Infrastructures\\Persistances\\ApplicationDbContext.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Infrastructures\\Persistances\\ApplicationDbContext.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Infrastructures\\Persistances\\ApplicationDbContext.cs",
+              "RelativeToolTip": "AttechServer\\Infrastructures\\Persistances\\ApplicationDbContext.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAAAlwB0AAAA0AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-15T10:04:45.908Z",
+              "WhenOpened": "2025-05-20T16:47:57.076Z",
               "EditorCaption": ""
             },
             {
@@ -47,41 +51,54 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "ErrorCode.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Shared\\Consts\\Exceptions\\ErrorCode.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Shared\\Consts\\Exceptions\\ErrorCode.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Shared\\Consts\\Exceptions\\ErrorCode.cs",
-              "RelativeToolTip": "AttechServer\\Shared\\Consts\\Exceptions\\ErrorCode.cs",
-              "ViewState": "AgIAAA4AAAAAAAAAAAAgwDoAAAAyAAAAAAAAAA==",
+              "DocumentIndex": 3,
+              "Title": "WysiwygFileProcessor.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Infrastructures\\ContentProcessing\\WysiwygFileProcessor.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Infrastructures\\ContentProcessing\\WysiwygFileProcessor.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Infrastructures\\ContentProcessing\\WysiwygFileProcessor.cs",
+              "RelativeToolTip": "AttechServer\\Infrastructures\\ContentProcessing\\WysiwygFileProcessor.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-15T10:03:51.253Z",
+              "WhenOpened": "2025-05-20T16:48:28.688Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "PostService.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\PostService.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Implements\\PostService.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\PostService.cs",
-              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Implements\\PostService.cs",
-              "ViewState": "AgIAAPAAAAAAAAAAAAAgwAABAAA+AAAAAAAAAA==",
+              "Title": "PermissionController.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\PermissionController.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Controllers\\PermissionController.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\PermissionController.cs",
+              "RelativeToolTip": "AttechServer\\Controllers\\PermissionController.cs",
+              "ViewState": "AgIAANYAAAAAAAAAAAAswO0AAAAlAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-15T09:54:11.254Z",
+              "WhenOpened": "2025-05-20T15:43:38.524Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "NewsController.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\NewsController.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Controllers\\NewsController.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\NewsController.cs",
-              "RelativeToolTip": "AttechServer\\Controllers\\NewsController.cs",
-              "ViewState": "AgIAADsAAAAAAAAAAAAgwEAAAAAIAAAAAAAAAA==",
+              "DocumentIndex": 1,
+              "Title": "PermissionService.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\PermissionService.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Implements\\PermissionService.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\PermissionService.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Implements\\PermissionService.cs",
+              "ViewState": "AgIAAF4AAAAAAAAAAAAcwGoAAABVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-15T09:45:39.82Z",
+              "WhenOpened": "2025-05-20T15:40:17.971Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "DbInitializer.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Infrastructures\\Persistances\\DbInitializer.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Infrastructures\\Persistances\\DbInitializer.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Infrastructures\\Persistances\\DbInitializer.cs",
+              "RelativeToolTip": "AttechServer\\Infrastructures\\Persistances\\DbInitializer.cs",
+              "ViewState": "AgIAAOABAAAAAAAAAAAAAPABAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-20T09:40:48.905Z",
               "EditorCaption": ""
             }
           ]

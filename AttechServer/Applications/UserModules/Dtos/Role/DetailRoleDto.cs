@@ -6,6 +6,6 @@ namespace AttechServer.Applications.UserModules.Dtos.Role
     {
         public int Id { get; set; }
         public string Name { get; set; } = null!;
-        public List<string>? PermissionKeys { get; set; }
+        public List<int> PermissionIds { get; set; } = new();
     }
 }

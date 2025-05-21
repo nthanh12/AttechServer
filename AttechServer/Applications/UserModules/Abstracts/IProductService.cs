@@ -25,7 +25,7 @@ namespace AttechServer.Applications.UserModules.Abstracts
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        //Task<DetailProductDto> FindById(int id);
+        Task<DetailProductDto> FindById(int id);
 
         /// <summary>
         /// Thêm mới sản phẩm

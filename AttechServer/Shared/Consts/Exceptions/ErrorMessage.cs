@@ -32,5 +32,8 @@
         public const string ProductNotFound = "Sản phẩm không tồn tại";
         public const string ServiceNotFound = "Dịch vụ không tồn tại";
 
+        public const string InvalidClientRequest = "Yêu cầu không hợp lệ";
+        public const string InvalidRefreshToken = "Mã làm mới không hợp lệ";
+
     }
 }

@@ -22,11 +22,11 @@ namespace AttechServer.Controllers
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost("login")]
-        public ApiResponse Login([FromBody] UserLoginDto input)
+        public async Task<ApiResponse> Login([FromBody] UserLoginDto input)
         {
             try
             {
-                return new(_authService.Login(input));
+                return new(await _authService.Login(input));
             }
             catch (Exception ex)
             {
@@ -46,6 +46,24 @@ namespace AttechServer.Controllers
             {
                 _authService.RegisterUser(input);
                 return new();
+            }
+            catch (Exception ex)
+            {
+                return OkException(ex);
+            }
+        }
+
+        /// <summary>
+        /// Refresh token
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [HttpPost("refresh-token")]
+        public ApiResponse RefreshToken([FromBody] TokenApiDto input)
+        {
+            try
+            {
+                return new(_authService.RefreshToken(input));
             }
             catch (Exception ex)
             {

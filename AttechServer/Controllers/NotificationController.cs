@@ -2,8 +2,11 @@
 using AttechServer.Applications.UserModules.Dtos.Post;
 using AttechServer.Shared.ApplicationBase.Common;
 using AttechServer.Shared.WebAPIBase;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using AttechServer.Shared.Filters;
 using AttechServer.Domains.Entities.Main;
+using AttechServer.Shared.Consts.Permissions;
 
 namespace AttechServer.Controllers
 {
@@ -13,7 +16,9 @@ namespace AttechServer.Controllers
     {
         private readonly IPostService _postService;
 
-        public NotificationController(ILogger<NotificationController> logger, IPostService postService) : base(logger)
+        public NotificationController(
+            ILogger<NotificationController> logger,
+            IPostService postService) : base(logger)
         {
             _postService = postService;
         }
@@ -21,9 +26,8 @@ namespace AttechServer.Controllers
         /// <summary>
         /// Danh sách thông báo
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
         [HttpGet("find-all")]
+        [AllowAnonymous]
         public async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
         {
             try
@@ -39,10 +43,8 @@ namespace AttechServer.Controllers
         /// <summary>
         /// Danh sách theo danh mục thông báo
         /// </summary>
-        /// <param name="input"></param>
-        /// <param name="categoryId"></param>
-        /// <returns></returns>
         [HttpGet("category/{categoryId}")]
+        [AllowAnonymous]
         public async Task<ApiResponse> FindAllByCategoryId([FromQuery] PagingRequestBaseDto input, int categoryId)
         {
             try
@@ -58,9 +60,8 @@ namespace AttechServer.Controllers
         /// <summary>
         /// Thông tin chi tiết thông báo
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpGet("find-by-id/{id}")]
+        [AllowAnonymous]
         public async Task<ApiResponse> FindById(int id)
         {
             try
@@ -76,9 +77,9 @@ namespace AttechServer.Controllers
         /// <summary>
         /// Thêm mới thông báo
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
         [HttpPost("create")]
+        [Authorize]
+        [PermissionFilter(PermissionKeys.CreateNotification)]
         public async Task<ApiResponse> Create([FromBody] CreatePostDto input)
         {
             try
@@ -95,9 +96,9 @@ namespace AttechServer.Controllers
         /// <summary>
         /// Cập nhật thông báo
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
         [HttpPut("update")]
+        [Authorize]
+        [PermissionFilter(PermissionKeys.EditNotification)]
         public async Task<ApiResponse> Update([FromBody] UpdatePostDto input)
         {
             try
@@ -114,9 +115,9 @@ namespace AttechServer.Controllers
         /// <summary>
         /// Xóa thông báo
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpDelete("delete/{id}")]
+        [Authorize]
+        [PermissionFilter(PermissionKeys.DeleteNotification)]
         public async Task<ApiResponse> Delete(int id)
         {
             try
@@ -133,9 +134,9 @@ namespace AttechServer.Controllers
         /// <summary>
         /// Khóa/Mở khóa thông báo
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
         [HttpPut("update-status")]
+        [Authorize]
+        [PermissionFilter(PermissionKeys.EditNotification)]
         public async Task<ApiResponse> UpdateStatus([FromBody] UpdatePostStatusDto input)
         {
             try

@@ -1,8 +1,12 @@
-﻿namespace AttechServer.Applications.UserModules.Dtos.Role
+﻿using AttechServer.Shared.ApplicationBase.Common.Validations;
+
+namespace AttechServer.Applications.UserModules.Dtos.Role
 {
-    public class UpdateRoleDto : CreateRoleDto
+    public class UpdateRoleDto
     {
         public int Id { get; set; }
-        public IEnumerable<string> PermissionKeys { get; internal set; }
+        [CustomMaxLength(256)]
+        public string Name { get; set; } = null!;
+        public List<int>? PermissionIds { get; set; }
     }
 }

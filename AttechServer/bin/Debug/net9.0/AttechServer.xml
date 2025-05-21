@@ -195,6 +195,13 @@
             <param name="categoryId"></param>
             <returns></returns>
         </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductService.FindById(System.Int32)">
+            <summary>
+            Lấy thông tin chi tiết sản phẩm theo Id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
         <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductService.Create(AttechServer.Applications.UserModules.Dtos.Product.CreateProductDto)">
             <summary>
             Thêm mới sản phẩm
@@ -324,6 +331,26 @@
             <param name="roleId"></param>
             <param name="userId"></param>
         </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IUserService.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Lấy danh sách người dùng
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IUserService.FindById(System.Int32)">
+            <summary>
+            Lấy thông tin người dùng theo ID
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IUserService.Update(AttechServer.Applications.UserModules.Dtos.User.UpdateUserDto)">
+            <summary>
+            Cập nhật thông tin người dùng
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IUserService.Delete(System.Int32)">
+            <summary>
+            Xóa người dùng
+            </summary>
+        </member>
         <member name="P:AttechServer.Applications.UserModules.Dtos.Permission.PermissionKeyDto.PermissionType">
             <summary>
             Loại permisison
@@ -341,6 +368,31 @@
             <see cref="T:AttechServer.Shared.Consts.CommonStatus"/>
             </summary>
         </member>
+        <member name="M:AttechServer.Controllers.ApiEndpointController.FindAll">
+            <summary>
+            Lấy danh sách tất cả API Endpoint
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ApiEndpointController.FindById(System.Int32)">
+            <summary>
+            Lấy thông tin API Endpoint theo ID
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ApiEndpointController.Create(CreateApiEndpointDto)">
+            <summary>
+            Tạo mới API Endpoint
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ApiEndpointController.Update(UpdateApiEndpointDto)">
+            <summary>
+            Cập nhật API Endpoint
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ApiEndpointController.Delete(System.Int32)">
+            <summary>
+            Xóa API Endpoint
+            </summary>
+        </member>
         <member name="M:AttechServer.Controllers.AuthController.Login(AttechServer.Applications.UserModules.Dtos.UserLoginDto)">
             <summary>
             Đăng nhập 
@@ -351,6 +403,13 @@
         <member name="M:AttechServer.Controllers.AuthController.Register(AttechServer.Applications.UserModules.Dtos.CreateUserDto)">
             <summary>
             Đăng ký tài khoản
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.AuthController.RefreshToken(AttechServer.Applications.UserModules.Dtos.TokenApiDto)">
+            <summary>
+            Refresh token
             </summary>
             <param name="input"></param>
             <returns></returns>
@@ -493,51 +552,36 @@
             <summary>
             Danh sách thông báo
             </summary>
-            <param name="input"></param>
-            <returns></returns>
         </member>
         <member name="M:AttechServer.Controllers.NotificationController.FindAllByCategoryId(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.Int32)">
             <summary>
             Danh sách theo danh mục thông báo
             </summary>
-            <param name="input"></param>
-            <param name="categoryId"></param>
-            <returns></returns>
         </member>
         <member name="M:AttechServer.Controllers.NotificationController.FindById(System.Int32)">
             <summary>
             Thông tin chi tiết thông báo
             </summary>
-            <param name="id"></param>
-            <returns></returns>
         </member>
         <member name="M:AttechServer.Controllers.NotificationController.Create(AttechServer.Applications.UserModules.Dtos.Post.CreatePostDto)">
             <summary>
             Thêm mới thông báo
             </summary>
-            <param name="input"></param>
-            <returns></returns>
         </member>
         <member name="M:AttechServer.Controllers.NotificationController.Update(AttechServer.Applications.UserModules.Dtos.Post.UpdatePostDto)">
             <summary>
             Cập nhật thông báo
             </summary>
-            <param name="input"></param>
-            <returns></returns>
         </member>
         <member name="M:AttechServer.Controllers.NotificationController.Delete(System.Int32)">
             <summary>
             Xóa thông báo
             </summary>
-            <param name="id"></param>
-            <returns></returns>
         </member>
         <member name="M:AttechServer.Controllers.NotificationController.UpdateStatus(AttechServer.Applications.UserModules.Dtos.Post.UpdatePostStatusDto)">
             <summary>
             Khóa/Mở khóa thông báo
             </summary>
-            <param name="input"></param>
-            <returns></returns>
         </member>
         <member name="M:AttechServer.Controllers.PermissionController.FindAll">
             <summary>
@@ -677,6 +721,13 @@
             <param name="categoryId"></param>
             <returns></returns>
         </member>
+        <member name="M:AttechServer.Controllers.ProductController.FindById(System.Int32)">
+            <summary>
+            Thông tin chi tiết sản phẩm
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
         <member name="M:AttechServer.Controllers.ProductController.Create(AttechServer.Applications.UserModules.Dtos.Product.CreateProductDto)">
             <summary>
             Thêm mới sản phẩm
@@ -792,21 +843,40 @@
             <param name="status"></param>
             <returns></returns>
         </member>
+        <member name="M:AttechServer.Controllers.UserController.Create(AttechServer.Applications.UserModules.Dtos.CreateUserDto)">
+            <summary>
+            Tạo tài khoản mới (chỉ dành cho Admin)
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.UserController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Lấy danh sách người dùng
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.UserController.FindById(System.Int32)">
+            <summary>
+            Lấy thông tin người dùng theo ID
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.UserController.Update(AttechServer.Applications.UserModules.Dtos.User.UpdateUserDto)">
+            <summary>
+            Cập nhật thông tin người dùng
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.UserController.Delete(System.Int32)">
+            <summary>
+            Xóa người dùng
+            </summary>
+        </member>
         <member name="M:AttechServer.Controllers.UserController.AddRoleToUser(System.Int32,System.Int32)">
             <summary>
-            Thêm quyền
+            Thêm role cho người dùng
             </summary>
-            <param name="roleId"></param>
-            <param name="userId"></param>
-            <returns></returns>
         </member>
-        <member name="M:AttechServer.Controllers.UserController.RemoveRoleToUser(System.Int32,System.Int32)">
+        <member name="M:AttechServer.Controllers.UserController.RemoveRoleFromUser(System.Int32,System.Int32)">
             <summary>
-            Gỡ quyền
+            Xóa role của người dùng
             </summary>
-            <param name="roleId"></param>
-            <param name="userId"></param>
-            <returns></returns>
         </member>
         <member name="P:AttechServer.Domains.Entities.Main.Post.Status">
             <summary>
@@ -835,7 +905,7 @@
         <member name="P:AttechServer.Domains.Entities.User.Status">
             <summary>
             Trạng thái
-            <see cref="!:CommonStatus"/>
+            <see cref="P:AttechServer.Domains.Entities.User.Status"/>
             </summary>
         </member>
         <member name="T:AttechServer.Migrations.InitialContext">
@@ -981,6 +1051,129 @@
         </member>
         <member name="M:AttechServer.Migrations.splitPost.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.updatePermission">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updatePermission.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updatePermission.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updatePermission.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.addRefreshToken">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.addRefreshToken.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.addRefreshToken.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.addRefreshToken.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.addPermissionKey">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.addPermissionKey.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.addPermissionKey.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.addPermissionKey.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.updatePermissionKey">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updatePermissionKey.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updatePermissionKey.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updatePermissionKey.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.addSeedDatav1">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.addSeedDatav1.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.addSeedDatav1.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.addSeedDatav1.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.addSeedDatav2">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.addSeedDatav2.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.addSeedDatav2.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.addSeedDatav2.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto">
+            <summary>
+            Base class for pagination request DTOs
+            </summary>
+        </member>
+        <member name="F:AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto.DEFAULT_PAGE_SIZE">
+            <summary>
+            Default number of items per page
+            </summary>
+        </member>
+        <member name="F:AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto.MIN_PAGE_SIZE">
+            <summary>
+            Minimum number of items per page
+            </summary>
+        </member>
+        <member name="F:AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto.MAX_PAGE_SIZE">
+            <summary>
+            Maximum number of items per page
+            </summary>
+        </member>
+        <member name="F:AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto.ALL_ITEMS">
+            <summary>
+            Special value to get all items
+            </summary>
+        </member>
+        <member name="P:AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto.PageSize">
+            <summary>
+            Number of items per page. Use -1 to get all items
+            </summary>
+        </member>
+        <member name="P:AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto.PageNumber">
+            <summary>
+            Page number (1-based)
+            </summary>
+        </member>
+        <member name="P:AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto.Keyword">
+            <summary>
+            Search keyword
+            </summary>
+        </member>
+        <member name="M:AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto.GetSkip">
+            <summary>
+            Calculate number of items to skip based on page size and number
+            </summary>
+            <returns>Number of items to skip</returns>
+        </member>
+        <member name="P:AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto.Sort">
+            <summary>
+            Sort parameters
+            </summary>
         </member>
         <member name="T:AttechServer.Shared.ApplicationBase.Common.Validations.IntegerRangeAttribute">
             <summary>

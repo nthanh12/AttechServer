@@ -19,12 +19,15 @@ namespace AttechServer.Domains.Entities
 
         /// <summary>
         /// Trạng thái
-        /// <see cref="CommonStatus"/>
+        /// <see cref="Status"/>
         /// </summary>
         public int Status { get; set; }
         public int UserType { get; set; }
-
         public List<UserRole> UserRoles { get; set; } = new();
+
+        [MaxLength(512)]
+        public string? RefreshToken { get; set; }
+        public DateTime? RefreshTokenExpiryTime { get; set; }
 
         #region audit
         public DateTime? CreatedDate { get; set; }

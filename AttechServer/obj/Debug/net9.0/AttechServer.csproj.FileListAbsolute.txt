@@ -11,6 +11,7 @@ C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\bin\Debug\net9.0\A
 C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\bin\Debug\net9.0\AngleSharp.Css.dll
 C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\bin\Debug\net9.0\Azure.Core.dll
 C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\bin\Debug\net9.0\Azure.Identity.dll
+C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\bin\Debug\net9.0\BCrypt.Net-Next.dll
 C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\bin\Debug\net9.0\HtmlSanitizer.dll
 C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\bin\Debug\net9.0\Humanizer.dll
 C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
@@ -167,6 +168,7 @@ C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\obj\Debug\net9.0\s
 C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\obj\Debug\net9.0\staticwebassets\msbuild.buildMultiTargeting.AttechServer.props
 C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\obj\Debug\net9.0\staticwebassets\msbuild.buildTransitive.AttechServer.props
 C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\obj\Debug\net9.0\staticwebassets.pack.json
+C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\obj\Debug\net9.0\AttechSe.C17D1A48.Up2Date
 C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\obj\Debug\net9.0\AttechServer.dll
 C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\obj\Debug\net9.0\refint\AttechServer.dll
@@ -174,4 +176,3 @@ C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\obj\Debug\net9.0\A
 C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\obj\Debug\net9.0\AttechServer.pdb
 C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\obj\Debug\net9.0\AttechServer.genruntimeconfig.cache
 C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\obj\Debug\net9.0\ref\AttechServer.dll
-C:\Users\thanh\source\repos\Backend\AttechServer\AttechServer\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt

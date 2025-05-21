@@ -14,6 +14,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddMemoryCache();
 //Config connect to sql server
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
@@ -32,7 +33,7 @@ builder.Services.AddAuthentication(options =>
     x.TokenValidationParameters = new TokenValidationParameters()
     {
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetSection("JWT")["Key"]!)),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("JWT")["Key"]!)),
         ValidateAudience = false,
         ValidateIssuer = false,
         ClockSkew = TimeSpan.Zero
@@ -102,6 +103,7 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IKeyPermissionService, KeyPermissionService>();
+builder.Services.AddScoped<IApiEndpointService, ApiEndpointService>();
 
 builder.Services.AddScoped<IWysiwygFileProcessor, WysiwygFileProcessor>();
 builder.Services.AddScoped<IPostCategoryService, PostCategoryService>();
@@ -113,6 +115,23 @@ builder.Services.AddScoped<IServiceService, ServiceService>();
 var app = builder.Build();
 var logger = app.Services.GetRequiredService<ILogger<Program>>();
 logger.LogInformation("Application started!");
+
+// Initialize database
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        await DbInitializer.InitializeAsync(context);
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error occurred while seeding the database.");
+    }
+}
+
+app.UseCors("AllowAllOrigins");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -127,8 +146,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseMiddleware<PermissionMiddleWare>();
-
-app.UseCors("AllowAllOrigins");
 
 app.MapControllers();
 

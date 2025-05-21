@@ -9,7 +9,8 @@ namespace AttechServer.Applications.UserModules.Dtos.ConfigPermission
         [CustomMaxLength(500)]
         public string Path { get; set; } = null!;
         [CustomMaxLength(500)]
-        public string? Description {  get; set; }
+        public string? Description { get; set; }
         public List<UpdateKeyPermissionDto> PermissionKeys { get; set; } = null!;
+        public List<int> PermissionIds { get; set; } = new();
     }
 }

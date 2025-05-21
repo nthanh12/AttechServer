@@ -1,4 +1,9 @@
 ﻿using AttechServer.Applications.UserModules.Abstracts;
+using AttechServer.Applications.UserModules.Dtos;
+using AttechServer.Applications.UserModules.Dtos.User;
+using AttechServer.Shared.ApplicationBase.Common;
+using AttechServer.Shared.Consts.Permissions;
+using AttechServer.Shared.Filters;
 using AttechServer.Shared.WebAPIBase;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,25 +14,28 @@ namespace AttechServer.Controllers
     [ApiController]
     public class UserController : ApiControllerBase
     {
-        private readonly IUserService _userServices;
+        private readonly IUserService _userService;
+        private readonly IAuthService _authService;
 
-        public UserController(ILogger<UserController> logger, IUserService userServices) : base(logger)
+        public UserController(
+            ILogger<UserController> logger,
+            IUserService userService,
+            IAuthService authService) : base(logger)
         {
-            _userServices = userServices;
+            _userService = userService;
+            _authService = authService;
         }
 
         /// <summary>
-        /// Thêm quyền
+        /// Tạo tài khoản mới (chỉ dành cho Admin)
         /// </summary>
-        /// <param name="roleId"></param>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        [HttpPost("add-role-to-user")]
-        public ApiResponse AddRoleToUser(int roleId, int userId)
+        [HttpPost]
+        [PermissionFilter(PermissionKeys.CreateUser)]
+        public ApiResponse Create([FromBody] CreateUserDto input)
         {
             try
             {
-                _userServices.AddRoleToUser(roleId, userId);
+                _authService.RegisterUser(input);
                 return new();
             }
             catch (Exception ex)
@@ -36,19 +44,104 @@ namespace AttechServer.Controllers
             }
         }
 
-
         /// <summary>
-        /// Gỡ quyền
+        /// Lấy danh sách người dùng
         /// </summary>
-        /// <param name="roleId"></param>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        [HttpPost("remove-role-to-user")]
-        public ApiResponse RemoveRoleToUser(int roleId, int userId)
+        [HttpGet]
+        [PermissionFilter(PermissionKeys.ViewUsers)]
+        public async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
         {
             try
             {
-                _userServices.RemoveRoleFromUser(roleId, userId);
+                return new(await _userService.FindAll(input));
+            }
+            catch (Exception ex)
+            {
+                return OkException(ex);
+            }
+        }
+
+        /// <summary>
+        /// Lấy thông tin người dùng theo ID
+        /// </summary>
+        [HttpGet("{id}")]
+        [PermissionFilter(PermissionKeys.ViewUsers)]
+        public async Task<ApiResponse> FindById(int id)
+        {
+            try
+            {
+                return new(await _userService.FindById(id));
+            }
+            catch (Exception ex)
+            {
+                return OkException(ex);
+            }
+        }
+
+        /// <summary>
+        /// Cập nhật thông tin người dùng
+        /// </summary>
+        [HttpPut]
+        [PermissionFilter(PermissionKeys.EditUser)]
+        public async Task<ApiResponse> Update([FromBody] UpdateUserDto input)
+        {
+            try
+            {
+                await _userService.Update(input);
+                return new();
+            }
+            catch (Exception ex)
+            {
+                return OkException(ex);
+            }
+        }
+
+        /// <summary>
+        /// Xóa người dùng
+        /// </summary>
+        [HttpDelete("{id}")]
+        [PermissionFilter(PermissionKeys.DeleteUser)]
+        public async Task<ApiResponse> Delete(int id)
+        {
+            try
+            {
+                await _userService.Delete(id);
+                return new();
+            }
+            catch (Exception ex)
+            {
+                return OkException(ex);
+            }
+        }
+
+        /// <summary>
+        /// Thêm role cho người dùng
+        /// </summary>
+        [HttpPost("{userId}/roles/{roleId}")]
+        [PermissionFilter(PermissionKeys.EditUser)]
+        public ApiResponse AddRoleToUser(int userId, int roleId)
+        {
+            try
+            {
+                _userService.AddRoleToUser(roleId, userId);
+                return new();
+            }
+            catch (Exception ex)
+            {
+                return OkException(ex);
+            }
+        }
+
+        /// <summary>
+        /// Xóa role của người dùng
+        /// </summary>
+        [HttpDelete("{userId}/roles/{roleId}")]
+        [PermissionFilter(PermissionKeys.EditUser)]
+        public ApiResponse RemoveRoleFromUser(int userId, int roleId)
+        {
+            try
+            {
+                _userService.RemoveRoleFromUser(roleId, userId);
                 return new();
             }
             catch (Exception ex)

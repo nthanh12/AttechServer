@@ -17,10 +17,12 @@
             { PermissionKeys.ButtonUpdateStatusRole, new(nameof(PermissionKeys.ButtonUpdateStatusRole), PermissionLabel.ButtonUpdateStatusRole, PermissionKeys.TableRole)},
             { PermissionKeys.ButtonUpdateRole, new(nameof(PermissionKeys.ButtonUpdateRole), PermissionLabel.ButtonUpdateRole, PermissionKeys.TableRole)},
            
-            ////User account
-            //{ PermissionKeys.MenuUserAccount, new(nameof(PermissionKeys.MenuUserAccount), PermissionLabel.MenuUserAccount)},
-            //{ PermissionKeys.CreateUserAccount, new(nameof(PermissionKeys.CreateUserAccount), PermissionLabel.CreateUserAccount, PermissionKeys.MenuUserAccount)},
-            //{ PermissionKeys.ListUserAccount, new(nameof(PermissionKeys.ListUserAccount), PermissionLabel.ListUserAccount,  PermissionKeys.MenuUserAccount)},
+            //User management
+            { PermissionKeys.MenuUserManager, new(nameof(PermissionKeys.MenuUserManager), PermissionLabel.MenuUserManager)},
+            { PermissionKeys.ViewUsers, new(nameof(PermissionKeys.ViewUsers), PermissionLabel.ViewUsers, PermissionKeys.MenuUserManager)},
+            { PermissionKeys.CreateUser, new(nameof(PermissionKeys.CreateUser), PermissionLabel.CreateUser, PermissionKeys.MenuUserManager)},
+            { PermissionKeys.EditUser, new(nameof(PermissionKeys.EditUser), PermissionLabel.EditUser, PermissionKeys.MenuUserManager)},
+            { PermissionKeys.DeleteUser, new(nameof(PermissionKeys.DeleteUser), PermissionLabel.DeleteUser, PermissionKeys.MenuUserManager)},
         };
     }
 }

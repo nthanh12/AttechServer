@@ -37,22 +37,21 @@ namespace AttechServer.Applications.UserModules.Implements
                     };
 
                     _dbContext.Roles.Add(newRole);
-                    _dbContext.SaveChanges();
+                    await _dbContext.SaveChangesAsync();
 
                     var newRoleId = newRole.Id;
 
-                    if (input.PermissionKeys?.Count > 0)
+                    if (input.PermissionIds?.Count > 0)
                     {
-                        var newRolePermissions = input.PermissionKeys.Select(x => new RolePermission()
+                        var newRolePermissions = input.PermissionIds.Select(x => new RolePermission()
                         {
-                            PermissionKey = x,
+                            PermissionId = x,
                             RoleId = newRoleId
                         });
 
                         _dbContext.RolePermissions.AddRange(newRolePermissions);
+                        await _dbContext.SaveChangesAsync();
                     }
-
-                    _dbContext.SaveChanges();
 
                     await transaction.CommitAsync();
                 }
@@ -67,7 +66,8 @@ namespace AttechServer.Applications.UserModules.Implements
         public async Task Delete(int id)
         {
             _logger.LogInformation($"{nameof(Delete)}: id = {id}");
-            var role = _dbContext.Roles.FirstOrDefault(x => x.Id == id) ?? throw new UserFriendlyException(ErrorCode.RoleNotFound);
+            var role = await _dbContext.Roles.FirstOrDefaultAsync(x => x.Id == id)
+                ?? throw new UserFriendlyException(ErrorCode.RoleNotFound);
             role.Deleted = true;
             await _dbContext.SaveChangesAsync();
         }
@@ -86,10 +86,12 @@ namespace AttechServer.Applications.UserModules.Implements
                 Name = r.Name,
                 Status = r.Status,
             }).ToListAsync();
+
             if (input.PageSize != -1)
             {
-                items.Skip(input.GetSkip())
-                .Take(input.PageSize);
+                items = items.Skip(input.GetSkip())
+                    .Take(input.PageSize)
+                    .ToList();
             }
 
             var result = new PagingResult<RoleDto>
@@ -105,50 +107,77 @@ namespace AttechServer.Applications.UserModules.Implements
         {
             _logger.LogInformation($"{nameof(FindById)}: id = {id}");
             var roleResult = await _dbContext.Roles
-                                            .Include(r => r.RolePermissions)
-                                            .Where(r => !r.Deleted && r.Id == id && r.Status == CommonStatus.ACTIVE)
-                                            .Select(c => new DetailRoleDto
-                                            {
-                                                Id = c.Id,
-                                                Name = c.Name,
-                                                PermissionKeys = c.RolePermissions.Where(rp => !rp.Deleted).Select(rp => rp.PermissionKey).Distinct().ToList(),
-                                            })
-                                            .FirstOrDefaultAsync()
-                    ?? throw new UserFriendlyException(ErrorCode.RoleNotFound);
+                .Include(r => r.RolePermissions)
+                    .ThenInclude(rp => rp.Permission)
+                .Where(r => !r.Deleted && r.Id == id && r.Status == CommonStatus.ACTIVE)
+                .Select(c => new DetailRoleDto
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    PermissionIds = c.RolePermissions
+                        .Where(rp => !rp.Deleted)
+                        .Select(rp => rp.PermissionId)
+                        .Distinct()
+                        .ToList(),
+                })
+                .FirstOrDefaultAsync()
+                ?? throw new UserFriendlyException(ErrorCode.RoleNotFound);
 
-            return new DetailRoleDto
-            {
-                Id = roleResult.Id,
-                Name = roleResult.Name,
-                PermissionKeys = roleResult.PermissionKeys
-            };
+            return roleResult;
         }
 
         public async Task Update(UpdateRoleDto input)
         {
             _logger.LogInformation($"{nameof(Update)}: input = {JsonSerializer.Serialize(input)}");
-            var role = await _dbContext.Roles.FirstOrDefaultAsync(r => r.Id == input.Id) ?? throw new UserFriendlyException(ErrorCode.RoleNotFound);
+            var role = await _dbContext.Roles
+                .Include(r => r.RolePermissions)
+                .FirstOrDefaultAsync(r => r.Id == input.Id)
+                ?? throw new UserFriendlyException(ErrorCode.RoleNotFound);
+
             using (var transaction = await _dbContext.Database.BeginTransactionAsync())
             {
                 try
                 {
                     role.Name = input.Name;
-                    _dbContext.SaveChanges();
-                    var currentRolePermissions = _dbContext.RolePermissions.Where(x => !x.Deleted && x.RoleId == input.Id)
-                                                                         .Select(e => e.PermissionKey).ToList();
-                    //list permission cần xóa
-                    var removeRolePermissions = currentRolePermissions.Except(input.PermissionKeys).ToList();
-                    await _dbContext.RolePermissions.Where(rp => rp.RoleId == input.Id && removeRolePermissions.Contains(rp.PermissionKey)).ExecuteDeleteAsync();
-                    _dbContext.SaveChanges();
+                    await _dbContext.SaveChangesAsync();
 
-                    var roleForUpdate = input.PermissionKeys.Select(c => new RolePermission
+                    // Get current permissions
+                    var currentRolePermissions = role.RolePermissions
+                        .Where(x => !x.Deleted)
+                        .Select(e => e.PermissionId)
+                        .ToList();
+
+                    // Find permissions to remove
+                    var permissionsToRemove = currentRolePermissions
+                        .Except(input.PermissionIds)
+                        .ToList();
+
+                    // Find permissions to add
+                    var permissionsToAdd = input.PermissionIds
+                        .Except(currentRolePermissions)
+                        .ToList();
+
+                    // Remove permissions
+                    if (permissionsToRemove.Any())
                     {
-                        RoleId = role.Id,
-                        PermissionKey = c
-                    });
-                    _dbContext.RolePermissions.AddRange(roleForUpdate);
+                        await _dbContext.RolePermissions
+                            .Where(rp => rp.RoleId == input.Id && permissionsToRemove.Contains(rp.PermissionId))
+                            .ExecuteUpdateAsync(s => s.SetProperty(rp => rp.Deleted, true));
+                    }
 
-                    _dbContext.SaveChanges();
+                    // Add new permissions
+                    if (permissionsToAdd.Any())
+                    {
+                        var newRolePermissions = permissionsToAdd.Select(pid => new RolePermission
+                        {
+                            RoleId = role.Id,
+                            PermissionId = pid
+                        });
+
+                        _dbContext.RolePermissions.AddRange(newRolePermissions);
+                        await _dbContext.SaveChangesAsync();
+                    }
+
                     await transaction.CommitAsync();
                 }
                 catch
@@ -162,8 +191,9 @@ namespace AttechServer.Applications.UserModules.Implements
         public async Task UpdateStatusRole(int id, int status)
         {
             _logger.LogInformation($"{nameof(UpdateStatusRole)}: Id = {id}, status = {status}");
-            var role = await _dbContext.Roles.FirstOrDefaultAsync(r => r.Id == id && !r.Deleted && r.Status == CommonStatus.ACTIVE)
-                            ?? throw new UserFriendlyException(ErrorCode.RoleNotFound);
+            var role = await _dbContext.Roles
+                .FirstOrDefaultAsync(r => r.Id == id && !r.Deleted && r.Status == CommonStatus.ACTIVE)
+                ?? throw new UserFriendlyException(ErrorCode.RoleNotFound);
             role.Status = status;
             await _dbContext.SaveChangesAsync();
         }
