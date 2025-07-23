@@ -104,6 +104,7 @@ builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IKeyPermissionService, KeyPermissionService>();
 builder.Services.AddScoped<IApiEndpointService, ApiEndpointService>();
+builder.Services.AddScoped<IMenuService, MenuService>();
 
 builder.Services.AddScoped<IWysiwygFileProcessor, WysiwygFileProcessor>();
 builder.Services.AddScoped<IPostCategoryService, PostCategoryService>();
@@ -111,6 +112,7 @@ builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
 builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IServiceService, ServiceService>();
+builder.Services.AddScoped<IMediaService, MediaService>();
 
 var app = builder.Build();
 var logger = app.Services.GetRequiredService<ILogger<Program>>();

@@ -36,30 +36,45 @@ namespace AttechServer.Applications.UserModules.Implements
                 try
                 {
                     // Validate input
-                    if (string.IsNullOrWhiteSpace(input.Name))
+                    if (string.IsNullOrWhiteSpace(input.NameVi) || string.IsNullOrWhiteSpace(input.SlugVi))
                     {
-                        throw new ArgumentException("Tên danh mục là bắt buộc.");
+                        throw new ArgumentException("Tên danh mục và Slug (VI) là bắt buộc.");
                     }
-                    if (input.Description.Length > 160)
+                    if (string.IsNullOrWhiteSpace(input.NameEn) || string.IsNullOrWhiteSpace(input.SlugEn))
                     {
-                        input.Description = input.Description.Substring(0, 157) + "...";
+                        throw new ArgumentException("Tên danh mục và Slug (EN) là bắt buộc.");
+                    }
+                    if (input.DescriptionVi.Length > 160)
+                    {
+                        input.DescriptionVi = input.DescriptionVi.Substring(0, 157) + "...";
+                    }
+                    if (input.DescriptionEn.Length > 160)
+                    {
+                        input.DescriptionEn = input.DescriptionEn.Substring(0, 157) + "...";
                     }
 
                     var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value, out var id) ? id : 0;
 
-                    // Tạo slug tự động
-                    var slug = SlugHelper.GenerateSlug(input.Name);
-                    var slugExists = await _dbContext.ProductCategories.AnyAsync(c => c.Slug == slug && !c.Deleted);
-                    if (slugExists)
+                    // Kiểm tra trùng slug
+                    var slugViExists = await _dbContext.ProductCategories.AnyAsync(c => c.SlugVi == input.SlugVi && !c.Deleted);
+                    if (slugViExists)
                     {
-                        slug = $"{slug}-{DateTime.Now.Ticks}";
+                        throw new ArgumentException("Slug VI đã tồn tại.");
+                    }
+                    var slugEnExists = await _dbContext.ProductCategories.AnyAsync(c => c.SlugEn == input.SlugEn && !c.Deleted);
+                    if (slugEnExists)
+                    {
+                        throw new ArgumentException("Slug EN đã tồn tại.");
                     }
 
                     var newProductCategory = new ProductCategory
                     {
-                        Name = input.Name,
-                        Slug = slug,
-                        Description = input.Description,
+                        NameVi = input.NameVi,
+                        NameEn = input.NameEn,
+                        SlugVi = input.SlugVi,
+                        SlugEn = input.SlugEn,
+                        DescriptionVi = input.DescriptionVi,
+                        DescriptionEn = input.DescriptionEn,
                         Status = input.Status,
                         CreatedDate = DateTime.UtcNow,
                         CreatedBy = userId,
@@ -74,9 +89,12 @@ namespace AttechServer.Applications.UserModules.Implements
                     return new ProductCategoryDto
                     {
                         Id = newProductCategory.Id,
-                        Name = newProductCategory.Name,
-                        Slug = newProductCategory.Slug,
-                        Description = newProductCategory.Description,
+                        NameVi = newProductCategory.NameVi,
+                        NameEn = newProductCategory.NameEn,
+                        SlugVi = newProductCategory.SlugVi,
+                        SlugEn = newProductCategory.SlugEn,
+                        DescriptionVi = newProductCategory.DescriptionVi,
+                        DescriptionEn = newProductCategory.DescriptionEn,
                         Status = newProductCategory.Status
                     };
                 }
@@ -130,20 +148,23 @@ namespace AttechServer.Applications.UserModules.Implements
 
             var baseQuery = _dbContext.ProductCategories.AsNoTracking()
                 .Where(pc => !pc.Deleted
-                    && (string.IsNullOrEmpty(input.Keyword) || pc.Name.Contains(input.Keyword)));
+                    && (string.IsNullOrEmpty(input.Keyword) || pc.NameVi.Contains(input.Keyword) || pc.NameEn.Contains(input.Keyword)));
 
             var totalItems = await baseQuery.CountAsync();
 
             var pagedItems = await baseQuery
-                .OrderBy(pc => pc.Name)
+                .OrderBy(pc => pc.NameVi)
                 .Skip(input.GetSkip())
                 .Take(input.PageSize)
                 .Select(pc => new ProductCategoryDto
                 {
                     Id = pc.Id,
-                    Name = pc.Name,
-                    Slug = pc.Slug,
-                    Description = pc.Description,
+                    NameVi = pc.NameVi,
+                    NameEn = pc.NameEn,
+                    SlugVi = pc.SlugVi,
+                    SlugEn = pc.SlugEn,
+                    DescriptionVi = pc.DescriptionVi,
+                    DescriptionEn = pc.DescriptionEn,
                     Status = pc.Status
                 })
                 .ToListAsync();
@@ -164,23 +185,29 @@ namespace AttechServer.Applications.UserModules.Implements
                 .Select(pc => new DetailProductCategoryDto
                 {
                     Id = pc.Id,
-                    Name = pc.Name,
-                    Slug = pc.Slug,
-                    Description = pc.Description,
+                    NameVi = pc.NameVi,
+                    NameEn = pc.NameEn,
+                    SlugVi = pc.SlugVi,
+                    SlugEn = pc.SlugEn,
+                    DescriptionVi = pc.DescriptionVi,
+                    DescriptionEn = pc.DescriptionEn,
                     Status = pc.Status,
                     Products = pc.Products
                         .Where(p => !p.Deleted && p.Status == CommonStatus.ACTIVE)
                         .Select(p => new ProductDto
                         {
                             Id = p.Id,
-                            Name = p.Name,
-                            Slug = p.Slug,
-                            Description = p.Description,
+                            NameVi = p.NameVi,
+                            NameEn = p.NameEn,
+                            SlugVi = p.SlugVi,
+                            SlugEn = p.SlugEn,
+                            DescriptionVi = p.DescriptionVi,
+                            DescriptionEn = p.DescriptionEn,
                             TimePosted = p.TimePosted,
                             Status = p.Status,
                             ProductCategoryId = p.ProductCategoryId,
-                            ProductCategoryName = pc.Name,
-                            ProductCategorySlug = pc.Slug
+                            ProductCategoryName = pc.NameVi,
+                            ProductCategorySlug = pc.SlugEn
                         })
                         .ToList()
                 })
@@ -202,31 +229,43 @@ namespace AttechServer.Applications.UserModules.Implements
                 try
                 {
                     // Validate input
-                    if (string.IsNullOrWhiteSpace(input.Name))
+                    if (string.IsNullOrWhiteSpace(input.NameVi) || string.IsNullOrWhiteSpace(input.SlugVi))
                     {
-                        throw new ArgumentException("Tên danh mục là bắt buộc.");
+                        throw new ArgumentException("Tên danh mục và Slug (VI) là bắt buộc.");
                     }
-                    if (input.Description.Length > 160)
+                    if (string.IsNullOrWhiteSpace(input.NameEn) || string.IsNullOrWhiteSpace(input.SlugEn))
                     {
-                        input.Description = input.Description.Substring(0, 157) + "...";
+                        throw new ArgumentException("Tên danh mục và Slug (EN) là bắt buộc.");
+                    }
+                    if (input.DescriptionVi.Length > 160)
+                    {
+                        input.DescriptionVi = input.DescriptionVi.Substring(0, 157) + "...";
+                    }
+                    if (input.DescriptionEn.Length > 160)
+                    {
+                        input.DescriptionEn = input.DescriptionEn.Substring(0, 157) + "...";
                     }
 
                     var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value, out var id) ? id : 0;
 
-                    // Cập nhật slug nếu tên thay đổi
-                    var slug = SlugHelper.GenerateSlug(input.Name);
-                    if (slug != productCategory.Slug)
+                    // Kiểm tra trùng slug (trừ chính nó)
+                    var slugViExists = await _dbContext.ProductCategories.AnyAsync(c => c.SlugVi == input.SlugVi && !c.Deleted && c.Id != input.Id);
+                    if (slugViExists)
                     {
-                        var slugExists = await _dbContext.ProductCategories.AnyAsync(c => c.Slug == slug && !c.Deleted && c.Id != input.Id);
-                        if (slugExists)
-                        {
-                            slug = $"{slug}-{DateTime.Now.Ticks}";
-                        }
-                        productCategory.Slug = slug;
+                        throw new ArgumentException("Slug VI đã tồn tại.");
+                    }
+                    var slugEnExists = await _dbContext.ProductCategories.AnyAsync(c => c.SlugEn == input.SlugEn && !c.Deleted && c.Id != input.Id);
+                    if (slugEnExists)
+                    {
+                        throw new ArgumentException("Slug EN đã tồn tại.");
                     }
 
-                    productCategory.Name = input.Name;
-                    productCategory.Description = input.Description;
+                    productCategory.NameVi = input.NameVi;
+                    productCategory.NameEn = input.NameEn;
+                    productCategory.SlugVi = input.SlugVi;
+                    productCategory.SlugEn = input.SlugEn;
+                    productCategory.DescriptionVi = input.DescriptionVi;
+                    productCategory.DescriptionEn = input.DescriptionEn;
                     productCategory.ModifiedBy = userId;
                     productCategory.ModifiedDate = DateTime.UtcNow;
 
@@ -236,9 +275,12 @@ namespace AttechServer.Applications.UserModules.Implements
                     return new ProductCategoryDto
                     {
                         Id = productCategory.Id,
-                        Name = productCategory.Name,
-                        Slug = productCategory.Slug,
-                        Description = productCategory.Description,
+                        NameVi = productCategory.NameVi,
+                        NameEn = productCategory.NameEn,
+                        SlugVi = productCategory.SlugVi,
+                        SlugEn = productCategory.SlugEn,
+                        DescriptionVi = productCategory.DescriptionVi,
+                        DescriptionEn = productCategory.DescriptionEn,
                         Status = productCategory.Status
                     };
                 }

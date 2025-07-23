@@ -12,7 +12,8 @@ namespace AttechServer.Domains.Entities.Main
         Name = $"IX_{nameof(Product)}",
         IsUnique = false
     )]
-    [Index(nameof(Slug), IsUnique = true)]
+    [Index(nameof(SlugVi), IsUnique = true)]
+    [Index(nameof(SlugEn), IsUnique = true)]
     [Index(nameof(ProductCategoryId))]
     public class Product : IFullAudited
     {
@@ -20,16 +21,23 @@ namespace AttechServer.Domains.Entities.Main
         public int Id { get; set; }
 
         [Required, StringLength(200)]
-        public string Slug { get; set; } = string.Empty;
+        public string SlugVi { get; set; } = string.Empty;
+        [Required, StringLength(200)]
+        public string SlugEn { get; set; } = string.Empty;
 
         [Required, StringLength(200)]
-        public string Name { get; set; } = null!;
-
+        public string NameVi { get; set; } = null!;
+        [Required, StringLength(200)]
+        public string NameEn { get; set; } = null!;
         [Required, StringLength(160)]
-        public string Description { get; set; } = null!;
+        public string DescriptionVi { get; set; } = null!;
+        [Required, StringLength(160)]
+        public string DescriptionEn { get; set; } = null!;
 
         [Required]
-        public string Content { get; set; } = string.Empty;
+        public string ContentVi { get; set; } = string.Empty;
+        [Required]
+        public string ContentEn { get; set; } = string.Empty;
 
         public DateTime TimePosted { get; set; }
 
@@ -43,6 +51,7 @@ namespace AttechServer.Domains.Entities.Main
         public int ProductCategoryId { get; set; }
 
         public ProductCategory ProductCategory { get; set; } = null!;
+        public string ImageUrl { get; set; } = string.Empty;
 
         #region audit
         public DateTime? CreatedDate { get; set; }

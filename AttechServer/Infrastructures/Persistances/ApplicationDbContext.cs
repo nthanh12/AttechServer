@@ -33,6 +33,8 @@ namespace AttechServer.Infrastructures.Persistances
         public DbSet<FileUpload> FileUploads { get; set; }
         #endregion
 
+        public DbSet<Menu> Menus { get; set; }
+
         public ApplicationDbContext(
             DbContextOptions<ApplicationDbContext> options,
             IHttpContextAccessor httpContextAccessor,
@@ -222,14 +224,19 @@ namespace AttechServer.Infrastructures.Persistances
             modelBuilder.Entity<Post>(entity =>
             {
                 entity.ToTable("Posts");
-                entity.HasIndex(e => e.Slug).IsUnique();
+                entity.HasIndex(e => e.SlugVi).IsUnique();
+                entity.HasIndex(e => e.SlugEn).IsUnique();
                 entity.HasIndex(e => e.PostCategoryId);
                 entity.HasIndex(e => e.Type); // Thêm index cho Type
                 entity.HasIndex(e => new { e.Id, e.Deleted }).HasDatabaseName("IX_Post");
-                entity.Property(e => e.Title).HasMaxLength(200).IsRequired();
-                entity.Property(e => e.Slug).HasMaxLength(200).IsRequired();
-                entity.Property(e => e.Description).HasMaxLength(160).IsRequired();
-                entity.Property(e => e.Content).IsRequired();
+                entity.Property(e => e.TitleVi).HasMaxLength(200).IsRequired();
+                entity.Property(e => e.TitleEn).HasMaxLength(200).IsRequired();
+                entity.Property(e => e.SlugVi).HasMaxLength(200).IsRequired();
+                entity.Property(e => e.SlugEn).HasMaxLength(200).IsRequired();
+                entity.Property(e => e.DescriptionVi).HasMaxLength(160).IsRequired();
+                entity.Property(e => e.DescriptionEn).HasMaxLength(160).IsRequired();
+                entity.Property(e => e.ContentVi).IsRequired();
+                entity.Property(e => e.ContentEn).IsRequired();
                 entity.Property(e => e.TimePosted).IsRequired();
                 entity.Property(e => e.Type).HasColumnType("int").IsRequired();
                 entity.Property(e => e.Deleted).HasDefaultValue(false);
@@ -241,26 +248,57 @@ namespace AttechServer.Infrastructures.Persistances
 
             modelBuilder.Entity<PostCategory>(entity =>
             {
-                entity.ToTable("PostCategory");
-                entity.HasIndex(e => e.Slug).IsUnique();
-                entity.HasIndex(e => e.Type); // Thêm index cho Type
+                entity.ToTable("PostCategories");
+                entity.HasIndex(e => e.SlugVi).IsUnique();
+                entity.HasIndex(e => e.SlugEn).IsUnique();
+                entity.HasIndex(e => e.Type);
                 entity.HasIndex(e => new { e.Id, e.Deleted }).HasDatabaseName("IX_PostCategory");
-                entity.Property(e => e.Name).HasMaxLength(100).IsRequired();
-                entity.Property(e => e.Slug).HasMaxLength(100).IsRequired();
-                entity.Property(e => e.Description).HasMaxLength(160);
-                entity.Property(e => e.Type).HasColumnType("int").IsRequired();
-                entity.Property(e => e.Deleted).HasDefaultValue(false);
+                entity.Property(e => e.NameVi)
+                      .HasMaxLength(100)
+                      .IsRequired();
+                entity.Property(e => e.NameEn)
+                      .HasMaxLength(100)
+                      .IsRequired();
+                entity.Property(e => e.SlugVi)
+                      .HasMaxLength(100)
+                      .IsRequired();
+                entity.Property(e => e.SlugEn)
+                      .HasMaxLength(100)
+                      .IsRequired();
+                entity.Property(e => e.DescriptionVi)
+                      .HasMaxLength(160);
+                entity.Property(e => e.DescriptionEn)
+                      .HasMaxLength(160);
+                entity.Property(e => e.Type)
+                      .HasColumnType("int")
+                      .IsRequired();
+                entity.Property(e => e.Deleted)
+                      .HasDefaultValue(false);
+                entity.Property(e => e.ParentId)
+                      .IsRequired(false);
+                entity.HasOne(e => e.Parent)
+                      .WithMany(e => e.Children)
+                      .HasForeignKey(e => e.ParentId)
+                      .OnDelete(DeleteBehavior.Restrict);
             });
+
 
             modelBuilder.Entity<Product>(entity =>
             {
                 entity.ToTable("Products");
-                entity.HasIndex(e => e.Slug).IsUnique();
+                entity.HasIndex(e => e.SlugVi).IsUnique();
+                entity.HasIndex(e => e.SlugEn).IsUnique();
                 entity.HasIndex(e => e.ProductCategoryId);
                 entity.HasIndex(e => new { e.Id, e.Deleted }).HasDatabaseName("IX_Product");
-                entity.Property(e => e.Name).HasMaxLength(200).IsRequired();
-                entity.Property(e => e.Slug).HasMaxLength(200).IsRequired();
-                entity.Property(e => e.Description).HasMaxLength(160).IsRequired();
+                entity.Property(e => e.NameVi).HasMaxLength(200).IsRequired();
+                entity.Property(e => e.NameEn).HasMaxLength(200).IsRequired();
+                entity.Property(e => e.SlugVi).HasMaxLength(200).IsRequired();
+                entity.Property(e => e.SlugEn).HasMaxLength(200).IsRequired();
+                entity.Property(e => e.DescriptionVi).HasMaxLength(160).IsRequired();
+                entity.Property(e => e.DescriptionEn).HasMaxLength(160).IsRequired();
+                entity.Property(e => e.ContentVi).IsRequired();
+                entity.Property(e => e.ContentEn).IsRequired();
+                entity.Property(e => e.TimePosted).IsRequired();
                 entity.Property(e => e.Deleted).HasDefaultValue(false);
                 entity.HasOne(p => p.ProductCategory)
                     .WithMany(c => c.Products)
@@ -271,20 +309,31 @@ namespace AttechServer.Infrastructures.Persistances
             modelBuilder.Entity<ProductCategory>(entity =>
             {
                 entity.ToTable("ProductCategories");
-                entity.HasIndex(e => e.Slug).IsUnique();
-                entity.Property(e => e.Name).HasMaxLength(100).IsRequired();
-                entity.Property(e => e.Slug).HasMaxLength(100).IsRequired();
-                entity.Property(e => e.Description).HasMaxLength(160);
+                entity.HasIndex(e => e.SlugVi).IsUnique();
+                entity.HasIndex(e => e.SlugEn).IsUnique();
+                entity.Property(e => e.NameVi).HasMaxLength(100).IsRequired();
+                entity.Property(e => e.NameEn).HasMaxLength(100).IsRequired();
+                entity.Property(e => e.SlugVi).HasMaxLength(100).IsRequired();
+                entity.Property(e => e.SlugEn).HasMaxLength(100).IsRequired();
+                entity.Property(e => e.DescriptionVi).HasMaxLength(160);
+                entity.Property(e => e.DescriptionEn).HasMaxLength(160);
                 entity.Property(e => e.Deleted).HasDefaultValue(false);
             });
 
             modelBuilder.Entity<Service>(entity =>
             {
                 entity.ToTable("Services");
-                entity.HasIndex(e => e.Slug).IsUnique();
-                entity.Property(e => e.Name).HasMaxLength(200).IsRequired();
-                entity.Property(e => e.Slug).HasMaxLength(200).IsRequired();
-                entity.Property(e => e.Description).HasMaxLength(160).IsRequired();
+                entity.HasIndex(e => e.SlugVi).IsUnique();
+                entity.HasIndex(e => e.SlugEn).IsUnique();
+                entity.Property(e => e.NameVi).HasMaxLength(200).IsRequired();
+                entity.Property(e => e.NameEn).HasMaxLength(200).IsRequired();
+                entity.Property(e => e.SlugVi).HasMaxLength(200).IsRequired();
+                entity.Property(e => e.SlugEn).HasMaxLength(200).IsRequired();
+                entity.Property(e => e.DescriptionVi).HasMaxLength(160).IsRequired();
+                entity.Property(e => e.DescriptionEn).HasMaxLength(160).IsRequired();
+                entity.Property(e => e.ContentVi).IsRequired();
+                entity.Property(e => e.ContentEn).IsRequired();
+                entity.Property(e => e.TimePosted).IsRequired();
                 entity.Property(e => e.Deleted).HasDefaultValue(false);
             });
 

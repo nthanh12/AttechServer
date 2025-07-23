@@ -7,7 +7,7 @@ using AttechServer.Domains.Entities.Main;
 
 namespace AttechServer.Controllers
 {
-    [Route("api/notification-category")]
+    [Route("api/notification-categories")]
     [ApiController]
     public class NotificationCategoryController : ApiControllerBase
     {

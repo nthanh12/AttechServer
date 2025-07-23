@@ -152,6 +152,50 @@ namespace AttechServer.Migrations
                     b.ToTable("FileUploads", (string)null);
                 });
 
+            modelBuilder.Entity("AttechServer.Domains.Entities.Main.Menu", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("LabelEn")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("LabelVi")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("OrderPriority")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PathEn")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("PathVi")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentId");
+
+                    b.ToTable("Menu");
+                });
+
             modelBuilder.Entity("AttechServer.Domains.Entities.Main.Post", b =>
                 {
                     b.Property<int>("Id")
@@ -160,7 +204,11 @@ namespace AttechServer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Content")
+                    b.Property<string>("ContentEn")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContentVi")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -175,10 +223,19 @@ namespace AttechServer.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<string>("Description")
+                    b.Property<string>("DescriptionEn")
                         .IsRequired()
                         .HasMaxLength(160)
                         .HasColumnType("nvarchar(160)");
+
+                    b.Property<string>("DescriptionVi")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int");
@@ -189,7 +246,12 @@ namespace AttechServer.Migrations
                     b.Property<int>("PostCategoryId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Slug")
+                    b.Property<string>("SlugEn")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("SlugVi")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
@@ -200,7 +262,12 @@ namespace AttechServer.Migrations
                     b.Property<DateTime>("TimePosted")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Title")
+                    b.Property<string>("TitleEn")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("TitleVi")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
@@ -212,7 +279,10 @@ namespace AttechServer.Migrations
 
                     b.HasIndex("PostCategoryId");
 
-                    b.HasIndex("Slug")
+                    b.HasIndex("SlugEn")
+                        .IsUnique();
+
+                    b.HasIndex("SlugVi")
                         .IsUnique();
 
                     b.HasIndex("Type");
@@ -244,7 +314,12 @@ namespace AttechServer.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<string>("Description")
+                    b.Property<string>("DescriptionEn")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<string>("DescriptionVi")
                         .IsRequired()
                         .HasMaxLength(160)
                         .HasColumnType("nvarchar(160)");
@@ -255,12 +330,25 @@ namespace AttechServer.Migrations
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("NameEn")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Slug")
+                    b.Property<string>("NameVi")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SlugEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("SlugVi")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -273,7 +361,12 @@ namespace AttechServer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Slug")
+                    b.HasIndex("ParentId");
+
+                    b.HasIndex("SlugEn")
+                        .IsUnique();
+
+                    b.HasIndex("SlugVi")
                         .IsUnique();
 
                     b.HasIndex("Type");
@@ -283,7 +376,7 @@ namespace AttechServer.Migrations
 
                     b.HasIndex(new[] { "Id", "Deleted" }, "IX_PostCategory");
 
-                    b.ToTable("PostCategory", (string)null);
+                    b.ToTable("PostCategories", (string)null);
                 });
 
             modelBuilder.Entity("AttechServer.Domains.Entities.Main.Product", b =>
@@ -294,7 +387,11 @@ namespace AttechServer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Content")
+                    b.Property<string>("ContentEn")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContentVi")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -309,10 +406,19 @@ namespace AttechServer.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<string>("Description")
+                    b.Property<string>("DescriptionEn")
                         .IsRequired()
                         .HasMaxLength(160)
                         .HasColumnType("nvarchar(160)");
+
+                    b.Property<string>("DescriptionVi")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int");
@@ -320,7 +426,12 @@ namespace AttechServer.Migrations
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("NameVi")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
@@ -328,7 +439,12 @@ namespace AttechServer.Migrations
                     b.Property<int>("ProductCategoryId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Slug")
+                    b.Property<string>("SlugEn")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("SlugVi")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
@@ -343,7 +459,10 @@ namespace AttechServer.Migrations
 
                     b.HasIndex("ProductCategoryId");
 
-                    b.HasIndex("Slug")
+                    b.HasIndex("SlugEn")
+                        .IsUnique();
+
+                    b.HasIndex("SlugVi")
                         .IsUnique();
 
                     b.HasIndex("Id", "Deleted")
@@ -373,7 +492,12 @@ namespace AttechServer.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<string>("Description")
+                    b.Property<string>("DescriptionEn")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<string>("DescriptionVi")
                         .IsRequired()
                         .HasMaxLength(160)
                         .HasColumnType("nvarchar(160)");
@@ -384,12 +508,22 @@ namespace AttechServer.Migrations
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("NameEn")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Slug")
+                    b.Property<string>("NameVi")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("SlugEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("SlugVi")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -399,7 +533,10 @@ namespace AttechServer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Slug")
+                    b.HasIndex("SlugEn")
+                        .IsUnique();
+
+                    b.HasIndex("SlugVi")
                         .IsUnique();
 
                     b.HasIndex(new[] { "Id", "Deleted" }, "IX_ProductCategory");
@@ -415,7 +552,11 @@ namespace AttechServer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Content")
+                    b.Property<string>("ContentEn")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContentVi")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -430,10 +571,19 @@ namespace AttechServer.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<string>("Description")
+                    b.Property<string>("DescriptionEn")
                         .IsRequired()
                         .HasMaxLength(160)
                         .HasColumnType("nvarchar(160)");
+
+                    b.Property<string>("DescriptionVi")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int");
@@ -441,12 +591,22 @@ namespace AttechServer.Migrations
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("NameEn")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("Slug")
+                    b.Property<string>("NameVi")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("SlugEn")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("SlugVi")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
@@ -459,7 +619,10 @@ namespace AttechServer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Slug")
+                    b.HasIndex("SlugEn")
+                        .IsUnique();
+
+                    b.HasIndex("SlugVi")
                         .IsUnique();
 
                     b.ToTable("Services", (string)null);
@@ -764,6 +927,15 @@ namespace AttechServer.Migrations
                     b.Navigation("Parent");
                 });
 
+            modelBuilder.Entity("AttechServer.Domains.Entities.Main.Menu", b =>
+                {
+                    b.HasOne("AttechServer.Domains.Entities.Main.Menu", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId");
+
+                    b.Navigation("Parent");
+                });
+
             modelBuilder.Entity("AttechServer.Domains.Entities.Main.Post", b =>
                 {
                     b.HasOne("AttechServer.Domains.Entities.Main.PostCategory", "PostCategory")
@@ -773,6 +945,16 @@ namespace AttechServer.Migrations
                         .IsRequired();
 
                     b.Navigation("PostCategory");
+                });
+
+            modelBuilder.Entity("AttechServer.Domains.Entities.Main.PostCategory", b =>
+                {
+                    b.HasOne("AttechServer.Domains.Entities.Main.PostCategory", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Parent");
                 });
 
             modelBuilder.Entity("AttechServer.Domains.Entities.Main.Product", b =>
@@ -873,8 +1055,15 @@ namespace AttechServer.Migrations
                     b.Navigation("PermissionForApiEndpoints");
                 });
 
+            modelBuilder.Entity("AttechServer.Domains.Entities.Main.Menu", b =>
+                {
+                    b.Navigation("Children");
+                });
+
             modelBuilder.Entity("AttechServer.Domains.Entities.Main.PostCategory", b =>
                 {
+                    b.Navigation("Children");
+
                     b.Navigation("Posts");
                 });
 

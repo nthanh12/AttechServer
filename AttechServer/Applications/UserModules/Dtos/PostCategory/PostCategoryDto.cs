@@ -7,13 +7,16 @@ namespace AttechServer.Applications.UserModules.Dtos.PostCategory
         public int Id { get; set; }
 
         [StringLength(100)]
-        public string Name { get; set; } = string.Empty;
+        public string NameVi { get; set; } = string.Empty;
+        public string NameEn { get; set; } = string.Empty;
 
         [StringLength(100)]
-        public string Slug { get; set; } = string.Empty;
+        public string SlugVi { get; set; } = string.Empty;
+        public string SlugEn { get; set; } = string.Empty;
 
         [StringLength(160)]
-        public string Description { get; set; } = string.Empty;
+        public string DescriptionVi { get; set; } = string.Empty;
+        public string DescriptionEn { get; set; } = string.Empty;
 
         public int Status { get; set; }
     }

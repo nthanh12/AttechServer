@@ -7,13 +7,16 @@ namespace AttechServer.Applications.UserModules.Dtos.Post
         public int Id { get; set; }
 
         [StringLength(200)]
-        public string Title { get; set; } = string.Empty;
+        public string TitleVi { get; set; } = string.Empty;
+        public string TitleEn { get; set; } = string.Empty;
 
         [StringLength(200)]
-        public string Slug { get; set; } = string.Empty;
+        public string SlugVi { get; set; } = string.Empty;
+        public string SlugEn { get; set; } = string.Empty;
 
         [StringLength(160)]
-        public string Description { get; set; } = string.Empty;
+        public string DescriptionVi { get; set; } = string.Empty;
+        public string DescriptionEn { get; set; } = string.Empty;
 
         public DateTime TimePosted { get; set; }
 
@@ -27,5 +30,7 @@ namespace AttechServer.Applications.UserModules.Dtos.Post
 
         [StringLength(100)]
         public string PostCategorySlug { get; set; } = string.Empty;
+        public bool isOutstanding { get; set;  } = false;
+        public string ImageUrl { get; set; } = string.Empty;
     }
 }

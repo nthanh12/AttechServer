@@ -42,30 +42,45 @@ namespace AttechServer.Applications.UserModules.Implements
                 try
                 {
                     // Validate input
-                    if (string.IsNullOrWhiteSpace(input.Name))
+                    if (string.IsNullOrWhiteSpace(input.NameVi) || string.IsNullOrWhiteSpace(input.SlugVi))
                     {
-                        throw new ArgumentException("Tên danh mục là bắt buộc.");
+                        throw new ArgumentException("Tên danh mục và Slug (VI) là bắt buộc.");
                     }
-                    if (input.Description.Length > 160)
+                    if (string.IsNullOrWhiteSpace(input.NameEn) || string.IsNullOrWhiteSpace(input.SlugEn))
                     {
-                        input.Description = input.Description.Substring(0, 157) + "...";
+                        throw new ArgumentException("Tên danh mục và Slug (EN) là bắt buộc.");
+                    }
+                    if (input.DescriptionVi.Length > 160)
+                    {
+                        input.DescriptionVi = input.DescriptionVi.Substring(0, 157) + "...";
+                    }
+                    if (input.DescriptionEn.Length > 160)
+                    {
+                        input.DescriptionEn = input.DescriptionEn.Substring(0, 157) + "...";
                     }
 
                     var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value, out var id) ? id : 0;
 
-                    // Tạo slug tự động
-                    var slug = SlugHelper.GenerateSlug(input.Name);
-                    var slugExists = await _dbContext.PostCategories.AnyAsync(c => c.Slug == slug && !c.Deleted && c.Type == type);
-                    if (slugExists)
+                    // Kiểm tra trùng slug
+                    var slugViExists = await _dbContext.PostCategories.AnyAsync(c => c.SlugVi == input.SlugVi && !c.Deleted && c.Type == type);
+                    if (slugViExists)
                     {
-                        slug = $"{slug}-{DateTime.Now.Ticks}";
+                        throw new ArgumentException("Slug VI đã tồn tại.");
+                    }
+                    var slugEnExists = await _dbContext.PostCategories.AnyAsync(c => c.SlugEn == input.SlugEn && !c.Deleted && c.Type == type);
+                    if (slugEnExists)
+                    {
+                        throw new ArgumentException("Slug EN đã tồn tại.");
                     }
 
                     var newPostCategory = new PostCategory
                     {
-                        Name = input.Name,
-                        Slug = slug,
-                        Description = input.Description,
+                        NameVi = input.NameVi,
+                        NameEn = input.NameEn,
+                        SlugVi = input.SlugVi,
+                        SlugEn = input.SlugEn,
+                        DescriptionVi = input.DescriptionVi,
+                        DescriptionEn = input.DescriptionEn,
                         Status = input.Status,
                         Type = type,
                         CreatedDate = DateTime.UtcNow,
@@ -81,9 +96,12 @@ namespace AttechServer.Applications.UserModules.Implements
                     return new PostCategoryDto
                     {
                         Id = newPostCategory.Id,
-                        Name = newPostCategory.Name,
-                        Slug = newPostCategory.Slug,
-                        Description = newPostCategory.Description,
+                        NameVi = newPostCategory.NameVi,
+                        NameEn = newPostCategory.NameEn,
+                        SlugVi = newPostCategory.SlugVi,
+                        SlugEn = newPostCategory.SlugEn,
+                        DescriptionVi = newPostCategory.DescriptionVi,
+                        DescriptionEn = newPostCategory.DescriptionEn,
                         Status = newPostCategory.Status
                     };
                 }
@@ -137,20 +155,23 @@ namespace AttechServer.Applications.UserModules.Implements
             ValidatePostType(type);
             var baseQuery = _dbContext.PostCategories.AsNoTracking()
                 .Where(pc => !pc.Deleted && pc.Type == type
-                    && (string.IsNullOrEmpty(input.Keyword) || pc.Name.Contains(input.Keyword)));
+                    && (string.IsNullOrEmpty(input.Keyword) || pc.NameVi.Contains(input.Keyword) || pc.NameEn.Contains(input.Keyword)));
 
             var totalItems = await baseQuery.CountAsync();
 
             var pagedItems = await baseQuery
-                .OrderBy(pc => pc.Name)
+                .OrderBy(pc => pc.NameVi)
                 .Skip(input.GetSkip())
                 .Take(input.PageSize)
                 .Select(pc => new PostCategoryDto
                 {
                     Id = pc.Id,
-                    Name = pc.Name,
-                    Slug = pc.Slug,
-                    Description = pc.Description,
+                    NameVi = pc.NameVi,
+                    NameEn = pc.NameEn,
+                    SlugVi = pc.SlugVi,
+                    SlugEn = pc.SlugEn,
+                    DescriptionVi = pc.DescriptionVi,
+                    DescriptionEn = pc.DescriptionEn,
                     Status = pc.Status
                 })
                 .ToListAsync();
@@ -171,23 +192,30 @@ namespace AttechServer.Applications.UserModules.Implements
                 .Select(pc => new DetailPostCategoryDto
                 {
                     Id = pc.Id,
-                    Name = pc.Name,
-                    Slug = pc.Slug,
-                    Description = pc.Description,
+                    NameVi = pc.NameVi,
+                    NameEn = pc.NameEn,
+                    SlugVi = pc.SlugVi,
+                    SlugEn = pc.SlugEn,
+                    DescriptionVi = pc.DescriptionVi,
+                    DescriptionEn = pc.DescriptionEn,
                     Status = pc.Status,
                     Posts = pc.Posts
                         .Where(p => !p.Deleted && p.Status == CommonStatus.ACTIVE && p.Type == type)
                         .Select(p => new PostDto
                         {
                             Id = p.Id,
-                            Title = p.Title,
-                            Slug = p.Slug,
-                            Description = p.Description,
+                            TitleVi = p.TitleVi,
+                            TitleEn = p.TitleEn,
+                            SlugVi = p.SlugVi,
+                            SlugEn = p.SlugEn,
+                            DescriptionVi = p.DescriptionVi,
+                            DescriptionEn = p.DescriptionEn,
                             TimePosted = p.TimePosted,
                             Status = p.Status,
                             PostCategoryId = p.PostCategoryId,
-                            PostCategoryName = pc.Name,
-                            PostCategorySlug = pc.Slug
+                            PostCategoryName = pc.NameVi,
+                            PostCategorySlug = pc.SlugVi,
+                            ImageUrl = p.ImageUrl
                         })
                         .ToList()
                 })
@@ -211,31 +239,43 @@ namespace AttechServer.Applications.UserModules.Implements
                 try
                 {
                     // Validate input
-                    if (string.IsNullOrWhiteSpace(input.Name))
+                    if (string.IsNullOrWhiteSpace(input.NameVi) || string.IsNullOrWhiteSpace(input.SlugVi))
                     {
-                        throw new ArgumentException("Tên danh mục là bắt buộc.");
+                        throw new ArgumentException("Tên danh mục và Slug (VI) là bắt buộc.");
                     }
-                    if (input.Description.Length > 160)
+                    if (string.IsNullOrWhiteSpace(input.NameEn) || string.IsNullOrWhiteSpace(input.SlugEn))
                     {
-                        input.Description = input.Description.Substring(0, 157) + "...";
+                        throw new ArgumentException("Tên danh mục và Slug (EN) là bắt buộc.");
+                    }
+                    if (input.DescriptionVi.Length > 160)
+                    {
+                        input.DescriptionVi = input.DescriptionVi.Substring(0, 157) + "...";
+                    }
+                    if (input.DescriptionEn.Length > 160)
+                    {
+                        input.DescriptionEn = input.DescriptionEn.Substring(0, 157) + "...";
                     }
 
                     var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value, out var id) ? id : 0;
 
-                    // Cập nhật slug nếu tên thay đổi
-                    var slug = SlugHelper.GenerateSlug(input.Name);
-                    if (slug != postCategory.Slug)
+                    // Kiểm tra trùng slug (trừ chính nó)
+                    var slugViExists = await _dbContext.PostCategories.AnyAsync(c => c.SlugVi == input.SlugVi && !c.Deleted && c.Id != input.Id && c.Type == type);
+                    if (slugViExists)
                     {
-                        var slugExists = await _dbContext.PostCategories.AnyAsync(c => c.Slug == slug && !c.Deleted && c.Id != input.Id && c.Type == type);
-                        if (slugExists)
-                        {
-                            slug = $"{slug}-{DateTime.Now.Ticks}";
-                        }
-                        postCategory.Slug = slug;
+                        throw new ArgumentException("Slug VI đã tồn tại.");
+                    }
+                    var slugEnExists = await _dbContext.PostCategories.AnyAsync(c => c.SlugEn == input.SlugEn && !c.Deleted && c.Id != input.Id && c.Type == type);
+                    if (slugEnExists)
+                    {
+                        throw new ArgumentException("Slug EN đã tồn tại.");
                     }
 
-                    postCategory.Name = input.Name;
-                    postCategory.Description = input.Description;
+                    postCategory.NameVi = input.NameVi;
+                    postCategory.NameEn = input.NameEn;
+                    postCategory.SlugVi = input.SlugVi;
+                    postCategory.SlugEn = input.SlugEn;
+                    postCategory.DescriptionVi = input.DescriptionVi;
+                    postCategory.DescriptionEn = input.DescriptionEn;
                     postCategory.Status = input.Status;
                     postCategory.ModifiedBy = userId;
                     postCategory.ModifiedDate = DateTime.UtcNow;
@@ -246,9 +286,12 @@ namespace AttechServer.Applications.UserModules.Implements
                     return new PostCategoryDto
                     {
                         Id = postCategory.Id,
-                        Name = postCategory.Name,
-                        Slug = postCategory.Slug,
-                        Description = postCategory.Description,
+                        NameVi = postCategory.NameVi,
+                        NameEn = postCategory.NameEn,
+                        SlugVi = postCategory.SlugVi,
+                        SlugEn = postCategory.SlugEn,
+                        DescriptionVi = postCategory.DescriptionVi,
+                        DescriptionEn = postCategory.DescriptionEn,
                         Status = postCategory.Status
                     };
                 }

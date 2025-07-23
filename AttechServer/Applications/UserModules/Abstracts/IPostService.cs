@@ -24,12 +24,25 @@ namespace AttechServer.Applications.UserModules.Abstracts
         Task<PagingResult<PostDto>> FindAllByCategoryId(PagingRequestBaseDto input, int categoryId, PostType type);
 
         /// <summary>
+        /// Lấy danh sách bài viết theo slug danh mục, bao gồm cả category chính và sub-categories
+        /// </summary>
+        Task<PagingResult<PostDto>> FindAllByCategorySlug(PagingRequestBaseDto input, string slug, PostType type);
+
+        /// <summary>
         /// Lấy thông tin chi tiết bài viết theo Id
         /// </summary>
         /// <param name="id"></param>
         /// <param name="type"></param>
         /// <returns></returns>
         Task<DetailPostDto> FindById(int id, PostType type);
+
+        /// <summary>
+        /// Lấy thông tin chi tiết bài viết theo slug (song ngữ)
+        /// </summary>
+        /// <param name="slug"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        Task<DetailPostDto> FindBySlug(string slug, PostType type);
 
         /// <summary>
         /// Thêm mới bài viết

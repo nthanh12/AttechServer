@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using AttechServer.Domains.Entities.Main; // Thêm dòng này
 
 namespace AttechServer.Domains.Entities.Main
 {
@@ -13,7 +12,8 @@ namespace AttechServer.Domains.Entities.Main
         Name = $"IX_{nameof(Post)}",
         IsUnique = false
     )]
-    [Index(nameof(Slug), IsUnique = true)]
+    [Index(nameof(SlugVi), IsUnique = true)]
+    [Index(nameof(SlugEn), IsUnique = true)]
     [Index(nameof(PostCategoryId))]
     public class Post : IFullAudited
     {
@@ -21,16 +21,25 @@ namespace AttechServer.Domains.Entities.Main
         public int Id { get; set; }
 
         [Required, StringLength(200)]
-        public string Slug { get; set; } = string.Empty;
+        public string SlugVi { get; set; } = string.Empty;
+        [Required, StringLength(200)]
+        public string SlugEn { get; set; } = string.Empty;
 
         [Required, StringLength(200)]
-        public string Title { get; set; } = null!;
+        public string TitleVi { get; set; } = null!;
+        [Required, StringLength(200)]
+        public string TitleEn { get; set; } = null!;
 
         [Required, StringLength(160)]
-        public string Description { get; set; } = null!;
+        public string DescriptionVi { get; set; } = null!;
+
+        [Required, StringLength(160)]
+        public string DescriptionEn { get; set; } = null!;
 
         [Required]
-        public string Content { get; set; } = string.Empty;
+        public string ContentVi { get; set; } = string.Empty;
+        [Required]
+        public string ContentEn { get; set; } = string.Empty;
 
         public DateTime TimePosted { get; set; }
 
@@ -46,6 +55,8 @@ namespace AttechServer.Domains.Entities.Main
         public int PostCategoryId { get; set; }
 
         public PostCategory PostCategory { get; set; } = null!;
+        public bool isOutstanding { get; set; } = false;
+        public string ImageUrl { get; set; } = string.Empty;
 
         #region audit
         public DateTime? CreatedDate { get; set; }

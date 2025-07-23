@@ -12,20 +12,27 @@ namespace AttechServer.Domains.Entities.Main
         Name = $"IX_{nameof(ProductCategory)}",
         IsUnique = false
     )]
-    [Index(nameof(Slug), IsUnique = true)]
+    [Index(nameof(SlugVi), IsUnique = true)]
+    [Index(nameof(SlugEn), IsUnique = true)]
     public class ProductCategory : IFullAudited
     {
         [Key]
         public int Id { get; set; }
 
         [Required, StringLength(100)]
-        public string Name { get; set; } = string.Empty;
+        public string NameVi { get; set; } = string.Empty;
+        [Required, StringLength(100)]
+        public string NameEn { get; set; } = string.Empty;
 
         [Required, StringLength(100)]
-        public string Slug { get; set; } = string.Empty;
+        public string SlugVi { get; set; } = string.Empty;
+        [Required, StringLength(100)]
+        public string SlugEn { get; set; } = string.Empty;
 
         [StringLength(160)]
-        public string Description { get; set; } = string.Empty;
+        public string DescriptionVi { get; set; } = string.Empty;
+        [StringLength(160)]
+        public string DescriptionEn { get; set; } = string.Empty;
 
         public int Status { get; set; }
 

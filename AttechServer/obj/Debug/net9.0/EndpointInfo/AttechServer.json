@@ -441,6 +441,581 @@
         }
       }
     },
+    "/api/media/find-all": {
+      "get": {
+        "tags": [
+          "Media"
+        ],
+        "summary": "Danh sách file",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Number of items per page. Use -1 to get all items",
+            "schema": {
+              "maximum": 100,
+              "minimum": -1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "description": "Page number (1-based)",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "Search keyword",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Sort",
+            "in": "query",
+            "description": "Sort parameters",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/media/find-by-entity/{entityType}/{entityId}": {
+      "get": {
+        "tags": [
+          "Media"
+        ],
+        "summary": "Danh sách file theo entity",
+        "parameters": [
+          {
+            "name": "entityType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/EntityType"
+            }
+          },
+          {
+            "name": "entityId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Number of items per page. Use -1 to get all items",
+            "schema": {
+              "maximum": 100,
+              "minimum": -1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "description": "Page number (1-based)",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "Search keyword",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Sort",
+            "in": "query",
+            "description": "Sort parameters",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/media/delete/{id}": {
+      "delete": {
+        "tags": [
+          "Media"
+        ],
+        "summary": "Xóa file",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/media/delete-by-entity/{entityType}/{entityId}": {
+      "delete": {
+        "tags": [
+          "Media"
+        ],
+        "summary": "Xóa file theo entity",
+        "parameters": [
+          {
+            "name": "entityType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/EntityType"
+            }
+          },
+          {
+            "name": "entityId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/menu/find-all": {
+      "get": {
+        "tags": [
+          "Menu"
+        ],
+        "parameters": [
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/menu/tree": {
+      "get": {
+        "tags": [
+          "Menu"
+        ],
+        "parameters": [
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/menu/find-by-id/{id}": {
+      "get": {
+        "tags": [
+          "Menu"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/menu/create": {
+      "post": {
+        "tags": [
+          "Menu"
+        ],
+        "parameters": [
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMenuDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMenuDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMenuDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/menu/update": {
+      "put": {
+        "tags": [
+          "Menu"
+        ],
+        "parameters": [
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMenuDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMenuDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMenuDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/menu/delete/{id}": {
+      "delete": {
+        "tags": [
+          "Menu"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/news/find-all": {
       "get": {
         "tags": [
@@ -522,12 +1097,12 @@
         }
       }
     },
-    "/api/news/category/{categoryId}": {
+    "/api/news/category/{slug}": {
       "get": {
         "tags": [
           "News"
         ],
-        "summary": "Danh sách theo danh mục tin tức",
+        "summary": "Danh sách theo slug danh mục tin tức, bao gồm cả sub-categories",
         "parameters": [
           {
             "name": "pageSize",
@@ -571,13 +1146,11 @@
             }
           },
           {
-            "name": "categoryId",
+            "name": "slug",
             "in": "path",
-            "description": "",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int32"
+              "type": "string"
             }
           },
           {
@@ -623,11 +1196,58 @@
           {
             "name": "id",
             "in": "path",
-            "description": "",
             "required": true,
             "schema": {
               "type": "integer",
               "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/news/detail/{slug}": {
+      "get": {
+        "tags": [
+          "News"
+        ],
+        "summary": "Lấy chi tiết tin tức theo slug",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -680,7 +1300,6 @@
           }
         ],
         "requestBody": {
-          "description": "",
           "content": {
             "application/json": {
               "schema": {
@@ -740,7 +1359,6 @@
           }
         ],
         "requestBody": {
-          "description": "",
           "content": {
             "application/json": {
               "schema": {
@@ -793,7 +1411,6 @@
           {
             "name": "id",
             "in": "path",
-            "description": "",
             "required": true,
             "schema": {
               "type": "integer",
@@ -850,7 +1467,6 @@
           }
         ],
         "requestBody": {
-          "description": "",
           "content": {
             "application/json": {
               "schema": {
@@ -893,7 +1509,7 @@
         }
       }
     },
-    "/api/news-category/find-all": {
+    "/api/news-categories/find-all": {
       "get": {
         "tags": [
           "NewsCategory"
@@ -974,7 +1590,7 @@
         }
       }
     },
-    "/api/news-category/find-by-id/{id}": {
+    "/api/news-categories/find-by-id/{id}": {
       "get": {
         "tags": [
           "NewsCategory"
@@ -1024,12 +1640,11 @@
         }
       }
     },
-    "/api/news-category/create": {
+    "/api/news-categories/create": {
       "post": {
         "tags": [
           "NewsCategory"
         ],
-        "summary": "Thêm mới danh mục tin tức",
         "parameters": [
           {
             "name": "permission",
@@ -1041,7 +1656,6 @@
           }
         ],
         "requestBody": {
-          "description": "",
           "content": {
             "application/json": {
               "schema": {
@@ -1084,12 +1698,11 @@
         }
       }
     },
-    "/api/news-category/update": {
+    "/api/news-categories/update": {
       "put": {
         "tags": [
           "NewsCategory"
         ],
-        "summary": "Cập nhật danh mục tin tức",
         "parameters": [
           {
             "name": "permission",
@@ -1101,7 +1714,6 @@
           }
         ],
         "requestBody": {
-          "description": "",
           "content": {
             "application/json": {
               "schema": {
@@ -1144,17 +1756,15 @@
         }
       }
     },
-    "/api/news-category/delete/{id}": {
+    "/api/news-categories/delete/{id}": {
       "delete": {
         "tags": [
           "NewsCategory"
         ],
-        "summary": "Xóa danh mục tin tức",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "",
             "required": true,
             "schema": {
               "type": "integer",
@@ -1194,12 +1804,11 @@
         }
       }
     },
-    "/api/news-category/update-status": {
+    "/api/news-categories/update-status": {
       "put": {
         "tags": [
           "NewsCategory"
         ],
-        "summary": "Khóa/Mở khóa danh mục tin tức",
         "parameters": [
           {
             "name": "permission",
@@ -1211,7 +1820,6 @@
           }
         ],
         "requestBody": {
-          "description": "",
           "content": {
             "application/json": {
               "schema": {
@@ -1335,12 +1943,12 @@
         }
       }
     },
-    "/api/notification/category/{categoryId}": {
+    "/api/notification/category/{slug}": {
       "get": {
         "tags": [
           "Notification"
         ],
-        "summary": "Danh sách theo danh mục thông báo",
+        "summary": "Danh sách theo slug danh mục thông báo",
         "parameters": [
           {
             "name": "pageSize",
@@ -1384,12 +1992,11 @@
             }
           },
           {
-            "name": "categoryId",
+            "name": "slug",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int32"
+              "type": "string"
             }
           },
           {
@@ -1439,6 +2046,54 @@
             "schema": {
               "type": "integer",
               "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/notification/detail/{slug}": {
+      "get": {
+        "tags": [
+          "Notification"
+        ],
+        "summary": "Lấy chi tiết thông báo theo slug",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -1700,7 +2355,7 @@
         }
       }
     },
-    "/api/notification-category/find-all": {
+    "/api/notification-categories/find-all": {
       "get": {
         "tags": [
           "NotificationCategory"
@@ -1781,7 +2436,7 @@
         }
       }
     },
-    "/api/notification-category/find-by-id/{id}": {
+    "/api/notification-categories/find-by-id/{id}": {
       "get": {
         "tags": [
           "NotificationCategory"
@@ -1831,7 +2486,7 @@
         }
       }
     },
-    "/api/notification-category/create": {
+    "/api/notification-categories/create": {
       "post": {
         "tags": [
           "NotificationCategory"
@@ -1891,7 +2546,7 @@
         }
       }
     },
-    "/api/notification-category/update": {
+    "/api/notification-categories/update": {
       "put": {
         "tags": [
           "NotificationCategory"
@@ -1951,7 +2606,7 @@
         }
       }
     },
-    "/api/notification-category/delete/{id}": {
+    "/api/notification-categories/delete/{id}": {
       "delete": {
         "tags": [
           "NotificationCategory"
@@ -2001,7 +2656,7 @@
         }
       }
     },
-    "/api/notification-category/update-status": {
+    "/api/notification-categories/update-status": {
       "put": {
         "tags": [
           "NotificationCategory"
@@ -2795,12 +3450,12 @@
         }
       }
     },
-    "/api/product/find-by-categoryId": {
+    "/api/product/category/{slug}": {
       "get": {
         "tags": [
           "Product"
         ],
-        "summary": "Danh sách sản phẩm theo danh mục",
+        "summary": "Danh sách sản phẩm theo slug danh mục sản phẩm\r\n///",
         "parameters": [
           {
             "name": "pageSize",
@@ -2844,12 +3499,11 @@
             }
           },
           {
-            "name": "categoryId",
-            "in": "query",
-            "description": "",
+            "name": "slug",
+            "in": "path",
+            "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int32"
+              "type": "string"
             }
           },
           {
@@ -2900,6 +3554,54 @@
             "schema": {
               "type": "integer",
               "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/product/detail/{slug}": {
+      "get": {
+        "tags": [
+          "Product"
+        ],
+        "summary": "Lấy chi tiết sản phẩm theo slug",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -3163,7 +3865,7 @@
         }
       }
     },
-    "/api/product-category/find-all": {
+    "/api/product-categories/find-all": {
       "get": {
         "tags": [
           "ProductCategory"
@@ -3244,7 +3946,7 @@
         }
       }
     },
-    "/api/product-category/find-by-id/{id}": {
+    "/api/product-categories/find-by-id/{id}": {
       "get": {
         "tags": [
           "ProductCategory"
@@ -3294,7 +3996,7 @@
         }
       }
     },
-    "/api/product-category/create": {
+    "/api/product-categories/create": {
       "post": {
         "tags": [
           "ProductCategory"
@@ -3354,7 +4056,7 @@
         }
       }
     },
-    "/api/product-category/update": {
+    "/api/product-categories/update": {
       "put": {
         "tags": [
           "ProductCategory"
@@ -3414,7 +4116,7 @@
         }
       }
     },
-    "/api/product-category/delete/{id}": {
+    "/api/product-categories/delete/{id}": {
       "delete": {
         "tags": [
           "ProductCategory"
@@ -3464,7 +4166,7 @@
         }
       }
     },
-    "/api/product-category/update-status": {
+    "/api/product-categories/update-status": {
       "put": {
         "tags": [
           "ProductCategory"
@@ -4013,6 +4715,54 @@
         }
       }
     },
+    "/api/service/detail/{slug}": {
+      "get": {
+        "tags": [
+          "Service"
+        ],
+        "summary": "Lấy chi tiết dịch vụ theo slug",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/service/create": {
       "post": {
         "tags": [
@@ -4248,6 +4998,21 @@
         ],
         "parameters": [
           {
+            "name": "entityType",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/EntityType"
+            }
+          },
+          {
+            "name": "entityId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
             "name": "permission",
             "in": "query",
             "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
@@ -4293,6 +5058,21 @@
         ],
         "parameters": [
           {
+            "name": "entityType",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/EntityType"
+            }
+          },
+          {
+            "name": "entityId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
             "name": "permission",
             "in": "query",
             "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
@@ -4335,6 +5115,21 @@
         ],
         "parameters": [
           {
+            "name": "entityType",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/EntityType"
+            }
+          },
+          {
+            "name": "entityId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
             "name": "permission",
             "in": "query",
             "description": "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
@@ -4376,6 +5171,21 @@
           "Upload"
         ],
         "parameters": [
+          {
+            "name": "entityType",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/EntityType"
+            }
+          },
+          {
+            "name": "entityId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
           {
             "name": "permission",
             "in": "query",
@@ -5051,6 +5861,37 @@
         },
         "additionalProperties": false
       },
+      "CreateMenuDto": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "nullable": true
+          },
+          "labelVi": {
+            "type": "string",
+            "nullable": true
+          },
+          "labelEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "pathVi": {
+            "type": "string",
+            "nullable": true
+          },
+          "pathEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "parentId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CreatePermissionApiDto": {
         "type": "object",
         "properties": {
@@ -5076,18 +5917,34 @@
       },
       "CreatePostCategoryDto": {
         "required": [
-          "name"
+          "nameVi"
         ],
         "type": "object",
         "properties": {
-          "name": {
+          "nameVi": {
             "maxLength": 100,
             "minLength": 0,
             "type": "string"
           },
-          "description": {
+          "nameEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "slugVi": {
+            "type": "string",
+            "nullable": true
+          },
+          "slugEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "descriptionVi": {
             "maxLength": 160,
             "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "descriptionEn": {
             "type": "string",
             "nullable": true
           },
@@ -5100,26 +5957,38 @@
       },
       "CreatePostDto": {
         "required": [
-          "content",
-          "description",
+          "contentVi",
+          "descriptionVi",
           "timePosted",
-          "title"
+          "titleVi"
         ],
         "type": "object",
         "properties": {
-          "title": {
+          "titleVi": {
             "maxLength": 200,
             "minLength": 0,
             "type": "string"
           },
-          "description": {
+          "titleEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "descriptionVi": {
             "maxLength": 160,
             "minLength": 0,
             "type": "string"
           },
-          "content": {
+          "descriptionEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "contentVi": {
             "minLength": 1,
             "type": "string"
+          },
+          "contentEn": {
+            "type": "string",
+            "nullable": true
           },
           "postCategoryId": {
             "maximum": 2147483647,
@@ -5130,24 +5999,48 @@
           "timePosted": {
             "type": "string",
             "format": "date-time"
+          },
+          "isOutstanding": {
+            "type": "boolean",
+            "default": false
+          },
+          "imageUrl": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
       },
       "CreateProductCategoryDto": {
         "required": [
-          "name"
+          "nameVi"
         ],
         "type": "object",
         "properties": {
-          "name": {
+          "nameVi": {
             "maxLength": 100,
             "minLength": 0,
             "type": "string"
           },
-          "description": {
+          "nameEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "slugVi": {
+            "type": "string",
+            "nullable": true
+          },
+          "slugEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "descriptionVi": {
             "maxLength": 160,
             "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "descriptionEn": {
             "type": "string",
             "nullable": true
           },
@@ -5160,26 +6053,46 @@
       },
       "CreateProductDto": {
         "required": [
-          "content",
-          "description",
-          "name",
+          "contentVi",
+          "descriptionVi",
+          "nameVi",
           "timePosted"
         ],
         "type": "object",
         "properties": {
-          "name": {
+          "nameVi": {
             "maxLength": 200,
             "minLength": 0,
             "type": "string"
           },
-          "description": {
+          "nameEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "slugVi": {
+            "type": "string",
+            "nullable": true
+          },
+          "slugEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "descriptionVi": {
             "maxLength": 160,
             "minLength": 0,
             "type": "string"
           },
-          "content": {
+          "descriptionEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "contentVi": {
             "minLength": 1,
             "type": "string"
+          },
+          "contentEn": {
+            "type": "string",
+            "nullable": true
           },
           "productCategoryId": {
             "maximum": 2147483647,
@@ -5190,6 +6103,10 @@
           "timePosted": {
             "type": "string",
             "format": "date-time"
+          },
+          "imageUrl": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -5215,30 +6132,54 @@
       },
       "CreateServiceDto": {
         "required": [
-          "content",
-          "description",
-          "name",
+          "contentVi",
+          "descriptionVi",
+          "nameVi",
           "timePosted"
         ],
         "type": "object",
         "properties": {
-          "name": {
+          "nameVi": {
             "maxLength": 200,
             "minLength": 0,
             "type": "string"
           },
-          "description": {
+          "nameEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "slugVi": {
+            "type": "string",
+            "nullable": true
+          },
+          "slugEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "descriptionVi": {
             "maxLength": 160,
             "minLength": 0,
             "type": "string"
           },
-          "content": {
+          "descriptionEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "contentVi": {
             "minLength": 1,
             "type": "string"
+          },
+          "contentEn": {
+            "type": "string",
+            "nullable": true
           },
           "timePosted": {
             "type": "string",
             "format": "date-time"
+          },
+          "imageUrl": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -5264,6 +6205,17 @@
           }
         },
         "additionalProperties": false
+      },
+      "EntityType": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "type": "integer",
+        "format": "int32"
       },
       "StatusCode": {
         "enum": [
@@ -5357,6 +6309,41 @@
         },
         "additionalProperties": false
       },
+      "UpdateMenuDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "key": {
+            "type": "string",
+            "nullable": true
+          },
+          "labelVi": {
+            "type": "string",
+            "nullable": true
+          },
+          "labelEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "pathVi": {
+            "type": "string",
+            "nullable": true
+          },
+          "pathEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "parentId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "UpdatePermissionConfigDto": {
         "type": "object",
         "properties": {
@@ -5394,18 +6381,34 @@
       },
       "UpdatePostCategoryDto": {
         "required": [
-          "name"
+          "nameVi"
         ],
         "type": "object",
         "properties": {
-          "name": {
+          "nameVi": {
             "maxLength": 100,
             "minLength": 0,
             "type": "string"
           },
-          "description": {
+          "nameEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "slugVi": {
+            "type": "string",
+            "nullable": true
+          },
+          "slugEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "descriptionVi": {
             "maxLength": 160,
             "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "descriptionEn": {
             "type": "string",
             "nullable": true
           },
@@ -5436,26 +6439,38 @@
       },
       "UpdatePostDto": {
         "required": [
-          "content",
-          "description",
+          "contentVi",
+          "descriptionVi",
           "timePosted",
-          "title"
+          "titleVi"
         ],
         "type": "object",
         "properties": {
-          "title": {
+          "titleVi": {
             "maxLength": 200,
             "minLength": 0,
             "type": "string"
           },
-          "description": {
+          "titleEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "descriptionVi": {
             "maxLength": 160,
             "minLength": 0,
             "type": "string"
           },
-          "content": {
+          "descriptionEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "contentVi": {
             "minLength": 1,
             "type": "string"
+          },
+          "contentEn": {
+            "type": "string",
+            "nullable": true
           },
           "postCategoryId": {
             "maximum": 2147483647,
@@ -5466,6 +6481,14 @@
           "timePosted": {
             "type": "string",
             "format": "date-time"
+          },
+          "isOutstanding": {
+            "type": "boolean",
+            "default": false
+          },
+          "imageUrl": {
+            "type": "string",
+            "nullable": true
           },
           "id": {
             "type": "integer",
@@ -5490,18 +6513,34 @@
       },
       "UpdateProductCategoryDto": {
         "required": [
-          "name"
+          "nameVi"
         ],
         "type": "object",
         "properties": {
-          "name": {
+          "nameVi": {
             "maxLength": 100,
             "minLength": 0,
             "type": "string"
           },
-          "description": {
+          "nameEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "slugVi": {
+            "type": "string",
+            "nullable": true
+          },
+          "slugEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "descriptionVi": {
             "maxLength": 160,
             "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "descriptionEn": {
             "type": "string",
             "nullable": true
           },
@@ -5532,26 +6571,46 @@
       },
       "UpdateProductDto": {
         "required": [
-          "content",
-          "description",
-          "name",
+          "contentVi",
+          "descriptionVi",
+          "nameVi",
           "timePosted"
         ],
         "type": "object",
         "properties": {
-          "name": {
+          "nameVi": {
             "maxLength": 200,
             "minLength": 0,
             "type": "string"
           },
-          "description": {
+          "nameEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "slugVi": {
+            "type": "string",
+            "nullable": true
+          },
+          "slugEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "descriptionVi": {
             "maxLength": 160,
             "minLength": 0,
             "type": "string"
           },
-          "content": {
+          "descriptionEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "contentVi": {
             "minLength": 1,
             "type": "string"
+          },
+          "contentEn": {
+            "type": "string",
+            "nullable": true
           },
           "productCategoryId": {
             "maximum": 2147483647,
@@ -5562,6 +6621,10 @@
           "timePosted": {
             "type": "string",
             "format": "date-time"
+          },
+          "imageUrl": {
+            "type": "string",
+            "nullable": true
           },
           "id": {
             "type": "integer",
@@ -5595,30 +6658,54 @@
       },
       "UpdateServiceDto": {
         "required": [
-          "content",
-          "description",
-          "name",
+          "contentVi",
+          "descriptionVi",
+          "nameVi",
           "timePosted"
         ],
         "type": "object",
         "properties": {
-          "name": {
+          "nameVi": {
             "maxLength": 200,
             "minLength": 0,
             "type": "string"
           },
-          "description": {
+          "nameEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "slugVi": {
+            "type": "string",
+            "nullable": true
+          },
+          "slugEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "descriptionVi": {
             "maxLength": 160,
             "minLength": 0,
             "type": "string"
           },
-          "content": {
+          "descriptionEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "contentVi": {
             "minLength": 1,
             "type": "string"
+          },
+          "contentEn": {
+            "type": "string",
+            "nullable": true
           },
           "timePosted": {
             "type": "string",
             "format": "date-time"
+          },
+          "imageUrl": {
+            "type": "string",
+            "nullable": true
           },
           "id": {
             "type": "integer",

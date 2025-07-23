@@ -38,49 +38,69 @@ namespace AttechServer.Applications.UserModules.Implements
                 try
                 {
                     // Validate input
-                    if (string.IsNullOrWhiteSpace(input.Name) || string.IsNullOrWhiteSpace(input.Content))
+                    if (string.IsNullOrWhiteSpace(input.NameVi) || string.IsNullOrWhiteSpace(input.SlugVi) || string.IsNullOrWhiteSpace(input.ContentVi))
                     {
-                        throw new ArgumentException("Tiêu đề và nội dung là bắt buộc.");
+                        throw new ArgumentException("Tên, Slug (VI) và nội dung là bắt buộc.");
+                    }
+                    if (string.IsNullOrWhiteSpace(input.NameEn) || string.IsNullOrWhiteSpace(input.SlugEn) || string.IsNullOrWhiteSpace(input.ContentEn))
+                    {
+                        throw new ArgumentException("Tên, Slug (EN) và nội dung là bắt buộc.");
+                    }
+                    if (input.DescriptionVi.Length > 160)
+                    {
+                        input.DescriptionVi = input.DescriptionVi.Substring(0, 157) + "...";
+                    }
+                    if (input.DescriptionEn.Length > 160)
+                    {
+                        input.DescriptionEn = input.DescriptionEn.Substring(0, 157) + "...";
                     }
                     if (input.TimePosted > DateTime.UtcNow)
                     {
                         throw new ArgumentException("Thời gian đăng bài không phù hợp.");
                     }
-                    if (input.Description.Length > 160)
-                    {
-                        input.Description = input.Description.Substring(0, 157) + "...";
-                    }
 
                     var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value, out var id) ? id : 0;
                     var sanitizer = new HtmlSanitizer();
-                    var safeContent = sanitizer.Sanitize(input.Content);
+                    var safeContentVi = sanitizer.Sanitize(input.ContentVi);
+                    var safeContentEn = sanitizer.Sanitize(input.ContentEn);
 
-                    // Tạo slug
-                    var slug = GenerateSlug(input.Name);
-                    var slugExists = await _dbContext.Services.AnyAsync(p => p.Slug == slug && !p.Deleted);
-                    if (slugExists)
+                    // Kiểm tra trùng slug
+                    var slugViExists = await _dbContext.Services.AnyAsync(p => p.SlugVi == input.SlugVi && !p.Deleted);
+                    if (slugViExists)
                     {
-                        slug = $"{slug}-{Guid.NewGuid().ToString("N").Substring(0, 4)}";
+                        throw new ArgumentException("Slug VI đã tồn tại.");
+                    }
+                    var slugEnExists = await _dbContext.Services.AnyAsync(p => p.SlugEn == input.SlugEn && !p.Deleted);
+                    if (slugEnExists)
+                    {
+                        throw new ArgumentException("Slug EN đã tồn tại.");
                     }
 
                     var newService = new Service
                     {
-                        Slug = slug,
-                        Name = input.Name,
-                        Description = input.Description,
-                        Content = safeContent,
+                        SlugVi = input.SlugVi,
+                        SlugEn = input.SlugEn,
+                        NameVi = input.NameVi,
+                        NameEn = input.NameEn,
+                        DescriptionVi = input.DescriptionVi,
+                        DescriptionEn = input.DescriptionEn,
+                        ContentVi = safeContentVi,
+                        ContentEn = safeContentEn,
                         TimePosted = input.TimePosted,
                         Status = CommonStatus.ACTIVE,
                         CreatedDate = DateTime.UtcNow,
                         CreatedBy = userId,
-                        Deleted = false
+                        Deleted = false,
+                        ImageUrl = input.ImageUrl ?? string.Empty
                     };
 
                     _dbContext.Services.Add(newService);
                     await _dbContext.SaveChangesAsync();
 
-                    var (processedContent, _) = await _wysiwygFileProcessor.ProcessContentAsync(safeContent, EntityType.Service, newService.Id);
-                    newService.Content = processedContent;
+                    var (processedContentVi, _) = await _wysiwygFileProcessor.ProcessContentAsync(safeContentVi, EntityType.Service, newService.Id);
+                    var (processedContentEn, _) = await _wysiwygFileProcessor.ProcessContentAsync(safeContentEn, EntityType.Service, newService.Id);
+                    newService.ContentVi = processedContentVi;
+                    newService.ContentEn = processedContentEn;
                     await _dbContext.SaveChangesAsync();
 
                     await transaction.CommitAsync();
@@ -88,11 +108,15 @@ namespace AttechServer.Applications.UserModules.Implements
                     return new ServiceDto
                     {
                         Id = newService.Id,
-                        Name = newService.Name,
-                        Slug = newService.Slug,
-                        Description = newService.Description,
+                        NameVi = newService.NameVi,
+                        NameEn = newService.NameEn,
+                        SlugVi = newService.SlugVi,
+                        SlugEn = newService.SlugEn,
+                        DescriptionVi = newService.DescriptionVi,
+                        DescriptionEn = newService.DescriptionEn,
                         TimePosted = newService.TimePosted,
-                        Status = newService.Status
+                        Status = newService.Status,
+                        ImageUrl = newService.ImageUrl
                     };
                 }
                 catch (Exception ex)
@@ -117,7 +141,7 @@ namespace AttechServer.Applications.UserModules.Implements
 
             var baseQuery = _dbContext.Services.AsNoTracking()
                 .Where(p => !p.Deleted && p.Status == CommonStatus.ACTIVE
-                    && (string.IsNullOrEmpty(input.Keyword) || p.Name.Contains(input.Keyword)));
+                    && (string.IsNullOrEmpty(input.Keyword) || p.NameVi.Contains(input.Keyword) || p.NameEn.Contains(input.Keyword)));
 
             var totalItems = await baseQuery.CountAsync();
 
@@ -128,10 +152,15 @@ namespace AttechServer.Applications.UserModules.Implements
                 .Select(p => new ServiceDto
                 {
                     Id = p.Id,
-                    Slug = p.Slug,
-                    Name = p.Name,
-                    Description = p.Description,
+                    SlugVi = p.SlugVi,
+                    SlugEn = p.SlugEn,
+                    NameVi = p.NameVi,
+                    NameEn = p.NameEn,
+                    DescriptionVi = p.DescriptionVi,
+                    DescriptionEn = p.DescriptionEn,
                     Status = p.Status,
+                    TimePosted = p.TimePosted,
+                    ImageUrl = p.ImageUrl
                 })
                 .ToListAsync();
 
@@ -151,12 +180,45 @@ namespace AttechServer.Applications.UserModules.Implements
                 .Select(p => new DetailServiceDto
                 {
                     Id = p.Id,
-                    Name = p.Name,
-                    Slug = p.Slug,
-                    Description = p.Description,
-                    Content = p.Content,
+                    NameVi = p.NameVi,
+                    NameEn = p.NameEn,
+                    SlugVi = p.SlugVi,
+                    SlugEn = p.SlugEn,
+                    DescriptionVi = p.DescriptionVi,
+                    DescriptionEn = p.DescriptionEn,
+                    ContentVi = p.ContentVi,
+                    ContentEn = p.ContentEn,
                     TimePosted = p.TimePosted,
                     Status = p.Status,
+                    ImageUrl = p.ImageUrl
+                })
+                .FirstOrDefaultAsync();
+
+            if (service == null)
+                throw new UserFriendlyException(ErrorCode.ServiceNotFound);
+
+            return service;
+        }
+
+        public async Task<DetailServiceDto> FindBySlug(string slug)
+        {
+            _logger.LogInformation($"{nameof(FindBySlug)}: slug = {slug}");
+            var service = await _dbContext.Services
+                .Where(p => (p.SlugVi == slug || p.SlugEn == slug) && !p.Deleted)
+                .Select(p => new DetailServiceDto
+                {
+                    Id = p.Id,
+                    NameVi = p.NameVi,
+                    NameEn = p.NameEn,
+                    SlugVi = p.SlugVi,
+                    SlugEn = p.SlugEn,
+                    DescriptionVi = p.DescriptionVi,
+                    DescriptionEn = p.DescriptionEn,
+                    ContentVi = p.ContentVi,
+                    ContentEn = p.ContentEn,
+                    TimePosted = p.TimePosted,
+                    Status = p.Status,
+                    ImageUrl = p.ImageUrl
                 })
                 .FirstOrDefaultAsync();
 
@@ -177,44 +239,56 @@ namespace AttechServer.Applications.UserModules.Implements
                         ?? throw new UserFriendlyException(ErrorCode.ServiceNotFound);
 
                     // Validate input
-                    if (string.IsNullOrWhiteSpace(input.Name) || string.IsNullOrWhiteSpace(input.Content))
+                    if (string.IsNullOrWhiteSpace(input.NameVi) || string.IsNullOrWhiteSpace(input.SlugVi) || string.IsNullOrWhiteSpace(input.ContentVi))
                     {
-                        throw new ArgumentException("Tiêu đề và nội dung là bắt buộc.");
+                        throw new ArgumentException("Tên, Slug (VI) và nội dung là bắt buộc.");
+                    }
+                    if (string.IsNullOrWhiteSpace(input.NameEn) || string.IsNullOrWhiteSpace(input.SlugEn) || string.IsNullOrWhiteSpace(input.ContentEn))
+                    {
+                        throw new ArgumentException("Tên, Slug (EN) và nội dung là bắt buộc.");
+                    }
+                    if (input.DescriptionVi.Length > 160)
+                    {
+                        input.DescriptionVi = input.DescriptionVi.Substring(0, 157) + "...";
+                    }
+                    if (input.DescriptionEn.Length > 160)
+                    {
+                        input.DescriptionEn = input.DescriptionEn.Substring(0, 157) + "...";
                     }
                     if (input.TimePosted > DateTime.UtcNow)
                     {
-                        throw new ArgumentException("Thời gian đăng bài không thể trong tương lai.");
-                    }
-                    if (input.Description.Length > 160)
-                    {
-                        input.Description = input.Description.Substring(0, 157) + "...";
+                        throw new ArgumentException("Thời gian đăng bài không phù hợp.");
                     }
 
                     var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value, out var id) ? id : 0;
                     var sanitizer = new HtmlSanitizer();
-                    var safeContent = sanitizer.Sanitize(input.Content);
+                    var safeContentVi = sanitizer.Sanitize(input.ContentVi);
+                    var safeContentEn = sanitizer.Sanitize(input.ContentEn);
 
-                    // Cập nhật slug nếu tiêu đề thay đổi
-                    var slug = GenerateSlug(input.Name);
-                    if (slug != service.Slug)
+                    // Kiểm tra trùng slug (trừ chính nó)
+                    var slugViExists = await _dbContext.Services.AnyAsync(p => p.SlugVi == input.SlugVi && !p.Deleted && p.Id != input.Id);
+                    if (slugViExists)
                     {
-                        var slugExists = await _dbContext.Services.AnyAsync(p => p.Slug == slug && !p.Deleted && p.Id != input.Id);
-                        if (slugExists)
-                        {
-                            slug = $"{slug}-{DateTime.Now.Ticks}";
-                        }
-                        service.Slug = slug;
+                        throw new ArgumentException("Slug VI đã tồn tại.");
+                    }
+                    var slugEnExists = await _dbContext.Services.AnyAsync(p => p.SlugEn == input.SlugEn && !p.Deleted && p.Id != input.Id);
+                    if (slugEnExists)
+                    {
+                        throw new ArgumentException("Slug EN đã tồn tại.");
                     }
 
-                    service.Name = input.Name;
-                    service.Description = input.Description;
-                    service.Content = safeContent;
+                    service.NameVi = input.NameVi;
+                    service.NameEn = input.NameEn;
+                    service.SlugVi = input.SlugVi;
+                    service.SlugEn = input.SlugEn;
+                    service.DescriptionVi = input.DescriptionVi;
+                    service.DescriptionEn = input.DescriptionEn;
+                    service.ContentVi = safeContentVi;
+                    service.ContentEn = safeContentEn;
                     service.TimePosted = input.TimePosted;
+                    service.ImageUrl = input.ImageUrl ?? string.Empty;
                     service.ModifiedDate = DateTime.UtcNow;
                     service.ModifiedBy = userId;
-
-                    var (processedContent, _) = await _wysiwygFileProcessor.ProcessContentAsync(safeContent, EntityType.Service, service.Id);
-                    service.Content = processedContent;
 
                     await _dbContext.SaveChangesAsync();
                     await transaction.CommitAsync();
@@ -222,11 +296,15 @@ namespace AttechServer.Applications.UserModules.Implements
                     return new ServiceDto
                     {
                         Id = service.Id,
-                        Name = service.Name,
-                        Slug = service.Slug,
-                        Description = service.Description,
+                        NameVi = service.NameVi,
+                        NameEn = service.NameEn,
+                        SlugVi = service.SlugVi,
+                        SlugEn = service.SlugEn,
+                        DescriptionVi = service.DescriptionVi,
+                        DescriptionEn = service.DescriptionEn,
                         TimePosted = service.TimePosted,
-                        Status = service.Status
+                        Status = service.Status,
+                        ImageUrl = service.ImageUrl
                     };
                 }
                 catch (Exception ex)

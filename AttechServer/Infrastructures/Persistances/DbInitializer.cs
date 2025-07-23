@@ -32,20 +32,30 @@ namespace AttechServer.Infrastructures.Persistances
                 await SeedApiEndpointsAsync(context);
             }
 
-            if (!await context.PostCategories.AnyAsync())
+            if (!await context.Set<Menu>().AnyAsync())
             {
-                await SeedPostCategoriesAsync(context);
+                await SeedMenusAsync(context);
             }
 
-            if (!await context.Services.AnyAsync())
+            if (!await context.Set<Domains.Entities.Main.Route>().AnyAsync())
             {
-                await SeedServicesAsync(context);
+                await SeedRoutesAsync(context);
             }
 
-            if (!await context.ProductCategories.AnyAsync())
-            {
-                await SeedProductCategoriesAsync(context);
-            }
+            //if (!await context.PostCategories.AnyAsync())
+            //{
+            //    await SeedPostCategoriesAsync(context);
+            //}
+
+            //if (!await context.Services.AnyAsync())
+            //{
+            //    await SeedServicesAsync(context);
+            //}
+
+            //if (!await context.ProductCategories.AnyAsync())
+            //{
+            //    await SeedProductCategoriesAsync(context);
+            //}
         }
 
         private static async Task SeedPermissionsAsync(ApplicationDbContext context)
@@ -124,6 +134,44 @@ namespace AttechServer.Infrastructures.Persistances
                 ParentId = systemPermission.Id
             };
             await context.Permissions.AddAsync(notificationManagementPermission);
+            await context.SaveChangesAsync();
+
+            var menuPermissions = new List<Permission>
+            {
+                new Permission
+                {
+                    PermissionLabel = "View Menu",
+                    PermissionKey = PermissionKeys.Menu_View,
+                    OrderPriority = 1,
+                    Description = "View menu list and details",
+                    ParentId = systemPermission.Id
+                },
+                new Permission
+                {
+                    PermissionLabel = "Create Menu",
+                    PermissionKey = PermissionKeys.Menu_Create,
+                    OrderPriority = 2,
+                    Description = "Create new menu",
+                    ParentId = systemPermission.Id
+                },
+                new Permission
+                {
+                    PermissionLabel = "Edit Menu",
+                    PermissionKey = PermissionKeys.Menu_Update,
+                    OrderPriority = 3,
+                    Description = "Edit existing menu",
+                    ParentId = systemPermission.Id
+                },
+                new Permission
+                {
+                    PermissionLabel = "Delete Menu",
+                    PermissionKey = PermissionKeys.Menu_Delete,
+                    OrderPriority = 4,
+                    Description = "Delete menu",
+                    ParentId = systemPermission.Id
+                }
+            };
+            await context.Permissions.AddRangeAsync(menuPermissions);
             await context.SaveChangesAsync();
 
             // Create child permissions
@@ -542,66 +590,97 @@ namespace AttechServer.Infrastructures.Persistances
         {
             var roles = new List<Role>
             {
-                new Role
-                {
-                    Name = "Admin",
-                    Status = 1
-                },
-                new Role
-                {
-                    Name = "User",
-                    Status = 1
-                }
+                new Role { Name = "SuperAdmin", Status = 1 },
+                new Role { Name = "Admin", Status = 1 },
+                new Role { Name = "EditorNews", Status = 1 },
+                new Role { Name = "EditorProduct", Status = 1 }
             };
-
             await context.Roles.AddRangeAsync(roles);
             await context.SaveChangesAsync();
 
-            // Add all permissions to Admin role
-            var adminRole = await context.Roles.FirstAsync(r => r.Name == "Admin");
             var allPermissions = await context.Permissions.ToListAsync();
+            var superAdminRole = await context.Roles.FirstAsync(r => r.Name == "SuperAdmin");
+            var adminRole = await context.Roles.FirstAsync(r => r.Name == "Admin");
+            var editorNewsRole = await context.Roles.FirstAsync(r => r.Name == "EditorNews");
+            var editorProductRole = await context.Roles.FirstAsync(r => r.Name == "EditorProduct");
 
-            var rolePermissions = allPermissions.Select(p => new RolePermission
-            {
-                RoleId = adminRole.Id,
-                PermissionId = p.Id
-            });
+            // SuperAdmin: tất cả quyền
+            await context.RolePermissions.AddRangeAsync(
+                allPermissions.Select(p => new RolePermission { RoleId = superAdminRole.Id, PermissionId = p.Id })
+            );
 
-            await context.RolePermissions.AddRangeAsync(rolePermissions);
+            // Admin: quyền quản trị (trừ quyền hệ thống/phân quyền)
+            var adminPermissions = allPermissions.Where(p =>
+                !p.PermissionKey.Contains("permission") &&
+                !p.PermissionKey.Contains("api_endpoint") &&
+                !p.PermissionKey.Contains("app")
+            );
+            await context.RolePermissions.AddRangeAsync(
+                adminPermissions.Select(p => new RolePermission { RoleId = adminRole.Id, PermissionId = p.Id })
+            );
+
+            // EditorNews: chỉ quyền tin tức, thông báo, danh mục liên quan
+            var editorNewsPermissions = allPermissions.Where(p =>
+                p.PermissionKey.Contains("news") ||
+                p.PermissionKey.Contains("notification")
+            );
+            await context.RolePermissions.AddRangeAsync(
+                editorNewsPermissions.Select(p => new RolePermission { RoleId = editorNewsRole.Id, PermissionId = p.Id })
+            );
+
+            // EditorProduct: chỉ quyền sản phẩm, dịch vụ, danh mục sản phẩm
+            var editorProductPermissions = allPermissions.Where(p =>
+                p.PermissionKey.Contains("product") ||
+                p.PermissionKey.Contains("service")
+            );
+            await context.RolePermissions.AddRangeAsync(
+                editorProductPermissions.Select(p => new RolePermission { RoleId = editorProductRole.Id, PermissionId = p.Id })
+            );
             await context.SaveChangesAsync();
         }
 
         private static async Task SeedUsersAsync(ApplicationDbContext context)
         {
+            var superAdminRole = await context.Roles.FirstAsync(r => r.Name == "SuperAdmin");
             var adminRole = await context.Roles.FirstAsync(r => r.Name == "Admin");
-            var userRole = await context.Roles.FirstAsync(r => r.Name == "User");
+            var editorNewsRole = await context.Roles.FirstAsync(r => r.Name == "EditorNews");
+            var editorProductRole = await context.Roles.FirstAsync(r => r.Name == "EditorProduct");
 
             var users = new List<User>
             {
                 new User
                 {
-                    Username = "admin",
-                    Password = PasswordHasher.HashPassword("admin123"),
-                    Status = 1, // Active
-                    UserType = 1, // Admin
-                    UserRoles = new List<UserRole>
-                    {
-                        new UserRole { RoleId = adminRole.Id }
-                    }
+                    Username = "superadmin",
+                    Password = PasswordHasher.HashPassword("superadmin123"),
+                    Status = 1,
+                    UserType = 0,
+                    UserRoles = new List<UserRole> { new UserRole { RoleId = superAdminRole.Id } }
                 },
                 new User
                 {
-                    Username = "user",
-                    Password = PasswordHasher.HashPassword("user123"),
-                    Status = 1, // Active
-                    UserType = 2, // Regular user
-                    UserRoles = new List<UserRole>
-                    {
-                        new UserRole { RoleId = userRole.Id }
-                    }
+                    Username = "admin",
+                    Password = PasswordHasher.HashPassword("admin123"),
+                    Status = 1,
+                    UserType = 1,
+                    UserRoles = new List<UserRole> { new UserRole { RoleId = adminRole.Id } }
+                },
+                new User
+                {
+                    Username = "editornews",
+                    Password = PasswordHasher.HashPassword("editornews123"),
+                    Status = 1,
+                    UserType = 2,
+                    UserRoles = new List<UserRole> { new UserRole { RoleId = editorNewsRole.Id } }
+                },
+                new User
+                {
+                    Username = "editorproduct",
+                    Password = PasswordHasher.HashPassword("editorproduct123"),
+                    Status = 1,
+                    UserType = 3,
+                    UserRoles = new List<UserRole> { new UserRole { RoleId = editorProductRole.Id } }
                 }
             };
-
             await context.Users.AddRangeAsync(users);
             await context.SaveChangesAsync();
         }
@@ -1270,44 +1349,82 @@ namespace AttechServer.Infrastructures.Persistances
                     Path = "api/upload/image",
                     HttpMethod = "POST",
                     Description = "Upload image",
-                    RequireAuthentication = true,
-                    PermissionForApiEndpoints = new List<PermissionForApiEndpoint>
-                    {
-                        new PermissionForApiEndpoint { PermissionId = permissions[PermissionKeys.UploadFile], IsRequired = true }
-                    }
+                    RequireAuthentication = false,
+                    PermissionForApiEndpoints = new List<PermissionForApiEndpoint>()
                 },
                 new ApiEndpoint
                 {
                     Path = "api/upload/video",
                     HttpMethod = "POST",
                     Description = "Upload video",
-                    RequireAuthentication = true,
-                    PermissionForApiEndpoints = new List<PermissionForApiEndpoint>
-                    {
-                        new PermissionForApiEndpoint { PermissionId = permissions[PermissionKeys.UploadFile], IsRequired = true }
-                    }
+                    RequireAuthentication = false,
+                    PermissionForApiEndpoints = new List<PermissionForApiEndpoint>()
                 },
                 new ApiEndpoint
                 {
                     Path = "api/upload/document",
                     HttpMethod = "POST",
                     Description = "Upload document",
-                    RequireAuthentication = true,
-                    PermissionForApiEndpoints = new List<PermissionForApiEndpoint>
-                    {
-                        new PermissionForApiEndpoint { PermissionId = permissions[PermissionKeys.UploadFile], IsRequired = true }
-                    }
+                    RequireAuthentication = false,
+                    PermissionForApiEndpoints = new List<PermissionForApiEndpoint>()
                 },
                 new ApiEndpoint
                 {
                     Path = "api/upload/multi-upload",
                     HttpMethod = "POST",
                     Description = "Upload multiple files",
-                    RequireAuthentication = true,
-                    PermissionForApiEndpoints = new List<PermissionForApiEndpoint>
-                    {
-                        new PermissionForApiEndpoint { PermissionId = permissions[PermissionKeys.UploadFile], IsRequired = true }
-                    }
+                    RequireAuthentication = false,
+                    PermissionForApiEndpoints = new List<PermissionForApiEndpoint>()
+                },
+                new ApiEndpoint
+                {
+                    Path = "api/upload/file/{subFolder}/{year}/{month}/{day}/{fileName}",
+                    HttpMethod = "GET",
+                    Description = "Get file by path",
+                    RequireAuthentication = false,
+                    PermissionForApiEndpoints = new List<PermissionForApiEndpoint>()
+                },
+                new ApiEndpoint
+                {
+                    Path = "api/upload/file/{subFolder}/{fileName}",
+                    HttpMethod = "GET",
+                    Description = "Get file by path (legacy)",
+                    RequireAuthentication = false,
+                    PermissionForApiEndpoints = new List<PermissionForApiEndpoint>()
+                },
+
+                // Media endpoints
+                new ApiEndpoint
+                {
+                    Path = "api/media/find-all",
+                    HttpMethod = "GET",
+                    Description = "Get all media files",
+                    RequireAuthentication = false,
+                    PermissionForApiEndpoints = new List<PermissionForApiEndpoint>()
+                },
+                new ApiEndpoint
+                {
+                    Path = "api/media/find-by-entity/{entityType}/{entityId}",
+                    HttpMethod = "GET",
+                    Description = "Get media files by entity",
+                    RequireAuthentication = false,
+                    PermissionForApiEndpoints = new List<PermissionForApiEndpoint>()
+                },
+                new ApiEndpoint
+                {
+                    Path = "api/media/delete/{id}",
+                    HttpMethod = "DELETE",
+                    Description = "Delete media file",
+                    RequireAuthentication = false,
+                    PermissionForApiEndpoints = new List<PermissionForApiEndpoint>()
+                },
+                new ApiEndpoint
+                {
+                    Path = "api/media/delete-by-entity/{entityType}/{entityId}",
+                    HttpMethod = "DELETE",
+                    Description = "Delete media files by entity",
+                    RequireAuthentication = false,
+                    PermissionForApiEndpoints = new List<PermissionForApiEndpoint>()
                 }
             };
 
@@ -1315,152 +1432,361 @@ namespace AttechServer.Infrastructures.Persistances
             await context.SaveChangesAsync();
         }
 
-        private static async Task SeedPostCategoriesAsync(ApplicationDbContext context)
+        private static async Task SeedMenusAsync(ApplicationDbContext context)
         {
-            var postCategories = new List<PostCategory>
-            {
-                // News Categories
-                new PostCategory
-                {
-                    Name = "Tin hoạt động",
-                    Slug = "tin-hoat-dong",
-                    Description = "Tin tức hoạt động của công ty TNHH Kỹ thuật Quản lý bay",
-                    Status = 1,
-                    Type = PostType.News
-                },
-                new PostCategory
-                {
-                    Name = "Tin ngành hàng không",
-                    Slug = "tin-nganh-hang-khong",
-                    Description = "Tin ngành hàng không trong nước và quốc tế",
-                    Status = 1,
-                    Type = PostType.News
-                },
-                new PostCategory
-                {
-                    Name = "Tuyên truyền pháp luật",
-                    Slug = "tuyen-truyen-phap-luat",
-                    Description = "Tin tức tuyên truyền về pháp luật",
-                    Status = 1,
-                    Type = PostType.News
-                },
+            if (await context.Set<Menu>().AnyAsync()) return;
 
-                // Notification Categories
-                new PostCategory
-                {
-                    Name = "Tuyển dụng",
-                    Slug = "tuyen-dung",
-                    Description = "Thông báo tuyển dụng của công ty TNHH Kỹ thuật Quản lý bay",
-                    Status = 1,
-                    Type = PostType.Notification
+            // Đầy đủ cấu trúc menu FE chuyển sang C#
+            var menuItems = new[]
+            {
+                new MenuSeedItem {
+                    Key = "home", LabelVi = "Trang chủ", LabelEn = "Home", PathVi = "/", PathEn = "/en/"
                 },
-                new PostCategory
-                {
-                    Name = "Thông báo mời nhà cung cấp",
-                    Slug = "thong-bao-moi-nha-cung-cap",
-                    Description = "Thông báo mời nhà cung cấp",
-                    Status = 1,
-                    Type = PostType.Notification
+                new MenuSeedItem {
+                    Key = "products", LabelVi = "Sản phẩm", LabelEn = "Products", PathVi = "/san-pham", PathEn = "/en/products",
+                    Children = new[] {
+                        new MenuSeedItem {
+                            Key = "cns-atm", LabelVi = "CNS/ATM", LabelEn = "CNS/ATM", PathVi = "/san-pham/cns-atm", PathEn = "/en/products/cns-atm",
+                            Children = new[] {
+                                new MenuSeedItem { Key = "ads-b", LabelVi = "Hệ thống ADS-B", LabelEn = "ADS-B System", PathVi = "/san-pham/he-thong-ads-b", PathEn = "/en/products/ads-b-system" },
+                                new MenuSeedItem { Key = "amhs", LabelVi = "Hệ thống AMHS", LabelEn = "AMHS System", PathVi = "/san-pham/he-thong-amhs", PathEn = "/en/products/amhs-system" },
+                                new MenuSeedItem { Key = "amss", LabelVi = "Hệ thống AMSS", LabelEn = "AMSS System", PathVi = "/san-pham/he-thong-amss", PathEn = "/en/products/amss-system" },
+                            }
+                        },
+                        new MenuSeedItem {
+                            Key = "traffic-lights", LabelVi = "Hệ thống đèn hiệu", LabelEn = "Traffic Lights", PathVi = "/san-pham/he-thong-den-hieu", PathEn = "/en/products/traffic-lights",
+                            Children = new[] {
+                                new MenuSeedItem { Key = "papi", LabelVi = "Đèn chỉ thị góc tiếp cận chính xác - PAPI", LabelEn = "PAPI Light", PathVi = "/san-pham/den-papi", PathEn = "/en/products/papi-light" },
+                                new MenuSeedItem { Key = "chc-two-way", LabelVi = "Đèn lề đường CHC hai hướng lắp nổi", LabelEn = "CHC Two-Way Light", PathVi = "/san-pham/den-chc-hai-huong", PathEn = "/en/products/chc-two-way-light" },
+                                new MenuSeedItem { Key = "led-road-edge", LabelVi = "Đèn lề đường lăn lắp nổi LED", LabelEn = "LED Road Edge Light", PathVi = "/san-pham/den-le-duong-noi-led", PathEn = "/en/products/led-road-edge-light" },
+                                new MenuSeedItem { Key = "flashing", LabelVi = "Đèn chớp lắp nổi", LabelEn = "Flashing Light", PathVi = "/san-pham/den-chop-lap-noi", PathEn = "/en/products/flashing-light" },
+                                new MenuSeedItem { Key = "single-phase", LabelVi = "Đèn pha 1 hướng lắp nổi", LabelEn = "Single-Phase Light", PathVi = "/san-pham/den-1-pha-lap-noi", PathEn = "/en/products/single-phase-light" },
+                                new MenuSeedItem { Key = "rotating", LabelVi = "Đèn pha xoay", LabelEn = "Rotating Light", PathVi = "/san-pham/den-pha-xoay", PathEn = "/en/products/rotating-light" },
+                            }
+                        },
+                        new MenuSeedItem {
+                            Key = "shelter", LabelVi = "Shelter", LabelEn = "Shelter", PathVi = "/san-pham/shelter", PathEn = "/en/products/shelter",
+                            Children = new[] {
+                                new MenuSeedItem { Key = "composite", LabelVi = "Shelter Composite", LabelEn = "Composite Shelter", PathVi = "/san-pham/shelter-composite", PathEn = "/en/products/composite-shelter" },
+                                new MenuSeedItem { Key = "steel", LabelVi = "Shelter Thép", LabelEn = "Steel Shelter", PathVi = "/san-pham/shelter-thep", PathEn = "/en/products/steel-shelter" },
+                            }
+                        },
+                        new MenuSeedItem {
+                            Key = "console-table", LabelVi = "Bàn console", LabelEn = "Console Table", PathVi = "/san-pham/ban-console", PathEn = "/en/products/console-table",
+                            Children = new[] {
+                                new MenuSeedItem { Key = "aic-console", LabelVi = "ATC consoles", LabelEn = "ATC Consoles", PathVi = "/san-pham/aic-console", PathEn = "/en/products/aic-consoles" },
+                                new MenuSeedItem { Key = "technical-console", LabelVi = "Technical console", LabelEn = "Technical Console", PathVi = "/san-pham/technical-console", PathEn = "/en/products/technical-console" },
+                            }
+                        },
+                        new MenuSeedItem {
+                            Key = "vor-reflector", LabelVi = "Giàn phản xạ VOR", LabelEn = "VOR Reflector", PathVi = "/san-pham/gian-phan-xa-vor", PathEn = "/en/products/vor-reflector",
+                            Children = new[] {
+                                new MenuSeedItem { Key = "easy-to-destroy", LabelVi = "Giàn phản xạ dễ phá hủy", LabelEn = "Easy-to-Destroy Reflector", PathVi = "/san-pham/gian-phan-xa-de-pha-huy", PathEn = "/en/products/easy-to-destroy-reflector" },
+                                new MenuSeedItem { Key = "steel", LabelVi = "Giàn phản xạ thép", LabelEn = "Steel Reflector", PathVi = "/san-pham/gian-phan-xa-thep", PathEn = "/en/products/steel-reflector" },
+                            }
+                        },
+                        new MenuSeedItem {
+                            Key = "audio-video-recording-equipment", LabelVi = "Thiết bị ghi âm/ghi hình", LabelEn = "Audio/Video Recording Equipment", PathVi = "/san-pham/thiet-bi-ghi-am-ghi-hinh", PathEn = "/en/products/audio-video-recording-equipment",
+                            Children = new[] {
+                                new MenuSeedItem { Key = "specialized-audio-recorder", LabelVi = "Thiết bị ghi âm chuyên dụng", LabelEn = "Specialized Audio Recorder", PathVi = "/san-pham/ghi-am-chuyen-dung-hang-khong", PathEn = "/en/products/specialized-audio-recorder" },
+                                new MenuSeedItem { Key = "voice-data-recorder", LabelVi = "Thiết bị ghi thoại dữ liệu", LabelEn = "Voice Data Recorder", PathVi = "/san-pham/ghi-thoai-du-lieu", PathEn = "/en/products/voice-data-recorder" },
+                            }
+                        },
+                        new MenuSeedItem {
+                            Key = "other-consumer-products", LabelVi = "Các sản phẩm dân dụng khác", LabelEn = "Other Consumer Products", PathVi = "/san-pham/cac-san-pham-dan-dung-khac", PathEn = "/en/products/other-consumer-products",
+                            Children = new[] {
+                                new MenuSeedItem { Key = "standard-gps-timepiece", LabelVi = "Đồng hồ thời gian chuẩn GPS", LabelEn = "Standard GPS Timepiece", PathVi = "/san-pham/dong-ho-thoi-gian-chuan-gps", PathEn = "/en/products/standard-gps-timepiece" },
+                                new MenuSeedItem { Key = "drill-machine", LabelVi = "Máy cắt vấu", LabelEn = "Drill Machine", PathVi = "/san-pham/may-cat-vau", PathEn = "/en/products/drill-machine" },
+                                new MenuSeedItem { Key = "may-la", LabelVi = "Máy là", LabelEn = "Máy là", PathVi = "/san-pham/may-la", PathEn = "/en/products/may-la" },
+                                new MenuSeedItem { Key = "tig-welding-machine", LabelVi = "Máy hàn TIG", LabelEn = "TIG Welding Machine", PathVi = "/san-pham/may-han-tig", PathEn = "/en/products/tig-welding-machine" },
+                                new MenuSeedItem { Key = "may-loc", LabelVi = "Máy lốc", LabelEn = "Máy lốc", PathVi = "/san-pham/may-loc", PathEn = "/en/products/may-loc" },
+                                new MenuSeedItem { Key = "rotary-welding-machine", LabelVi = "Máy hàn quay", LabelEn = "Rotary Welding Machine", PathVi = "/san-pham/may-han-quay", PathEn = "/en/products/rotary-welding-machine" },
+                            }
+                        },
+                        new MenuSeedItem {
+                            Key = "vr360", LabelVi = "VR 360", LabelEn = "VR 360", PathVi = "https://attech.vr360.one/", PathEn = "https://attech.vr360.one/en"
+                        },
+                    }
                 },
-                new PostCategory
-                {
-                    Name = "Thông báo khác",
-                    Slug = "thong-bao-khac",
-                    Description = "Thông báo khác của công ty TNHH Kỹ thuật Quản lý bay",
-                    Status = 1,
-                    Type = PostType.Notification
-                }
+                new MenuSeedItem {
+                    Key = "services", LabelVi = "Dịch vụ", LabelEn = "Services", PathVi = "/dich-vu", PathEn = "/en/services",
+                    Children = new[] {
+                        new MenuSeedItem { Key = "cns-service", LabelVi = "Dịch vụ thông tin dẫn đường giám sát (CNS)", LabelEn = "CNS Service", PathVi = "/dich-vu/thong-tin-dan-duong-giam-sat", PathEn = "/en/services/cns-service" },
+                        new MenuSeedItem { Key = "calibration-service", LabelVi = "Dịch vụ Bay kiểm tra hiệu chuẩn", LabelEn = "Calibration Service", PathVi = "/dich-vu/bay-kiem-tra-hieu-chuan", PathEn = "/en/services/calibration-service" },
+                        new MenuSeedItem { Key = "testing-calibration-service", LabelVi = "Dịch vụ Thử nghiệm - Hiệu chuẩn", LabelEn = "Testing - Calibration Service", PathVi = "/dich-vu/thu-nghiem-hieu-chuan", PathEn = "/en/services/testing-calibration-service" },
+                        new MenuSeedItem { Key = "aviation-service", LabelVi = "Dịch vụ Kỹ thuật (Hàng không)", LabelEn = "Aviation Service", PathVi = "/dich-vu/ky-thuat-hang-khong", PathEn = "/en/services/aviation-service" },
+                        new MenuSeedItem { Key = "training-education-service", LabelVi = "Dịch vụ Huấn luyện - Đào tạo", LabelEn = "Training - Education Service", PathVi = "/dich-vu/huan-luyen-dao-tao", PathEn = "/en/services/training-education-service" },
+                        new MenuSeedItem { Key = "consulting-qlda-service", LabelVi = "Dịch vụ Tư vấn đầu tư và xây dựng QLDA", LabelEn = "Consulting - QLDA Service", PathVi = "/dich-vu/tu-van-dau-tu-xay-dung-qlda", PathEn = "/en/services/consulting-qlda-service" },
+                    }
+                },
+                new MenuSeedItem {
+                    Key = "news", LabelVi = "Tin tức", LabelEn = "News", PathVi = "/tin-tuc", PathEn = "/en/news",
+                    Children = new[] {
+                        new MenuSeedItem {
+                            Key = "activities", LabelVi = "Tin hoạt động", LabelEn = "Activities", PathVi = "/tin-tuc/tin-hoat-dong", PathEn = "/en/news/activities",
+                            Children = new[] {
+                                new MenuSeedItem { Key = "company-activities", LabelVi = "Hoạt động công ty", LabelEn = "Company Activities", PathVi = "/tin-tuc/hoat-dong-cong-ty", PathEn = "/en/news/company-activities" },
+                                new MenuSeedItem { Key = "company-party", LabelVi = "Đảng bộ công ty", LabelEn = "Company Party", PathVi = "/tin-tuc/dang-bo-cong-ty", PathEn = "/en/news/company-party" },
+                                new MenuSeedItem { Key = "company-youth-union", LabelVi = "Đoàn thanh niên công ty", LabelEn = "Company Youth Union", PathVi = "/tin-tuc/doan-thanh-nien-cong-ty", PathEn = "/en/news/company-youth-union" },
+                                new MenuSeedItem { Key = "company-union", LabelVi = "Công đoàn công ty", LabelEn = "Company Union", PathVi = "/tin-tuc/cong-doan-cong-ty", PathEn = "/en/news/company-union" },
+                            }
+                        },
+                        new MenuSeedItem { Key = "aviation-news", LabelVi = "Tin ngành hàng không", LabelEn = "Aviation News", PathVi = "/tin-tuc/tin-nganh-hang-khong", PathEn = "/en/news/aviation-news" },
+                        new MenuSeedItem { Key = "legal-propaganda", LabelVi = "Tuyên truyền pháp luật", LabelEn = "Legal Propaganda", PathVi = "/tin-tuc/tuyen-truyen-phap-luat", PathEn = "/en/news/legal-propaganda" },
+                    }
+                },
+                new MenuSeedItem {
+                    Key = "notifications", LabelVi = "Thông báo", LabelEn = "Notifications", PathVi = "/thong-bao", PathEn = "/en/notifications",
+                    Children = new[] {
+                        new MenuSeedItem { Key = "recruitment", LabelVi = "Tuyển dụng", LabelEn = "Recruitment", PathVi = "/thong-bao/tuyen-dung", PathEn = "/en/notifications/recruitment" },
+                        new MenuSeedItem { Key = "supplier-notice", LabelVi = "Thông báo mời nhà cung cấp", LabelEn = "Supplier Notice", PathVi = "/thong-bao/moi-nha-cung-cap", PathEn = "/en/notifications/supplier-notice" },
+                        new MenuSeedItem { Key = "other-notices", LabelVi = "Thông báo khác", LabelEn = "Other Notices", PathVi = "/thong-bao/thong-bao-khac", PathEn = "/en/notifications/other-notices" },
+                    }
+                },
+                new MenuSeedItem {
+                    Key = "company", LabelVi = "Thông tin công ty", LabelEn = "Company Info", PathVi = "/thong-tin-cong-ty", PathEn = "/en/company-info",
+                    Children = new[] {
+                        new MenuSeedItem { Key = "history", LabelVi = "Lịch sử ra đời", LabelEn = "History", PathVi = "/thong-tin-cong-ty/lich-su-ra-doi", PathEn = "/en/company-info/history" },
+                        new MenuSeedItem { Key = "structure", LabelVi = "Cơ cấu tổ chức", LabelEn = "Structure", PathVi = "/thong-tin-cong-ty/co-cau-to-chuc", PathEn = "/en/company-info/structure" },
+                        new MenuSeedItem { Key = "leadership", LabelVi = "Ban lãnh đạo", LabelEn = "Leadership", PathVi = "/thong-tin-cong-ty/ban-lanh-dao", PathEn = "/en/company-info/leadership" },
+                        new MenuSeedItem { Key = "business", LabelVi = "Ngành nghề kinh doanh", LabelEn = "Business", PathVi = "/thong-tin-cong-ty/nganh-nghe-kinh-doanh", PathEn = "/en/company-info/business" },
+                        new MenuSeedItem { Key = "iso", LabelVi = "Hệ thống chứng chỉ ISO", LabelEn = "ISO Certificates", PathVi = "/thong-tin-cong-ty/he-thong-chung-chi-iso", PathEn = "/en/company-info/iso-certificates" },
+                        new MenuSeedItem { Key = "financial-info", LabelVi = "Thông tin tài chính", LabelEn = "Financial Info", PathVi = "/thong-tin-cong-ty/thong-tin-tai-chinh", PathEn = "/en/company-info/financial-info" },
+                        new MenuSeedItem { Key = "gallery", LabelVi = "Thư viện công ty", LabelEn = "Company Gallery", PathVi = "/thong-tin-cong-ty/thu-vien-cong-ty", PathEn = "/en/company-info/gallery" },
+                    }
+                },
+                new MenuSeedItem {
+                    Key = "contact", LabelVi = "Liên hệ", LabelEn = "Contact", PathVi = "/lien-he", PathEn = "/en/contact"
+                },
             };
 
-            await context.PostCategories.AddRangeAsync(postCategories);
+            int order = 1;
+            async Task<int> AddMenuAsync(MenuSeedItem item, int? parentId, int order)
+            {
+                var menu = new Menu
+                {
+                    Key = item.Key,
+                    LabelVi = item.LabelVi,
+                    LabelEn = item.LabelEn,
+                    PathVi = item.PathVi,
+                    PathEn = item.PathEn,
+                    ParentId = parentId,
+                    OrderPriority = order
+                };
+                context.Set<Menu>().Add(menu);
+                await context.SaveChangesAsync();
+                if (item.Children != null)
+                {
+                    int subOrder = 1;
+                    foreach (var child in item.Children)
+                    {
+                        await AddMenuAsync(child, menu.Id, subOrder++);
+                    }
+                }
+                return menu.Id;
+            }
+
+            int topOrder = 1;
+            foreach (var item in menuItems)
+            {
+                await AddMenuAsync(item, null, topOrder++);
+            }
+        }
+
+        // Định nghĩa class tạm cho seed menu
+        private class MenuSeedItem
+        {
+            public string Key { get; set; } = string.Empty;
+            public string LabelVi { get; set; } = string.Empty;
+            public string LabelEn { get; set; } = string.Empty;
+            public string? PathVi { get; set; }
+            public string? PathEn { get; set; }
+            public MenuSeedItem[]? Children { get; set; }
+        }
+
+        private static async Task SeedRoutesAsync(ApplicationDbContext context)
+        {
+            if (await context.Set<Domains.Entities.Main.Route>().AnyAsync()) return;
+
+            var routes = new[]
+            {
+                new Domains.Entities.Main.Route { Id = 1, Path = "/", Component = "Home", Layout = "MainLayout", Protected = false, ParentId = null, OrderIndex = 1, IsActive = true, LabelVi = "Trang chủ", LabelEn = "Home", Icon = "bi bi-house", DescriptionVi = "Trang chủ của website", DescriptionEn = "Website homepage" },
+                new Domains.Entities.Main.Route { Id = 2, Path = "/news", Component = "NewsPage", Layout = "MainLayout", Protected = false, ParentId = null, OrderIndex = 2, IsActive = true, LabelVi = "Tin tức", LabelEn = "News", Icon = "bi bi-newspaper", DescriptionVi = "Trang tin tức và hoạt động", DescriptionEn = "News and activities page" },
+                new Domains.Entities.Main.Route { Id = 3, Path = "/news/:category", Component = "NewsListPage", Layout = "MainLayout", Protected = false, ParentId = 2, OrderIndex = 1, IsActive = true, LabelVi = "Danh mục tin tức", LabelEn = "News Category", Icon = "bi bi-list", DescriptionVi = "Danh sách tin tức theo danh mục", DescriptionEn = "News list by category" },
+                new Domains.Entities.Main.Route { Id = 8, Path = "/news/aviation", Component = "NewsListPage", Layout = "MainLayout", Protected = false, ParentId = 2, OrderIndex = 6, IsActive = true, LabelVi = "Tin ngành hàng không", LabelEn = "Aviation News", Icon = "bi bi-airplane", DescriptionVi = "Tin tức về ngành hàng không", DescriptionEn = "Aviation industry news" },
+                new Domains.Entities.Main.Route { Id = 9, Path = "/news/law", Component = "NewsListPage", Layout = "MainLayout", Protected = false, ParentId = 2, OrderIndex = 7, IsActive = true, LabelVi = "Tuyên truyền pháp luật", LabelEn = "Legal Propaganda", Icon = "bi bi-journal-text", DescriptionVi = "Tuyên truyền pháp luật và quy định", DescriptionEn = "Legal propaganda and regulations" },
+                new Domains.Entities.Main.Route { Id = 10, Path = "/news/:id/:slug", Component = "NewsDetailPage", Layout = "MainLayout", Protected = false, ParentId = 2, OrderIndex = 8, IsActive = true, LabelVi = "Chi tiết tin tức", LabelEn = "News Detail", Icon = "bi bi-file-text", DescriptionVi = "Trang chi tiết tin tức", DescriptionEn = "News detail page" },
+                new Domains.Entities.Main.Route { Id = 11, Path = "/products/*", Component = "ProductPage", Layout = "MainLayout", Protected = false, ParentId = null, OrderIndex = 3, IsActive = true, LabelVi = "Sản phẩm", LabelEn = "Products", Icon = "bi bi-box", DescriptionVi = "Trang sản phẩm và giải pháp", DescriptionEn = "Products and solutions page" },
+                new Domains.Entities.Main.Route { Id = 12, Path = "/services/*", Component = "ServicePage", Layout = "MainLayout", Protected = false, ParentId = null, OrderIndex = 4, IsActive = true, LabelVi = "Dịch vụ", LabelEn = "Services", Icon = "bi bi-gear", DescriptionVi = "Trang dịch vụ và giải pháp", DescriptionEn = "Services and solutions page" },
+                new Domains.Entities.Main.Route { Id = 13, Path = "/notifications", Component = "NotificationPage", Layout = "MainLayout", Protected = false, ParentId = null, OrderIndex = 5, IsActive = true, LabelVi = "Thông báo", LabelEn = "Notifications", Icon = "bi bi-bell", DescriptionVi = "Trang thông báo và tuyển dụng", DescriptionEn = "Notifications and recruitment page" },
+                new Domains.Entities.Main.Route { Id = 14, Path = "/notifications/:category", Component = "NotificationListPage", Layout = "MainLayout", Protected = false, ParentId = 13, OrderIndex = 1, IsActive = true, LabelVi = "Danh sách thông báo", LabelEn = "Notification List", Icon = "bi bi-list", DescriptionVi = "Danh sách thông báo theo danh mục", DescriptionEn = "Notification list by category" },
+                new Domains.Entities.Main.Route { Id = 15, Path = "/notifications/:id/:slug", Component = "NotificationDetailPage", Layout = "MainLayout", Protected = false, ParentId = 13, OrderIndex = 2, IsActive = true, LabelVi = "Chi tiết thông báo", LabelEn = "Notification Detail", Icon = "bi bi-file-text", DescriptionVi = "Trang chi tiết thông báo", DescriptionEn = "Notification detail page" },
+                new Domains.Entities.Main.Route { Id = 16, Path = "/company", Component = "Financial", Layout = "MainLayout", Protected = false, ParentId = null, OrderIndex = 6, IsActive = true, LabelVi = "Thông tin công ty", LabelEn = "Company Information", Icon = "bi bi-building", DescriptionVi = "Trang thông tin về công ty", DescriptionEn = "Company information page" },
+                new Domains.Entities.Main.Route { Id = 17, Path = "/company/finance", Component = "Financial", Layout = "MainLayout", Protected = false, ParentId = 16, OrderIndex = 1, IsActive = true, LabelVi = "Thông tin tài chính", LabelEn = "Financial Information", Icon = "bi bi-cash-stack", DescriptionVi = "Thông tin tài chính công ty", DescriptionEn = "Company financial information" },
+                new Domains.Entities.Main.Route { Id = 18, Path = "/company/history", Component = "History", Layout = "MainLayout", Protected = false, ParentId = 16, OrderIndex = 2, IsActive = true, LabelVi = "Lịch sử ra đời", LabelEn = "Company History", Icon = "bi bi-clock-history", DescriptionVi = "Lịch sử phát triển công ty", DescriptionEn = "Company development history" },
+                new Domains.Entities.Main.Route { Id = 19, Path = "/company/structure", Component = "Structure", Layout = "MainLayout", Protected = false, ParentId = 16, OrderIndex = 3, IsActive = true, LabelVi = "Cơ cấu tổ chức", LabelEn = "Organization Structure", Icon = "bi bi-diagram-3", DescriptionVi = "Cơ cấu tổ chức công ty", DescriptionEn = "Company organization structure" },
+                new Domains.Entities.Main.Route { Id = 20, Path = "/company/leadership", Component = "Leadership", Layout = "MainLayout", Protected = false, ParentId = 16, OrderIndex = 4, IsActive = true, LabelVi = "Ban lãnh đạo", LabelEn = "Leadership", Icon = "bi bi-person-badge", DescriptionVi = "Thông tin ban lãnh đạo công ty", DescriptionEn = "Company leadership information" },
+                new Domains.Entities.Main.Route { Id = 21, Path = "/company/business", Component = "Business", Layout = "MainLayout", Protected = false, ParentId = 16, OrderIndex = 5, IsActive = true, LabelVi = "Ngành nghề kinh doanh", LabelEn = "Business Sectors", Icon = "bi bi-briefcase", DescriptionVi = "Thông tin ngành nghề kinh doanh", DescriptionEn = "Business sectors information" },
+                new Domains.Entities.Main.Route { Id = 22, Path = "/company/iso", Component = "Iso", Layout = "MainLayout", Protected = false, ParentId = 16, OrderIndex = 6, IsActive = true, LabelVi = "Hệ thống chứng chỉ ISO", LabelEn = "ISO Certification System", Icon = "bi bi-award", DescriptionVi = "Hệ thống chứng chỉ ISO của công ty", DescriptionEn = "Company ISO certification system" },
+                new Domains.Entities.Main.Route { Id = 23, Path = "/company/gallery", Component = "Gallery", Layout = "MainLayout", Protected = false, ParentId = 16, OrderIndex = 7, IsActive = true, LabelVi = "Thư viện công ty", LabelEn = "Company Gallery", Icon = "bi bi-images", DescriptionVi = "Thư viện hình ảnh công ty", DescriptionEn = "Company image gallery" },
+                new Domains.Entities.Main.Route { Id = 24, Path = "/contact", Component = "ContactPage", Layout = "MainLayout", Protected = false, ParentId = null, OrderIndex = 7, IsActive = true, LabelVi = "Liên hệ", LabelEn = "Contact", Icon = "bi bi-envelope", DescriptionVi = "Trang liên hệ và thông tin", DescriptionEn = "Contact and information page" },
+                new Domains.Entities.Main.Route { Id = 25, Path = "/login", Component = "UserLogin", Layout = null, Protected = false, ParentId = null, OrderIndex = 8, IsActive = true, LabelVi = "Đăng nhập", LabelEn = "Login", Icon = "bi bi-box-arrow-in-right", DescriptionVi = "Trang đăng nhập hệ thống", DescriptionEn = "System login page" },
+                new Domains.Entities.Main.Route { Id = 26, Path = "*", Component = "NotFoundPage", Layout = null, Protected = false, ParentId = null, OrderIndex = 999, IsActive = true, LabelVi = "Không tìm thấy", LabelEn = "Not Found", Icon = "bi bi-exclamation-triangle", DescriptionVi = "Trang lỗi không tìm thấy", DescriptionEn = "Page not found error" }
+            };
+
+            await context.Set<Domains.Entities.Main.Route>().AddRangeAsync(routes);
             await context.SaveChangesAsync();
         }
 
-        private static async Task SeedServicesAsync(ApplicationDbContext context)
-        {
-            var services = new List<Service>
-            {
-                new Service
-                {
-                    Name = "Dịch vụ bảo trì hệ thống",
-                    Slug = "dich-vu-bao-tri-he-thong",
-                    Description = "Dịch vụ bảo trì, bảo dưỡng các hệ thống kỹ thuật",
-                    Content = "Cung cấp các dịch vụ bảo trì, bảo dưỡng định kỳ và theo yêu cầu cho các hệ thống kỹ thuật",
-                    Status = 1
-                },
-                new Service
-                {
-                    Name = "Dịch vụ tư vấn kỹ thuật",
-                    Slug = "dich-vu-tu-van-ky-thuat",
-                    Description = "Dịch vụ tư vấn kỹ thuật chuyên nghiệp",
-                    Content = "Cung cấp các giải pháp tư vấn kỹ thuật chuyên sâu cho doanh nghiệp",
-                    Status = 1
-                },
-                new Service
-                {
-                    Name = "Dịch vụ đào tạo",
-                    Slug = "dich-vu-dao-tao",
-                    Description = "Dịch vụ đào tạo chuyên môn kỹ thuật",
-                    Content = "Cung cấp các khóa đào tạo chuyên môn kỹ thuật cho nhân viên",
-                    Status = 1
-                },
-                new Service
-                {
-                    Name = "Dịch vụ lắp đặt",
-                    Slug = "dich-vu-lap-dat",
-                    Description = "Dịch vụ lắp đặt hệ thống kỹ thuật",
-                    Content = "Cung cấp dịch vụ lắp đặt các hệ thống kỹ thuật theo yêu cầu",
-                    Status = 1
-                }
-            };
+        //private static async Task SeedPostCategoriesAsync(ApplicationDbContext context)
+        //{
+        //    var postCategories = new List<PostCategory>
+        //    {
+        //        // News Categories
+        //        new PostCategory
+        //        {
+        //            NameVi = "Tin hoạt động",
+        //            NameEn = "Activity news",
+        //            SlugVi = "tin-hoat-dong",
+        //            SlugEn = "activity-news",
+        //            DescriptionVi = "Tin tức hoạt động của công ty TNHH Kỹ thuật Quản lý bay",
+        //            DescriptionEn = "News of activities of Air Traffic Management Engineering Co., Ltd.",
+        //            Status = 1,
+        //            Type = PostType.News
+        //        },
+        //        new PostCategory
+        //        {
+        //            Name = "Tin ngành hàng không",
+        //            Slug = "tin-nganh-hang-khong",
+        //            Description = "Tin ngành hàng không trong nước và quốc tế",
+        //            Status = 1,
+        //            Type = PostType.News
+        //        },
+        //        new PostCategory
+        //        {
+        //            Name = "Tuyên truyền pháp luật",
+        //            Slug = "tuyen-truyen-phap-luat",
+        //            Description = "Tin tức tuyên truyền về pháp luật",
+        //            Status = 1,
+        //            Type = PostType.News
+        //        },
 
-            await context.Services.AddRangeAsync(services);
-            await context.SaveChangesAsync();
-        }
+        //        // Notification Categories
+        //        new PostCategory
+        //        {
+        //            Name = "Tuyển dụng",
+        //            Slug = "tuyen-dung",
+        //            Description = "Thông báo tuyển dụng của công ty TNHH Kỹ thuật Quản lý bay",
+        //            Status = 1,
+        //            Type = PostType.Notification
+        //        },
+        //        new PostCategory
+        //        {
+        //            Name = "Thông báo mời nhà cung cấp",
+        //            Slug = "thong-bao-moi-nha-cung-cap",
+        //            Description = "Thông báo mời nhà cung cấp",
+        //            Status = 1,
+        //            Type = PostType.Notification
+        //        },
+        //        new PostCategory
+        //        {
+        //            Name = "Thông báo khác",
+        //            Slug = "thong-bao-khac",
+        //            Description = "Thông báo khác của công ty TNHH Kỹ thuật Quản lý bay",
+        //            Status = 1,
+        //            Type = PostType.Notification
+        //        }
+        //    };
 
-        private static async Task SeedProductCategoriesAsync(ApplicationDbContext context)
-        {
-            var productCategories = new List<ProductCategory>
-            {
-                new ProductCategory
-                {
-                    Name = "Thiết bị hàng không",
-                    Slug = "thiet-bi-hang-khong",
-                    Description = "Các thiết bị chuyên dụng trong ngành hàng không",
-                    Status = 1
-                },
-                new ProductCategory
-                {
-                    Name = "Phụ tùng thay thế",
-                    Slug = "phu-tung-thay-the",
-                    Description = "Phụ tùng thay thế cho các thiết bị hàng không",
-                    Status = 1
-                },
-                new ProductCategory
-                {
-                    Name = "Thiết bị bảo trì",
-                    Slug = "thiet-bi-bao-tri",
-                    Description = "Các thiết bị phục vụ công tác bảo trì, bảo dưỡng",
-                    Status = 1
-                },
-                new ProductCategory
-                {
-                    Name = "Thiết bị đo lường",
-                    Slug = "thiet-bi-do-luong",
-                    Description = "Các thiết bị đo lường chuyên dụng",
-                    Status = 1
-                },
-                new ProductCategory
-                {
-                    Name = "Thiết bị an toàn",
-                    Slug = "thiet-bi-an-toan",
-                    Description = "Các thiết bị đảm bảo an toàn trong quá trình vận hành",
-                    Status = 1
-                }
-            };
+        //    await context.PostCategories.AddRangeAsync(postCategories);
+        //    await context.SaveChangesAsync();
+        //}
 
-            await context.ProductCategories.AddRangeAsync(productCategories);
-            await context.SaveChangesAsync();
-        }
+        //private static async Task SeedServicesAsync(ApplicationDbContext context)
+        //{
+        //    var services = new List<Service>
+        //    {
+        //        new Service
+        //        {
+        //            Name = "Dịch vụ bảo trì hệ thống",
+        //            Slug = "dich-vu-bao-tri-he-thong",
+        //            Description = "Dịch vụ bảo trì, bảo dưỡng các hệ thống kỹ thuật",
+        //            Content = "Cung cấp các dịch vụ bảo trì, bảo dưỡng định kỳ và theo yêu cầu cho các hệ thống kỹ thuật",
+        //            Status = 1
+        //        },
+        //        new Service
+        //        {
+        //            Name = "Dịch vụ tư vấn kỹ thuật",
+        //            Slug = "dich-vu-tu-van-ky-thuat",
+        //            Description = "Dịch vụ tư vấn kỹ thuật chuyên nghiệp",
+        //            Content = "Cung cấp các giải pháp tư vấn kỹ thuật chuyên sâu cho doanh nghiệp",
+        //            Status = 1
+        //        },
+        //        new Service
+        //        {
+        //            Name = "Dịch vụ đào tạo",
+        //            Slug = "dich-vu-dao-tao",
+        //            Description = "Dịch vụ đào tạo chuyên môn kỹ thuật",
+        //            Content = "Cung cấp các khóa đào tạo chuyên môn kỹ thuật cho nhân viên",
+        //            Status = 1
+        //        },
+        //        new Service
+        //        {
+        //            Name = "Dịch vụ lắp đặt",
+        //            Slug = "dich-vu-lap-dat",
+        //            Description = "Dịch vụ lắp đặt hệ thống kỹ thuật",
+        //            Content = "Cung cấp dịch vụ lắp đặt các hệ thống kỹ thuật theo yêu cầu",
+        //            Status = 1
+        //        }
+        //    };
+
+        //    await context.Services.AddRangeAsync(services);
+        //    await context.SaveChangesAsync();
+        //}
+
+        //private static async Task SeedProductCategoriesAsync(ApplicationDbContext context)
+        //{
+        //    var productCategories = new List<ProductCategory>
+        //    {
+        //        new ProductCategory
+        //        {
+        //            Name = "Thiết bị hàng không",
+        //            Slug = "thiet-bi-hang-khong",
+        //            Description = "Các thiết bị chuyên dụng trong ngành hàng không",
+        //            Status = 1
+        //        },
+        //        new ProductCategory
+        //        {
+        //            Name = "Phụ tùng thay thế",
+        //            Slug = "phu-tung-thay-the",
+        //            Description = "Phụ tùng thay thế cho các thiết bị hàng không",
+        //            Status = 1
+        //        },
+        //        new ProductCategory
+        //        {
+        //            Name = "Thiết bị bảo trì",
+        //            Slug = "thiet-bi-bao-tri",
+        //            Description = "Các thiết bị phục vụ công tác bảo trì, bảo dưỡng",
+        //            Status = 1
+        //        },
+        //        new ProductCategory
+        //        {
+        //            Name = "Thiết bị đo lường",
+        //            Slug = "thiet-bi-do-luong",
+        //            Description = "Các thiết bị đo lường chuyên dụng",
+        //            Status = 1
+        //        },
+        //        new ProductCategory
+        //        {
+        //            Name = "Thiết bị an toàn",
+        //            Slug = "thiet-bi-an-toan",
+        //            Description = "Các thiết bị đảm bảo an toàn trong quá trình vận hành",
+        //            Status = 1
+        //        }
+        //    };
+
+        //    await context.ProductCategories.AddRangeAsync(productCategories);
+        //    await context.SaveChangesAsync();
+        //}
     }
 }

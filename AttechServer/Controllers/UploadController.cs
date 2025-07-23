@@ -4,6 +4,8 @@ using AttechServer.Shared.WebAPIBase;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AttechServer.Shared.ApplicationBase.Common;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Webp;
 
 namespace AttechServer.Controllers
 {
@@ -13,12 +15,14 @@ namespace AttechServer.Controllers
     {
         private readonly IWebHostEnvironment _env;
         private readonly ApplicationDbContext _dbContext;
+        private readonly IConfiguration _configuration;
         private readonly long _maxFileSize = 10 * 1024 * 1024; // Giới hạn 10MB
 
-        public UploadController(ILogger<UploadController> logger, IWebHostEnvironment env, ApplicationDbContext dbContext) : base(logger)
+        public UploadController(ILogger<UploadController> logger, IWebHostEnvironment env, ApplicationDbContext dbContext, IConfiguration configuration) : base(logger)
         {
             _env = env;
             _dbContext = dbContext;
+            _configuration = configuration;
         }
 
         private string GetUploadPath(string subFolder)
@@ -30,9 +34,64 @@ namespace AttechServer.Controllers
             return uploadPath;
         }
 
+        private async Task<(string relativePath, string fileUrl)> UploadFile(IFormFile file, string subFolder, EntityType? entityType = null, int? entityId = null)
+        {
+            if (file.Length > _maxFileSize)
+                throw new Exception($"File {file.FileName} vượt quá kích thước cho phép (10MB).");
+
+            var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+            if (!IsValidMimeType(file.ContentType, extension))
+                throw new Exception($"MIME type của file {file.FileName} không hợp lệ.");
+
+            var datePath = Path.Combine(DateTime.Now.Year.ToString(), DateTime.Now.Month.ToString("D2"), DateTime.Now.Day.ToString("D2"));
+            var uploads = GetUploadPath(subFolder);
+            string fileName;
+            string filePath;
+            string relativePath;
+
+            // Nếu là ảnh thì convert sang .webp
+            if (subFolder == "images" && new[] { ".jpg", ".jpeg", ".png", ".gif" }.Contains(extension))
+            {
+                fileName = Guid.NewGuid() + ".webp";
+                filePath = Path.Combine(uploads, fileName);
+                relativePath = $"{subFolder}/{datePath.Replace("\\", "/")}/{fileName}";
+                using (var image = SixLabors.ImageSharp.Image.Load(file.OpenReadStream()))
+                {
+                    await image.SaveAsWebpAsync(filePath);
+                }
+            }
+            else
+            {
+                fileName = Guid.NewGuid() + extension;
+                filePath = Path.Combine(uploads, fileName);
+                relativePath = $"{subFolder}/{datePath.Replace("\\", "/")}/{fileName}";
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+            }
+
+            var fileEntry = new FileUpload
+            {
+                EntityType = entityType ?? EntityType.Temp,
+                EntityId = entityId ?? 0,
+                FilePath = relativePath,
+                FileType = subFolder,
+                CreatedDate = DateTime.Now
+            };
+            _dbContext.FileUploads.Add(fileEntry);
+            await _dbContext.SaveChangesAsync();
+
+            var baseUrl = _configuration["ApplicationUrl"] ?? $"{Request.Scheme}://{Request.Host}";
+            var fileUrl = $"{baseUrl}/api/upload/file/{relativePath}";
+
+            _logger.LogInformation($"Uploaded file: {relativePath}");
+            return (relativePath, fileUrl);
+        }
+
         [HttpPost("multi-upload")]
         //[Authorize]
-        public async Task<IActionResult> MultiUpload(IFormFile[] files)
+        public async Task<IActionResult> MultiUpload(IFormFile[] files, [FromQuery] EntityType? entityType = null, [FromQuery] int? entityId = null)
         {
             if (files == null || !files.Any())
                 return BadRequest("Không có file nào được tải lên.");
@@ -40,97 +99,100 @@ namespace AttechServer.Controllers
             var fileUrls = new List<string>();
             foreach (var file in files)
             {
-                if (file.Length > _maxFileSize)
-                    return BadRequest($"File {file.FileName} vượt quá kích thước cho phép (10MB).");
-
-                // Xác định loại file và thư mục lưu trữ
-                var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-                string subFolder;
-                if (new[] { ".jpg", ".jpeg", ".png", ".gif" }.Contains(extension))
-                    subFolder = "images";
-                else if (new[] { ".mp4", ".webm", ".ogg" }.Contains(extension))
-                    subFolder = "videos";
-                else if (new[] { ".pdf", ".doc", ".docx", ".xls", ".xlsx" }.Contains(extension))
-                    subFolder = "documents";
-                else if (new[] { ".mp3", ".wav", ".ogg" }.Contains(extension))
-                    subFolder = "audio";
-                else if (new[] { ".zip", ".rar" }.Contains(extension))
-                    subFolder = "archives";
-                else
-                    return BadRequest($"Định dạng file {file.FileName} không được hỗ trợ.");
-
-                // Kiểm tra MIME type
-                if (!IsValidMimeType(file.ContentType, extension))
-                    return BadRequest($"MIME type của file {file.FileName} không hợp lệ.");
-
-                var datePath = Path.Combine(DateTime.Now.Year.ToString(), DateTime.Now.Month.ToString("D2"), DateTime.Now.Day.ToString("D2"));
-                var uploads = GetUploadPath(subFolder);
-                var fileName = Guid.NewGuid() + extension;
-                var filePath = Path.Combine(uploads, fileName);
-                var relativePath = Path.Combine(subFolder, datePath, fileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                try
                 {
-                    await file.CopyToAsync(stream);
+                    // Xác định loại file và thư mục lưu trữ
+                    var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+                    string subFolder;
+                    if (new[] { ".jpg", ".jpeg", ".png", ".gif" }.Contains(extension))
+                        subFolder = "images";
+                    else if (new[] { ".mp4", ".webm", ".ogg" }.Contains(extension))
+                        subFolder = "videos";
+                    else if (new[] { ".pdf", ".doc", ".docx", ".xls", ".xlsx" }.Contains(extension))
+                        subFolder = "documents";
+                    else if (new[] { ".mp3", ".wav", ".ogg" }.Contains(extension))
+                        subFolder = "audio";
+                    else if (new[] { ".zip", ".rar" }.Contains(extension))
+                        subFolder = "archives";
+                    else
+                        return BadRequest($"Định dạng file {file.FileName} không được hỗ trợ.");
+
+                    var (_, fileUrl) = await UploadFile(file, subFolder, entityType, entityId);
+                    fileUrls.Add(fileUrl);
                 }
-
-                var fileEntry = new FileUpload
+                catch (Exception ex)
                 {
-                    EntityType = EntityType.Temp,
-                    EntityId = 0,
-                    FilePath = relativePath,
-                    FileType = subFolder,
-                    CreatedDate = DateTime.Now
-                };
-                _dbContext.FileUploads.Add(fileEntry);
-                await _dbContext.SaveChangesAsync();
-
-                var fileUrl = $"{Request.Scheme}://{Request.Host}/api/upload/file/{subFolder}/{datePath}/{fileName}";
-                fileUrls.Add(fileUrl);
-
-                _logger.LogInformation($"Uploaded file: {relativePath}");
+                    return BadRequest(ex.Message);
+                }
             }
 
             return Ok(new { locations = fileUrls });
         }
 
         [HttpPost("image")]
-        [Authorize]
-        public async Task<IActionResult> UploadImage(IFormFile file)
+        //[Authorize]
+        public async Task<IActionResult> UploadImage(IFormFile file, [FromQuery] EntityType? entityType = null, [FromQuery] int? entityId = null)
         {
-            var result = await MultiUpload(new[] { file });
-            if (result is OkObjectResult okResult && okResult.Value is { } value)
+            if (file == null)
+                return BadRequest("Không có file nào được tải lên.");
+
+            try
             {
-                var locations = (value as dynamic)?.locations as List<string>;
-                return Ok(new { location = locations?.FirstOrDefault() });
+                var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+                if (!new[] { ".jpg", ".jpeg", ".png", ".gif" }.Contains(extension))
+                    return BadRequest($"Định dạng file {file.FileName} không được hỗ trợ.");
+
+                var (_, fileUrl) = await UploadFile(file, "images", entityType, entityId);
+                return Ok(new { location = fileUrl });
             }
-            return result;
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("video")]
-        [Authorize]
-        public async Task<IActionResult> UploadVideo(IFormFile file)
+        //[Authorize]
+        public async Task<IActionResult> UploadVideo(IFormFile file, [FromQuery] EntityType? entityType = null, [FromQuery] int? entityId = null)
         {
-            var result = await MultiUpload(new[] { file });
-            if (result is OkObjectResult okResult && okResult.Value is { } value)
+            if (file == null)
+                return BadRequest("Không có file nào được tải lên.");
+
+            try
             {
-                var locations = (value as dynamic)?.locations as List<string>;
-                return Ok(new { location = locations?.FirstOrDefault() });
+                var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+                if (!new[] { ".mp4", ".webm", ".ogg" }.Contains(extension))
+                    return BadRequest($"Định dạng file {file.FileName} không được hỗ trợ.");
+
+                var (_, fileUrl) = await UploadFile(file, "videos", entityType, entityId);
+                return Ok(new { location = fileUrl });
             }
-            return result;
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("document")]
-        [Authorize]
-        public async Task<IActionResult> UploadDocument(IFormFile file)
+        //[Authorize]
+        public async Task<IActionResult> UploadDocument(IFormFile file, [FromQuery] EntityType? entityType = null, [FromQuery] int? entityId = null)
         {
-            var result = await MultiUpload(new[] { file });
-            if (result is OkObjectResult okResult && okResult.Value is { } value)
+            if (file == null)
+                return BadRequest("Không có file nào được tải lên.");
+
+            try
             {
-                var locations = (value as dynamic)?.locations as List<string>;
-                return Ok(new { location = locations?.FirstOrDefault() });
+                var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+                if (!new[] { ".pdf", ".doc", ".docx", ".xls", ".xlsx" }.Contains(extension))
+                    return BadRequest($"Định dạng file {file.FileName} không được hỗ trợ.");
+
+                var (_, fileUrl) = await UploadFile(file, "documents", entityType, entityId);
+                return Ok(new { location = fileUrl });
             }
-            return result;
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("file/{subFolder}/{year}/{month}/{day}/{fileName}")]

@@ -37,7 +37,7 @@ namespace AttechServer.Infrastructures.ContentProcessing
 
             var fileEntries = new List<FileEntry>();
 
-            var config = Configuration.Default;
+            var config = AngleSharp.Configuration.Default;
             var context = BrowsingContext.New(config);
             var document = await context.OpenAsync(req => req.Content(content));
 
@@ -108,7 +108,7 @@ namespace AttechServer.Infrastructures.ContentProcessing
             }
 
             var domain = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}";
-            var config = Configuration.Default;
+            var config = AngleSharp.Configuration.Default;
             var context = BrowsingContext.New(config);
             var document = await context.OpenAsync(req => req.Content(content));
 

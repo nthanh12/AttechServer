@@ -59,6 +59,23 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
+        /// Lấy chi tiết dịch vụ theo slug
+        /// </summary>
+        [HttpGet("detail/{slug}")]
+        [AllowAnonymous]
+        public async Task<ApiResponse> FindBySlug(string slug)
+        {
+            try
+            {
+                return new(await _serviceService.FindBySlug(slug));
+            }
+            catch (Exception ex)
+            {
+                return OkException(ex);
+            }
+        }
+
+        /// <summary>
         /// Thêm mới dịch vụ
         /// </summary>
         /// <param name="input"></param>

@@ -96,11 +96,24 @@
             <param name="type"></param>
             <returns></returns>
         </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IPostService.FindAllByCategorySlug(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.String,AttechServer.Domains.Entities.Main.PostType)">
+            <summary>
+            Lấy danh sách bài viết theo slug danh mục, bao gồm cả category chính và sub-categories
+            </summary>
+        </member>
         <member name="M:AttechServer.Applications.UserModules.Abstracts.IPostService.FindById(System.Int32,AttechServer.Domains.Entities.Main.PostType)">
             <summary>
             Lấy thông tin chi tiết bài viết theo Id
             </summary>
             <param name="id"></param>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IPostService.FindBySlug(System.String,AttechServer.Domains.Entities.Main.PostType)">
+            <summary>
+            Lấy thông tin chi tiết bài viết theo slug (song ngữ)
+            </summary>
+            <param name="slug"></param>
             <param name="type"></param>
             <returns></returns>
         </member>
@@ -195,11 +208,23 @@
             <param name="categoryId"></param>
             <returns></returns>
         </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductService.FindAllByCategorySlug(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.String)">
+            <summary>
+            Lấy danh sách sản phẩm theo slug danh mục sản phẩm, bao gồm cả category chính và sub-categories
+            </summary>
+        </member>
         <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductService.FindById(System.Int32)">
             <summary>
             Lấy thông tin chi tiết sản phẩm theo Id
             </summary>
             <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductService.FindBySlug(System.String)">
+            <summary>
+            Lấy thông tin chi tiết sản phẩm theo slug (song ngữ)
+            </summary>
+            <param name="slug"></param>
             <returns></returns>
         </member>
         <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductService.Create(AttechServer.Applications.UserModules.Dtos.Product.CreateProductDto)">
@@ -288,6 +313,13 @@
             <param name="id"></param>
             <returns></returns>
         </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IServiceService.FindBySlug(System.String)">
+            <summary>
+            Lấy thông tin chi tiết dịch vụ theo slug (song ngữ)
+            </summary>
+            <param name="slug"></param>
+            <returns></returns>
+        </member>
         <member name="M:AttechServer.Applications.UserModules.Abstracts.IServiceService.Create(AttechServer.Applications.UserModules.Dtos.Service.CreateServiceDto)">
             <summary>
             Thêm mới dịch vụ
@@ -368,6 +400,11 @@
             <see cref="T:AttechServer.Shared.Consts.CommonStatus"/>
             </summary>
         </member>
+        <member name="M:AttechServer.Applications.UserModules.Implements.ProductService.FindAllByCategorySlug(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.String)">
+            <summary>
+            Lấy danh sách sản phẩm theo SlugVi danh mục, bao gồm cả category chính và sub-categories
+            </summary>
+        </member>
         <member name="M:AttechServer.Controllers.ApiEndpointController.FindAll">
             <summary>
             Lấy danh sách tất cả API Endpoint
@@ -414,6 +451,26 @@
             <param name="input"></param>
             <returns></returns>
         </member>
+        <member name="M:AttechServer.Controllers.MediaController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Danh sách file
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.MediaController.FindByEntity(AttechServer.Shared.ApplicationBase.Common.EntityType,System.Int32,AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Danh sách file theo entity
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.MediaController.Delete(System.Int32)">
+            <summary>
+            Xóa file
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.MediaController.DeleteByEntity(AttechServer.Shared.ApplicationBase.Common.EntityType,System.Int32)">
+            <summary>
+            Xóa file theo entity
+            </summary>
+        </member>
         <member name="M:AttechServer.Controllers.NewsCategoryController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
             <summary>
             Danh sách danh mục tin tức
@@ -428,83 +485,45 @@
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:AttechServer.Controllers.NewsCategoryController.Create(AttechServer.Applications.UserModules.Dtos.PostCategory.CreatePostCategoryDto)">
-            <summary>
-            Thêm mới danh mục tin tức
-            </summary>
-            <param name="input"></param>
-            <returns></returns>
-        </member>
-        <member name="M:AttechServer.Controllers.NewsCategoryController.Update(AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryDto)">
-            <summary>
-            Cập nhật danh mục tin tức
-            </summary>
-            <param name="input"></param>
-            <returns></returns>
-        </member>
-        <member name="M:AttechServer.Controllers.NewsCategoryController.Delete(System.Int32)">
-            <summary>
-            Xóa danh mục tin tức
-            </summary>
-            <param name="id"></param>
-            <returns></returns>
-        </member>
-        <member name="M:AttechServer.Controllers.NewsCategoryController.UpdateStatus(AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryStatusDto)">
-            <summary>
-            Khóa/Mở khóa danh mục tin tức
-            </summary>
-            <param name="input"></param>
-            <returns></returns>
-        </member>
         <member name="M:AttechServer.Controllers.NewsController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
             <summary>
             Danh sách tin tức
             </summary>
-            <param name="input"></param>
-            <returns></returns>
         </member>
-        <member name="M:AttechServer.Controllers.NewsController.FindAllByCategoryId(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.Int32)">
+        <member name="M:AttechServer.Controllers.NewsController.FindAllByCategorySlug(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.String)">
             <summary>
-            Danh sách theo danh mục tin tức
+            Danh sách theo slug danh mục tin tức, bao gồm cả sub-categories
             </summary>
-            <param name="input"></param>
-            <param name="categoryId"></param>
-            <returns></returns>
         </member>
         <member name="M:AttechServer.Controllers.NewsController.FindById(System.Int32)">
             <summary>
             Thông tin chi tiết tin tức
             </summary>
-            <param name="id"></param>
-            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.NewsController.FindBySlug(System.String)">
+            <summary>
+            Lấy chi tiết tin tức theo slug
+            </summary>
         </member>
         <member name="M:AttechServer.Controllers.NewsController.Create(AttechServer.Applications.UserModules.Dtos.Post.CreatePostDto)">
             <summary>
             Thêm mới tin tức
             </summary>
-            <param name="input"></param>
-            <returns></returns>
         </member>
         <member name="M:AttechServer.Controllers.NewsController.Update(AttechServer.Applications.UserModules.Dtos.Post.UpdatePostDto)">
             <summary>
             Cập nhật tin tức
             </summary>
-            <param name="input"></param>
-            <returns></returns>
         </member>
         <member name="M:AttechServer.Controllers.NewsController.Delete(System.Int32)">
             <summary>
             Xóa tin tức
             </summary>
-            <param name="id"></param>
-            <returns></returns>
         </member>
         <member name="M:AttechServer.Controllers.NewsController.UpdateStatus(AttechServer.Applications.UserModules.Dtos.Post.UpdatePostStatusDto)">
             <summary>
             Khóa/Mở khóa tin tức
             </summary>
-            <param name="input"></param>
-            <returns></returns>
         </member>
         <member name="M:AttechServer.Controllers.NotificationCategoryController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
             <summary>
@@ -553,14 +572,19 @@
             Danh sách thông báo
             </summary>
         </member>
-        <member name="M:AttechServer.Controllers.NotificationController.FindAllByCategoryId(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.Int32)">
+        <member name="M:AttechServer.Controllers.NotificationController.FindAllByCategorySlug(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.String)">
             <summary>
-            Danh sách theo danh mục thông báo
+            Danh sách theo slug danh mục thông báo
             </summary>
         </member>
         <member name="M:AttechServer.Controllers.NotificationController.FindById(System.Int32)">
             <summary>
             Thông tin chi tiết thông báo
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NotificationController.FindBySlug(System.String)">
+            <summary>
+            Lấy chi tiết thông báo theo slug
             </summary>
         </member>
         <member name="M:AttechServer.Controllers.NotificationController.Create(AttechServer.Applications.UserModules.Dtos.Post.CreatePostDto)">
@@ -713,13 +737,13 @@
             <param name="input"></param>
             <returns></returns>
         </member>
-        <member name="M:AttechServer.Controllers.ProductController.FindAllByCategoryId(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.Int32)">
+        <member name="M:AttechServer.Controllers.ProductController.FindAllByCategorySlug(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.String)">
             <summary>
-            Danh sách sản phẩm theo danh mục
-            </summary>
+            Danh sách sản phẩm theo slug danh mục sản phẩm
+            /// </summary>
             <param name="input"></param>
-            <param name="categoryId"></param>
             <returns></returns>
+            
         </member>
         <member name="M:AttechServer.Controllers.ProductController.FindById(System.Int32)">
             <summary>
@@ -727,6 +751,11 @@
             </summary>
             <param name="id"></param>
             <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.ProductController.FindBySlug(System.String)">
+            <summary>
+            Lấy chi tiết sản phẩm theo slug
+            </summary>
         </member>
         <member name="M:AttechServer.Controllers.ProductController.Create(AttechServer.Applications.UserModules.Dtos.Product.CreateProductDto)">
             <summary>
@@ -814,6 +843,11 @@
             <param name="id"></param>
             <returns></returns>
         </member>
+        <member name="M:AttechServer.Controllers.ServiceController.FindBySlug(System.String)">
+            <summary>
+            Lấy chi tiết dịch vụ theo slug
+            </summary>
+        </member>
         <member name="M:AttechServer.Controllers.ServiceController.Create(AttechServer.Applications.UserModules.Dtos.Service.CreateServiceDto)">
             <summary>
             Thêm mới dịch vụ
@@ -882,6 +916,21 @@
             <summary>
             Trạng thái
             <see cref="!:PostStatuses"/>
+            </summary>
+        </member>
+        <member name="P:AttechServer.Domains.Entities.Main.PostCategory.ParentId">
+            <summary>
+            Khóa ngoại self‐reference
+            </summary>
+        </member>
+        <member name="P:AttechServer.Domains.Entities.Main.PostCategory.Parent">
+            <summary>
+            Navigation tới danh mục cha (nullable)
+            </summary>
+        </member>
+        <member name="P:AttechServer.Domains.Entities.Main.PostCategory.Children">
+            <summary>
+            Tập hợp các danh mục con
             </summary>
         </member>
         <member name="P:AttechServer.Domains.Entities.Main.Product.Status">
@@ -1122,6 +1171,66 @@
             <inheritdoc />
         </member>
         <member name="M:AttechServer.Migrations.addSeedDatav2.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.updateMedia">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateMedia.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateMedia.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateMedia.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.AddSelfReferenceToPostCategory">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.AddSelfReferenceToPostCategory.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.AddSelfReferenceToPostCategory.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.AddSelfReferenceToPostCategory.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.UpdatePostCategoryTable">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.UpdatePostCategoryTable.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.UpdatePostCategoryTable.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.UpdatePostCategoryTable.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.AddMenuTable">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.AddMenuTable.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.AddMenuTable.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.AddMenuTable.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.AddOrderPriorityToMenu">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.AddOrderPriorityToMenu.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.AddOrderPriorityToMenu.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.AddOrderPriorityToMenu.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
         <member name="T:AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto">

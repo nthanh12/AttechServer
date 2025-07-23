@@ -20,6 +20,13 @@ namespace AttechServer.Applications.UserModules.Abstracts
         Task<DetailServiceDto> FindById(int id);
 
         /// <summary>
+        /// Lấy thông tin chi tiết dịch vụ theo slug (song ngữ)
+        /// </summary>
+        /// <param name="slug"></param>
+        /// <returns></returns>
+        Task<DetailServiceDto> FindBySlug(string slug);
+
+        /// <summary>
         /// Thêm mới dịch vụ
         /// </summary>
         /// <param name="input"></param>

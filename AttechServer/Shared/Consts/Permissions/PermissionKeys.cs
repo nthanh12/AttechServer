@@ -96,6 +96,11 @@
         #region upload
         public const string UploadFile = "upload_file";
         #endregion
+
+        public const string Menu_View = "menu_view";
+        public const string Menu_Create = "menu_create";
+        public const string Menu_Update = "menu_update";
+        public const string Menu_Delete = "menu_delete";
     }
 
     public static class PermissionLabel

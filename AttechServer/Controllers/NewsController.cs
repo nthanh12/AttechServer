@@ -24,8 +24,6 @@ namespace AttechServer.Controllers
         /// <summary>
         /// Danh sách tin tức
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
         [HttpGet("find-all")]
         [AllowAnonymous]
         public async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
@@ -41,18 +39,15 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Danh sách theo danh mục tin tức
+        /// Danh sách theo slug danh mục tin tức, bao gồm cả sub-categories
         /// </summary>
-        /// <param name="input"></param>
-        /// <param name="categoryId"></param>
-        /// <returns></returns>
-        [HttpGet("category/{categoryId}")]
+        [HttpGet("category/{slug}")]
         [AllowAnonymous]
-        public async Task<ApiResponse> FindAllByCategoryId([FromQuery] PagingRequestBaseDto input, int categoryId)
+        public async Task<ApiResponse> FindAllByCategorySlug([FromQuery] PagingRequestBaseDto input, string slug)
         {
             try
             {
-                return new(await _postService.FindAllByCategoryId(input, categoryId, PostType.News));
+                return new(await _postService.FindAllByCategorySlug(input, slug, PostType.News));
             }
             catch (Exception ex)
             {
@@ -63,8 +58,6 @@ namespace AttechServer.Controllers
         /// <summary>
         /// Thông tin chi tiết tin tức
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpGet("find-by-id/{id}")]
         [AllowAnonymous]
         public async Task<ApiResponse> FindById(int id)
@@ -80,13 +73,26 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
+        /// Lấy chi tiết tin tức theo slug
+        /// </summary>
+        [HttpGet("detail/{slug}")]
+        [AllowAnonymous]
+        public async Task<ApiResponse> FindBySlug(string slug)
+        {
+            try
+            {
+                return new(await _postService.FindBySlug(slug, PostType.News));
+            }
+            catch (Exception ex)
+            {
+                return OkException(ex);
+            }
+        }
+
+        /// <summary>
         /// Thêm mới tin tức
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
         [HttpPost("create")]
-        [Authorize]
-        [PermissionFilter(PermissionKeys.CreateNews)]
         public async Task<ApiResponse> Create([FromBody] CreatePostDto input)
         {
             try
@@ -103,8 +109,6 @@ namespace AttechServer.Controllers
         /// <summary>
         /// Cập nhật tin tức
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
         [HttpPut("update")]
         [Authorize]
         [PermissionFilter(PermissionKeys.EditNews)]
@@ -124,8 +128,6 @@ namespace AttechServer.Controllers
         /// <summary>
         /// Xóa tin tức
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpDelete("delete/{id}")]
         [Authorize]
         [PermissionFilter(PermissionKeys.DeleteNews)]
@@ -134,7 +136,7 @@ namespace AttechServer.Controllers
             try
             {
                 await _postService.Delete(id, PostType.News);
-                return new();
+                return new ApiResponse();
             }
             catch (Exception ex)
             {
@@ -145,8 +147,6 @@ namespace AttechServer.Controllers
         /// <summary>
         /// Khóa/Mở khóa tin tức
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
         [HttpPut("update-status")]
         [Authorize]
         [PermissionFilter(PermissionKeys.EditNews)]
@@ -155,7 +155,7 @@ namespace AttechServer.Controllers
             try
             {
                 await _postService.UpdateStatusPost(input.Id, input.Status, PostType.News);
-                return new();
+                return new ApiResponse();
             }
             catch (Exception ex)
             {

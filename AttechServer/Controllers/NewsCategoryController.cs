@@ -4,10 +4,12 @@ using AttechServer.Shared.ApplicationBase.Common;
 using AttechServer.Shared.WebAPIBase;
 using Microsoft.AspNetCore.Mvc;
 using AttechServer.Domains.Entities.Main;
+using AttechServer.Shared.Filters;
+using AttechServer.Shared.Consts.Permissions;
 
 namespace AttechServer.Controllers
 {
-    [Route("api/news-category")]
+    [Route("api/news-categories")]
     [ApiController]
     public class NewsCategoryController : ApiControllerBase
     {
@@ -54,11 +56,7 @@ namespace AttechServer.Controllers
             }
         }
 
-        /// <summary>
-        /// Thêm mới danh mục tin tức
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
+        [PermissionFilter(PermissionKeys.CreateNewsCategory)]
         [HttpPost("create")]
         public async Task<ApiResponse> Create([FromBody] CreatePostCategoryDto input)
         {
@@ -73,11 +71,7 @@ namespace AttechServer.Controllers
             }
         }
 
-        /// <summary>
-        /// Cập nhật danh mục tin tức
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
+        [PermissionFilter(PermissionKeys.EditNewsCategory)]
         [HttpPut("update")]
         public async Task<ApiResponse> Update([FromBody] UpdatePostCategoryDto input)
         {
@@ -92,11 +86,7 @@ namespace AttechServer.Controllers
             }
         }
 
-        /// <summary>
-        /// Xóa danh mục tin tức
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        [PermissionFilter(PermissionKeys.DeleteNewsCategory)]
         [HttpDelete("delete/{id}")]
         public async Task<ApiResponse> Delete(int id)
         {
@@ -111,11 +101,7 @@ namespace AttechServer.Controllers
             }
         }
 
-        /// <summary>
-        /// Khóa/Mở khóa danh mục tin tức
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
+        [PermissionFilter(PermissionKeys.EditNewsCategory)]
         [HttpPut("update-status")]
         public async Task<ApiResponse> UpdateStatus(UpdatePostCategoryStatusDto input)
         {

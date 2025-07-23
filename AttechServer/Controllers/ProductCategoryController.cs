@@ -3,10 +3,12 @@ using AttechServer.Applications.UserModules.Dtos.ProductCategory;
 using AttechServer.Shared.ApplicationBase.Common;
 using AttechServer.Shared.WebAPIBase;
 using Microsoft.AspNetCore.Mvc;
+using AttechServer.Shared.Filters;
+using AttechServer.Shared.Consts.Permissions;
 
 namespace AttechServer.Controllers
 {
-    [Route("api/product-category")]
+    [Route("api/product-categories")]
     [ApiController]
     public class ProductCategoryController : ApiControllerBase
     {
@@ -57,6 +59,7 @@ namespace AttechServer.Controllers
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
+        [PermissionFilter(PermissionKeys.CreateProductCategory)]
         [HttpPost("create")]
         public async Task<ApiResponse> Create([FromBody] CreateProductCategoryDto input)
         {
@@ -76,6 +79,7 @@ namespace AttechServer.Controllers
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
+        [PermissionFilter(PermissionKeys.EditProductCategory)]
         [HttpPut("update")]
         public async Task<ApiResponse> Update([FromBody] UpdateProductCategoryDto input)
         {
@@ -95,6 +99,7 @@ namespace AttechServer.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [PermissionFilter(PermissionKeys.DeleteProductCategory)]
         [HttpDelete("delete/{id}")]
         public async Task<ApiResponse> Delete(int id)
         {
@@ -115,6 +120,7 @@ namespace AttechServer.Controllers
         /// <param name="id"></param>
         /// <param name="status"></param>
         /// <returns></returns>
+        [PermissionFilter(PermissionKeys.EditProductCategory)]
         [HttpPut("update-status")]
         public async Task<ApiResponse> UpdateStatus([FromBody] UpdateProductCategoryStatusDto input)
         {

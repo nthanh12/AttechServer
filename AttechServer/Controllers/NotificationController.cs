@@ -41,15 +41,15 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Danh sách theo danh mục thông báo
+        /// Danh sách theo slug danh mục thông báo
         /// </summary>
-        [HttpGet("category/{categoryId}")]
+        [HttpGet("category/{slug}")]
         [AllowAnonymous]
-        public async Task<ApiResponse> FindAllByCategoryId([FromQuery] PagingRequestBaseDto input, int categoryId)
+        public async Task<ApiResponse> FindAllByCategorySlug([FromQuery] PagingRequestBaseDto input, string slug)
         {
-            try
+            try 
             {
-                return new(await _postService.FindAllByCategoryId(input, categoryId, PostType.Notification));
+                return new(await _postService.FindAllByCategorySlug(input, slug, PostType.Notification));
             }
             catch (Exception ex)
             {
@@ -67,6 +67,23 @@ namespace AttechServer.Controllers
             try
             {
                 return new(await _postService.FindById(id, PostType.Notification));
+            }
+            catch (Exception ex)
+            {
+                return OkException(ex);
+            }
+        }
+
+        /// <summary>
+        /// Lấy chi tiết thông báo theo slug
+        /// </summary>
+        [HttpGet("detail/{slug}")]
+        [AllowAnonymous]
+        public async Task<ApiResponse> FindBySlug(string slug)
+        {
+            try
+            {
+                return new(await _postService.FindBySlug(slug, PostType.Notification));
             }
             catch (Exception ex)
             {

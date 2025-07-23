@@ -6,6 +6,7 @@ using AttechServer.Infrastructures.Persistances;
 using AttechServer.Shared.ApplicationBase.Common;
 using AttechServer.Shared.Consts.Exceptions;
 using AttechServer.Shared.Exceptions;
+using AttechServer.Shared.WebAPIBase;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
@@ -37,7 +38,7 @@ namespace AttechServer.Applications.UserModules.Implements
                     Id = f.Id,
                     FileName = Path.GetFileName(f.FilePath),
                     FileType = f.FileType,
-                    FilePath = f.FilePath,
+                    FilePath = f.FilePath.Replace('\\', '/'),
                     EntityType = f.EntityType,
                     EntityId = f.EntityId,
                     CreatedDate = f.CreatedDate
@@ -56,40 +57,45 @@ namespace AttechServer.Applications.UserModules.Implements
         {
             _logger.LogInformation($"{nameof(FindAll)}: input = {JsonSerializer.Serialize(input)}");
 
-            var baseQuery = _dbContext.FileUploads.AsNoTracking()
-                .Where(f => f.EntityType != EntityType.Temp);
+            var query = _dbContext.FileUploads.AsNoTracking();
 
             // Tìm kiếm
             if (!string.IsNullOrEmpty(input.Keyword))
             {
-                baseQuery = baseQuery.Where(f =>
+                query = query.Where(f =>
                     f.FilePath.Contains(input.Keyword) ||
                     f.FileType.Contains(input.Keyword));
             }
 
-            var totalItems = await baseQuery.CountAsync();
-
             // Sắp xếp
-            var query = baseQuery.OrderByDescending(f => f.CreatedDate);
             if (input.Sort.Any())
             {
                 // TODO: Implement dynamic sorting based on input.Sort
             }
+            else
+            {
+                query = query.OrderByDescending(f => f.CreatedDate);
+            }
 
-            var pagedItems = await query
-                .Skip(input.GetSkip())
-                .Take(input.PageSize)
+            // Thực hiện truy vấn
+            var result = await query
                 .Select(f => new FileUploadDto
                 {
                     Id = f.Id,
                     FileName = Path.GetFileName(f.FilePath),
                     FileType = f.FileType,
-                    FilePath = f.FilePath,
+                    FilePath = f.FilePath.Replace('\\', '/'),
                     EntityType = f.EntityType,
                     EntityId = f.EntityId,
                     CreatedDate = f.CreatedDate
                 })
                 .ToListAsync();
+
+            var totalItems = result.Count;
+            var pagedItems = result
+                .Skip(input.GetSkip())
+                .Take(input.PageSize)
+                .ToList();
 
             return new PagingResult<FileUploadDto>
             {
@@ -102,40 +108,46 @@ namespace AttechServer.Applications.UserModules.Implements
         {
             _logger.LogInformation($"{nameof(FindByEntity)}: entityType = {entityType}, entityId = {entityId}, input = {JsonSerializer.Serialize(input)}");
 
-            var baseQuery = _dbContext.FileUploads.AsNoTracking()
+            var query = _dbContext.FileUploads.AsNoTracking()
                 .Where(f => f.EntityType == entityType && f.EntityId == entityId);
 
             // Tìm kiếm
             if (!string.IsNullOrEmpty(input.Keyword))
             {
-                baseQuery = baseQuery.Where(f =>
+                query = query.Where(f =>
                     f.FilePath.Contains(input.Keyword) ||
                     f.FileType.Contains(input.Keyword));
             }
 
-            var totalItems = await baseQuery.CountAsync();
-
             // Sắp xếp
-            var query = baseQuery.OrderByDescending(f => f.CreatedDate);
             if (input.Sort.Any())
             {
                 // TODO: Implement dynamic sorting based on input.Sort
             }
+            else
+            {
+                query = query.OrderByDescending(f => f.CreatedDate);
+            }
 
-            var pagedItems = await query
-                .Skip(input.GetSkip())
-                .Take(input.PageSize)
+            // Thực hiện truy vấn
+            var result = await query
                 .Select(f => new FileUploadDto
                 {
                     Id = f.Id,
                     FileName = Path.GetFileName(f.FilePath),
                     FileType = f.FileType,
-                    FilePath = f.FilePath,
+                    FilePath = f.FilePath.Replace('\\', '/'),
                     EntityType = f.EntityType,
                     EntityId = f.EntityId,
                     CreatedDate = f.CreatedDate
                 })
                 .ToListAsync();
+
+            var totalItems = result.Count;
+            var pagedItems = result
+                .Skip(input.GetSkip())
+                .Take(input.PageSize)
+                .ToList();
 
             return new PagingResult<FileUploadDto>
             {
@@ -154,6 +166,10 @@ namespace AttechServer.Applications.UserModules.Implements
 
             // Xóa file vật lý
             await _wysiwygFileProcessor.DeleteFilesAsync(file.EntityType, file.EntityId);
+
+            // Xóa bản ghi trong database
+            _dbContext.FileUploads.Remove(file);
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task DeleteByEntity(EntityType entityType, int entityId)
@@ -162,6 +178,14 @@ namespace AttechServer.Applications.UserModules.Implements
 
             // Xóa file vật lý
             await _wysiwygFileProcessor.DeleteFilesAsync(entityType, entityId);
+
+            // Xóa các bản ghi trong database
+            var files = await _dbContext.FileUploads
+                .Where(f => f.EntityType == entityType && f.EntityId == entityId)
+                .ToListAsync();
+
+            _dbContext.FileUploads.RemoveRange(files);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

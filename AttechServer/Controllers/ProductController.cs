@@ -40,18 +40,17 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Danh sách sản phẩm theo danh mục
-        /// </summary>
+        /// Danh sách sản phẩm theo slug danh mục sản phẩm
+        /// /// </summary>
         /// <param name="input"></param>
-        /// <param name="categoryId"></param>
         /// <returns></returns>
-        [HttpGet("find-by-categoryId")]
+        /// 
+        [HttpGet("category/{slug}")]
         [AllowAnonymous]
-        public async Task<ApiResponse> FindAllByCategoryId(PagingRequestBaseDto input, int categoryId)
+        public async Task<ApiResponse> FindAllByCategorySlug([FromQuery] PagingRequestBaseDto input, string slug)
         {
-            try
-            {
-                return new(await _productService.FindAllByCategoryId(input, categoryId));
+            try {
+                return new(await _productService.FindAllByCategorySlug(input, slug));
             }
             catch (Exception ex)
             {
@@ -71,6 +70,23 @@ namespace AttechServer.Controllers
             try
             {
                 return new(await _productService.FindById(id));
+            }
+            catch (Exception ex)
+            {
+                return OkException(ex);
+            }
+        }
+
+        /// <summary>
+        /// Lấy chi tiết sản phẩm theo slug
+        /// </summary>
+        [HttpGet("detail/{slug}")]
+        [AllowAnonymous]
+        public async Task<ApiResponse> FindBySlug(string slug)
+        {
+            try
+            {
+                return new(await _productService.FindBySlug(slug));
             }
             catch (Exception ex)
             {

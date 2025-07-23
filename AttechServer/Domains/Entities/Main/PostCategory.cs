@@ -1,8 +1,9 @@
 ﻿using AttechServer.Domains.EntityBase;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using AttechServer.Domains.Entities.Main; // Đảm bảo đã thêm dòng này
 
 namespace AttechServer.Domains.Entities.Main
 {
@@ -13,26 +14,48 @@ namespace AttechServer.Domains.Entities.Main
         Name = $"IX_{nameof(PostCategory)}",
         IsUnique = false
     )]
-    [Index(nameof(Slug), IsUnique = true)]
+    [Index(nameof(SlugVi), IsUnique = true)]
+    [Index(nameof(SlugEn), IsUnique = true)]
     public class PostCategory : IFullAudited
     {
         [Key]
         public int Id { get; set; }
 
         [Required, StringLength(100)]
-        public string Name { get; set; } = string.Empty;
+        public string NameVi { get; set; } = string.Empty;
+        [Required, StringLength(100)]
+        public string NameEn { get; set; } = string.Empty;
 
         [Required, StringLength(100)]
-        public string Slug { get; set; } = string.Empty;
+        public string SlugVi { get; set; } = string.Empty;
+        [Required, StringLength(100)]
+        public string SlugEn { get; set; } = string.Empty;
 
         [StringLength(160)]
-        public string Description { get; set; } = string.Empty;
+        public string DescriptionVi { get; set; } = string.Empty;
+        [StringLength(160)]
+        public string DescriptionEn { get; set; } = string.Empty;
 
         public int Status { get; set; }
 
         public PostType Type { get; set; }
 
-        public List<Post> Posts { get; set; } = new List<Post>();
+        /// <summary>
+        /// Khóa ngoại self‐reference
+        /// </summary>
+        public int? ParentId { get; set; }
+
+        /// <summary>
+        /// Navigation tới danh mục cha (nullable)
+        /// </summary>
+        public PostCategory? Parent { get; set; }
+
+        /// <summary>
+        /// Tập hợp các danh mục con
+        /// </summary>
+        public List<PostCategory> Children { get; set; } = new();
+
+        public List<Post> Posts { get; set; } = new();
 
         #region audit
         public DateTime? CreatedDate { get; set; }

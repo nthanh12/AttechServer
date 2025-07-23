@@ -21,11 +21,23 @@ namespace AttechServer.Applications.UserModules.Abstracts
         Task<PagingResult<ProductDto>> FindAllByCategoryId(PagingRequestBaseDto input, int categoryId);
 
         /// <summary>
+        /// Lấy danh sách sản phẩm theo slug danh mục sản phẩm, bao gồm cả category chính và sub-categories
+        /// </summary>
+        Task<PagingResult<ProductDto>> FindAllByCategorySlug(PagingRequestBaseDto input, string slug);
+
+        /// <summary>
         /// Lấy thông tin chi tiết sản phẩm theo Id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         Task<DetailProductDto> FindById(int id);
+
+        /// <summary>
+        /// Lấy thông tin chi tiết sản phẩm theo slug (song ngữ)
+        /// </summary>
+        /// <param name="slug"></param>
+        /// <returns></returns>
+        Task<DetailProductDto> FindBySlug(string slug);
 
         /// <summary>
         /// Thêm mới sản phẩm

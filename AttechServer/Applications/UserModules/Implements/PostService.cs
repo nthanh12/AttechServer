@@ -46,7 +46,7 @@ namespace AttechServer.Applications.UserModules.Implements
         private async Task<string> GenerateUniqueSlug(string title, PostType type, int? excludeId = null)
         {
             var slug = SlugHelper.GenerateSlug(title);
-            var query = _dbContext.Posts.Where(p => p.Slug == slug && !p.Deleted && p.Type == type);
+            var query = _dbContext.Posts.Where(p => p.SlugVi == slug && !p.Deleted && p.Type == type);
 
             if (excludeId.HasValue)
             {
@@ -100,7 +100,7 @@ namespace AttechServer.Applications.UserModules.Implements
                 try
                 {
                     // Validate input
-                    if (string.IsNullOrWhiteSpace(input.Title) || string.IsNullOrWhiteSpace(input.Content))
+                    if (string.IsNullOrWhiteSpace(input.TitleVi) || string.IsNullOrWhiteSpace(input.ContentVi))
                     {
                         throw new ArgumentException("Tiêu đề và nội dung là bắt buộc.");
                     }
@@ -114,7 +114,7 @@ namespace AttechServer.Applications.UserModules.Implements
                     // Kiểm tra danh mục
                     var category = await _dbContext.PostCategories
                         .Where(c => c.Id == input.PostCategoryId && !c.Deleted && c.Type == type)
-                        .Select(c => new { c.Id, c.Name, c.Slug })
+                        .Select(c => new { c.Id, c.NameVi, c.SlugVi })
                         .FirstOrDefaultAsync();
                     if (category == null)
                     {
@@ -122,28 +122,30 @@ namespace AttechServer.Applications.UserModules.Implements
                     }
 
                     // Tạo slug
-                    var slug = await GenerateUniqueSlug(input.Title, type);
+                    var slug = await GenerateUniqueSlug(input.TitleVi, type);
 
                     var newPost = new Post
                     {
-                        Slug = slug,
-                        Title = input.Title,
-                        Description = TruncateDescription(input.Description),
-                        Content = input.Content, // Tạm thời lưu content gốc
+                        SlugVi = slug,
+                        TitleVi = input.TitleVi,
+                        DescriptionVi = TruncateDescription(input.DescriptionVi),
+                        ContentVi = input.ContentVi,
                         TimePosted = input.TimePosted,
                         Status = CommonStatus.ACTIVE,
                         PostCategoryId = input.PostCategoryId,
                         Type = type,
                         CreatedDate = DateTime.UtcNow,
                         CreatedBy = userId,
-                        Deleted = false
+                        Deleted = false,
+                        isOutstanding = input.isOutstanding,
+                        ImageUrl = input.ImageUrl ?? string.Empty
                     };
 
                     _dbContext.Posts.Add(newPost);
                     await _dbContext.SaveChangesAsync();
 
                     // Xử lý content và file sau khi có Id
-                    newPost.Content = await ProcessContent(input.Content, newPost.Id);
+                    newPost.ContentVi = await ProcessContent(input.ContentVi, newPost.Id);
                     await _dbContext.SaveChangesAsync();
 
                     await transaction.CommitAsync();
@@ -151,14 +153,17 @@ namespace AttechServer.Applications.UserModules.Implements
                     return new PostDto
                     {
                         Id = newPost.Id,
-                        Title = newPost.Title,
-                        Slug = newPost.Slug,
-                        Description = newPost.Description,
+                        TitleVi = newPost.TitleVi,
+                        TitleEn = newPost.TitleEn,
+                        SlugVi = newPost.SlugVi,
+                        DescriptionVi = newPost.DescriptionVi,
                         TimePosted = newPost.TimePosted,
                         Status = newPost.Status,
                         PostCategoryId = newPost.PostCategoryId,
-                        PostCategoryName = category.Name,
-                        PostCategorySlug = category.Slug
+                        PostCategoryName = category.NameVi,
+                        PostCategorySlug = category.SlugVi,
+                        isOutstanding = newPost.isOutstanding,
+                        ImageUrl = newPost.ImageUrl
                     };
                 }
                 catch (Exception ex)
@@ -215,9 +220,12 @@ namespace AttechServer.Applications.UserModules.Implements
             if (!string.IsNullOrEmpty(input.Keyword))
             {
                 baseQuery = baseQuery.Where(p =>
-                    p.Title.Contains(input.Keyword) ||
-                    p.Description.Contains(input.Keyword) ||
-                    p.Content.Contains(input.Keyword));
+                    p.TitleVi.Contains(input.Keyword) ||
+                    p.DescriptionVi.Contains(input.Keyword) ||
+                    p.ContentVi.Contains(input.Keyword) ||
+                    p.TitleEn.Contains(input.Keyword) ||
+                    p.DescriptionEn.Contains(input.Keyword) ||
+                    p.ContentEn.Contains(input.Keyword));
             }
 
             var totalItems = await baseQuery.CountAsync();
@@ -235,14 +243,19 @@ namespace AttechServer.Applications.UserModules.Implements
                 .Select(p => new PostDto
                 {
                     Id = p.Id,
-                    Slug = p.Slug,
-                    Title = p.Title,
-                    Description = p.Description,
+                    SlugVi = p.SlugVi,
+                    SlugEn = p.SlugEn,
+                    TitleVi = p.TitleVi,
+                    TitleEn = p.TitleEn,
+                    DescriptionVi = p.DescriptionVi,
+                    DescriptionEn = p.DescriptionEn,
                     TimePosted = p.TimePosted,
                     Status = p.Status,
                     PostCategoryId = p.PostCategoryId,
-                    PostCategoryName = p.PostCategory.Name,
-                    PostCategorySlug = p.PostCategory.Slug
+                    PostCategoryName = p.PostCategory.NameVi,
+                    PostCategorySlug = p.PostCategory.SlugVi,
+                    isOutstanding = p.isOutstanding,
+                    ImageUrl = p.ImageUrl
                 })
                 .ToListAsync();
 
@@ -253,64 +266,91 @@ namespace AttechServer.Applications.UserModules.Implements
             };
         }
 
-        public async Task<PagingResult<PostDto>> FindAllByCategoryId(PagingRequestBaseDto input, int categoryId, PostType type)
+        public async Task<PagingResult<PostDto>> FindAllByCategoryId(
+            PagingRequestBaseDto input,
+            int categoryId,
+            PostType type)
         {
             _logger.LogInformation($"{nameof(FindAllByCategoryId)}: input = {JsonSerializer.Serialize(input)}, categoryId = {categoryId}, type = {type}");
             ValidatePostType(type);
 
             // Kiểm tra danh mục tồn tại và đúng Type
-            var categoryExists = await _dbContext.PostCategories
+            var exists = await _dbContext.PostCategories
                 .AnyAsync(c => c.Id == categoryId && !c.Deleted && c.Type == type);
-            if (!categoryExists)
-            {
+            if (!exists)
                 throw new UserFriendlyException(ErrorCode.PostCategoryNotFound);
-            }
 
+            // Lấy tất cả categoryId của cha và sub-categories
+            var allCategoryIds = await GetAllDescendantIdsAsync(categoryId);
+
+            // Build query với tập IDs
             var baseQuery = _dbContext.Posts.AsNoTracking()
-                .Where(p => !p.Deleted && p.Status == CommonStatus.ACTIVE && p.Type == type && p.PostCategoryId == categoryId);
+                .Where(p => !p.Deleted
+                            && p.Status == CommonStatus.ACTIVE
+                            && p.Type == type
+                            && allCategoryIds.Contains(p.PostCategoryId));
 
             // Tìm kiếm
             if (!string.IsNullOrEmpty(input.Keyword))
             {
                 baseQuery = baseQuery.Where(p =>
-                    p.Title.Contains(input.Keyword) ||
-                    p.Description.Contains(input.Keyword) ||
-                    p.Content.Contains(input.Keyword));
+                    p.TitleVi.Contains(input.Keyword) ||
+                    p.DescriptionVi.Contains(input.Keyword) ||
+                    p.ContentVi.Contains(input.Keyword) ||
+                    p.TitleEn.Contains(input.Keyword) ||
+                    p.DescriptionEn.Contains(input.Keyword) ||
+                    p.ContentEn.Contains(input.Keyword));
             }
 
             var totalItems = await baseQuery.CountAsync();
 
-            // Sắp xếp
-            var query = baseQuery.OrderByDescending(p => p.TimePosted);
-            if (input.Sort.Any())
-            {
-                // TODO: Implement dynamic sorting based on input.Sort
-            }
-
-            var pagedItems = await query
+            // Phân trang và sắp xếp
+            var items = await baseQuery
+                .OrderByDescending(p => p.TimePosted)
                 .Skip(input.GetSkip())
                 .Take(input.PageSize)
                 .Select(p => new PostDto
                 {
                     Id = p.Id,
-                    Slug = p.Slug,
-                    Title = p.Title,
-                    Description = p.Description,
+                    SlugVi = p.SlugVi,
+                    SlugEn = p.SlugEn,
+                    DescriptionVi = p.DescriptionVi,
+                    DescriptionEn = p.DescriptionEn,
                     TimePosted = p.TimePosted,
                     Status = p.Status,
                     PostCategoryId = p.PostCategoryId,
-                    PostCategoryName = p.PostCategory.Name,
-                    PostCategorySlug = p.PostCategory.Slug
+                    PostCategoryName = p.PostCategory.NameVi,
+                    PostCategorySlug = p.PostCategory.SlugVi,
+                    isOutstanding = p.isOutstanding,
+                    ImageUrl = p.ImageUrl
                 })
                 .ToListAsync();
 
             return new PagingResult<PostDto>
             {
                 TotalItems = totalItems,
-                Items = pagedItems
+                Items = items
             };
         }
 
+        public async Task<PagingResult<PostDto>> FindAllByCategorySlug(
+            PagingRequestBaseDto input,
+            string slug,
+            PostType type)
+        {
+            // Validate loại bài
+            ValidatePostType(type);
+
+            // 1. Tìm category theo slug
+            var category = await _dbContext.PostCategories
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.SlugVi == slug && !c.Deleted && c.Type == type);
+            if (category == null)
+                throw new UserFriendlyException(ErrorCode.PostCategoryNotFound);
+
+            // 2. Delegate về hàm cũ để xử lý tree + paging
+            return await FindAllByCategoryId(input, category.Id, type);
+        }
         public async Task<DetailPostDto> FindById(int id, PostType type)
         {
             _logger.LogInformation($"{nameof(FindById)}: id = {id}, type = {type}");
@@ -321,15 +361,21 @@ namespace AttechServer.Applications.UserModules.Implements
                 .Select(p => new DetailPostDto
                 {
                     Id = p.Id,
-                    Slug = p.Slug,
-                    Title = p.Title,
-                    Description = p.Description,
-                    Content = p.Content,
+                    SlugVi = p.SlugVi,
+                    TitleVi = p.TitleVi,
+                    DescriptionVi = p.DescriptionVi,
+                    ContentVi = p.ContentVi,
+                    SlugEn = p.SlugEn,
+                    TitleEn = p.TitleEn,
+                    DescriptionEn = p.DescriptionEn,
+                    ContentEn = p.ContentEn,
                     TimePosted = p.TimePosted,
                     Status = p.Status,
                     PostCategoryId = p.PostCategoryId,
-                    PostCategoryName = p.PostCategory.Name,
-                    PostCategorySlug = p.PostCategory.Slug
+                    PostCategoryName = p.PostCategory.NameVi,
+                    PostCategorySlug = p.PostCategory.SlugVi,
+                    isOutstanding = p.isOutstanding,
+                    ImageUrl = p.ImageUrl
                 })
                 .FirstOrDefaultAsync();
 
@@ -337,6 +383,39 @@ namespace AttechServer.Applications.UserModules.Implements
             {
                 throw new UserFriendlyException(ErrorCode.PostNotFound);
             }
+
+            return post;
+        }
+
+        public async Task<DetailPostDto> FindBySlug(string slug, PostType type)
+        {
+            _logger.LogInformation($"{nameof(FindBySlug)}: slug = {slug}, type = {type}");
+            ValidatePostType(type);
+            var post = await _dbContext.Posts
+                .Where(p => (p.SlugVi == slug || p.SlugEn == slug) && !p.Deleted && p.Type == type)
+                .Select(p => new DetailPostDto
+                {
+                    Id = p.Id,
+                    TitleVi = p.TitleVi,
+                    TitleEn = p.TitleEn,
+                    SlugVi = p.SlugVi,
+                    SlugEn = p.SlugEn,
+                    DescriptionVi = p.DescriptionVi,
+                    DescriptionEn = p.DescriptionEn,
+                    ContentVi = p.ContentVi,
+                    ContentEn = p.ContentEn,
+                    TimePosted = p.TimePosted,
+                    Status = p.Status,
+                    PostCategoryId = p.PostCategoryId,
+                    PostCategoryName = p.PostCategory.NameVi,
+                    PostCategorySlug = p.PostCategory.SlugVi,
+                    isOutstanding = p.isOutstanding,
+                    ImageUrl = p.ImageUrl
+                })
+                .FirstOrDefaultAsync();
+
+            if (post == null)
+                throw new UserFriendlyException(ErrorCode.PostNotFound);
 
             return post;
         }
@@ -350,7 +429,7 @@ namespace AttechServer.Applications.UserModules.Implements
                 try
                 {
                     // Validate input
-                    if (string.IsNullOrWhiteSpace(input.Title) || string.IsNullOrWhiteSpace(input.Content))
+                    if (string.IsNullOrWhiteSpace(input.TitleVi) || string.IsNullOrWhiteSpace(input.ContentVi))
                     {
                         throw new ArgumentException("Tiêu đề và nội dung là bắt buộc.");
                     }
@@ -369,7 +448,7 @@ namespace AttechServer.Applications.UserModules.Implements
                     // Kiểm tra danh mục
                     var category = await _dbContext.PostCategories
                         .Where(c => c.Id == input.PostCategoryId && !c.Deleted && c.Type == type)
-                        .Select(c => new { c.Id, c.Name, c.Slug })
+                        .Select(c => new { c.Id, c.NameVi, c.SlugVi })
                         .FirstOrDefaultAsync();
                     if (category == null)
                     {
@@ -377,20 +456,20 @@ namespace AttechServer.Applications.UserModules.Implements
                     }
 
                     // Tạo slug mới nếu title thay đổi
-                    if (post.Title != input.Title)
+                    if (post.TitleVi != input.TitleVi)
                     {
-                        post.Slug = await GenerateUniqueSlug(input.Title, type, post.Id);
+                        post.SlugVi = await GenerateUniqueSlug(input.TitleVi, type, post.Id);
                     }
 
                     // Xóa các file cũ trong content nếu content thay đổi
-                    if (post.Content != input.Content)
+                    if (post.ContentVi != input.ContentVi)
                     {
                         await _wysiwygFileProcessor.DeleteFilesAsync(EntityType.Post, post.Id);
                     }
 
-                    post.Title = input.Title;
-                    post.Description = TruncateDescription(input.Description);
-                    post.Content = await ProcessContent(input.Content, post.Id);
+                    post.TitleVi = input.TitleVi;
+                    post.DescriptionVi = TruncateDescription(input.DescriptionVi);
+                    post.ContentVi = await ProcessContent(input.ContentVi, post.Id);
                     post.TimePosted = input.TimePosted;
                     post.PostCategoryId = input.PostCategoryId;
                     post.ModifiedDate = DateTime.UtcNow;
@@ -402,14 +481,15 @@ namespace AttechServer.Applications.UserModules.Implements
                     return new PostDto
                     {
                         Id = post.Id,
-                        Title = post.Title,
-                        Slug = post.Slug,
-                        Description = post.Description,
+                        TitleVi = post.TitleVi,
+                        SlugVi = post.SlugVi,
+                        DescriptionVi = post.DescriptionVi,
                         TimePosted = post.TimePosted,
                         Status = post.Status,
                         PostCategoryId = post.PostCategoryId,
-                        PostCategoryName = category.Name,
-                        PostCategorySlug = category.Slug
+                        PostCategoryName = category.NameVi,
+                        PostCategorySlug = category.SlugVi,
+                        isOutstanding = post.isOutstanding,
                     };
                 }
                 catch (Exception ex)
@@ -442,6 +522,19 @@ namespace AttechServer.Applications.UserModules.Implements
             post.ModifiedBy = userId;
 
             await _dbContext.SaveChangesAsync();
+        }
+
+        // Lấy tất cả categoryId con cháu
+        private async Task<List<int>> GetAllDescendantIdsAsync(int parentId)
+        {
+            var ids = new List<int> { parentId };
+            var children = await _dbContext.PostCategories
+                .Where(c => c.ParentId == parentId && !c.Deleted)
+                .Select(c => c.Id)
+                .ToListAsync();
+            foreach (var child in children)
+                ids.AddRange(await GetAllDescendantIdsAsync(child));
+            return ids;
         }
     }
 }
