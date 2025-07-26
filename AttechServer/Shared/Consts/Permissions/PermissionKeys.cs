@@ -93,8 +93,12 @@
         public const string DeleteProductCategory = "delete_product_category";
         #endregion
 
-        #region upload
-        public const string UploadFile = "upload_file";
+        #region file upload
+        public const string FileUpload = "file_upload";
+        public const string FileUploadImage = "file_upload_image";
+        public const string FileUploadDocument = "file_upload_document";
+        public const string FileUploadVideo = "file_upload_video";
+        public const string FileUploadAudio = "file_upload_audio";
         #endregion
 
         public const string Menu_View = "menu_view";
@@ -196,8 +200,12 @@
         public const string DeleteProductCategory = "Xóa danh mục sản phẩm";
         #endregion
 
-        #region upload
-        public const string UploadFile = "Upload file";
+        #region file upload
+        public const string FileUpload = "Tải lên file";
+        public const string FileUploadImage = "Tải lên ảnh";
+        public const string FileUploadDocument = "Tải lên tài liệu";
+        public const string FileUploadVideo = "Tải lên video";
+        public const string FileUploadAudio = "Tải lên audio";
         #endregion
     }
 }

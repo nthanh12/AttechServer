@@ -5,6 +5,7 @@ using AttechServer.Shared.ApplicationBase.Common;
 using AttechServer.Shared.Consts.Permissions;
 using AttechServer.Shared.Filters;
 using AttechServer.Shared.WebAPIBase;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,6 +13,7 @@ namespace AttechServer.Controllers
 {
     [Route("api/user")]
     [ApiController]
+    [Authorize]
     public class UserController : ApiControllerBase
     {
         private readonly IUserService _userService;

@@ -32,6 +32,16 @@
         public const int InvalidClientRequest = 1019;
         public const int InvalidRefreshToken = 1020;
 
+        // File Upload Error Codes
+        public const int InvalidFileType = 1021;
+        public const int FileTooLarge = 1022;
+        public const int InvalidFileExtension = 1023;
+        public const int InvalidMimeType = 1024;
+        public const int SuspiciousFile = 1025;
+        public const int ImageTooLarge = 1026;
+        public const int InvalidImage = 1027;
+        public const int TooManyFiles = 1028;
+
 
         //Từ điển lỗi
         public static readonly Dictionary<int, string> ErrorDict = new Dictionary<int, string>()
@@ -63,6 +73,16 @@
             {ServiceNotFound, ErrorMessage.ServiceNotFound },
             {InvalidClientRequest, ErrorMessage.InvalidClientRequest },
             {InvalidRefreshToken, ErrorMessage.InvalidRefreshToken },
+            
+            // File Upload Errors
+            {InvalidFileType, ErrorMessage.InvalidFileType },
+            {FileTooLarge, ErrorMessage.FileTooLarge },
+            {InvalidFileExtension, ErrorMessage.InvalidFileExtension },
+            {InvalidMimeType, ErrorMessage.InvalidMimeType },
+            {SuspiciousFile, ErrorMessage.SuspiciousFile },
+            {ImageTooLarge, ErrorMessage.ImageTooLarge },
+            {InvalidImage, ErrorMessage.InvalidImage },
+            {TooManyFiles, ErrorMessage.TooManyFiles },
         };
 
         public static string GetMessage(int errorCode)

@@ -1,8 +1,8 @@
-﻿using AttechServer.Applications.UserModules.Abstracts;
+using AttechServer.Applications.UserModules.Abstracts;
 using AttechServer.Applications.UserModules.Dtos.Product;
 using AttechServer.Shared.ApplicationBase.Common;
+using AttechServer.Shared.Attributes;
 using AttechServer.Shared.WebAPIBase;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using AttechServer.Shared.Filters;
 using AttechServer.Shared.Consts.Permissions;
@@ -11,172 +11,129 @@ using Microsoft.AspNetCore.Authorization;
 namespace AttechServer.Controllers
 {
     [Route("api/product")]
-    [ApiController]
-    public class ProductController : ApiControllerBase
+    public class ProductController : BaseCrudController<IProductService, ProductDto, DetailProductDto, CreateProductDto, UpdateProductDto>
     {
-        private readonly IProductService _productService;
-        public ProductController(IProductService productService, ILogger<ProductController> logger) : base(logger)
+        public ProductController(IProductService productService, ILogger<ProductController> logger) 
+            : base(productService, logger)
         {
-            _productService = productService;
         }
 
         /// <summary>
-        /// Danh sách sản phẩm
+        /// Get all products with caching
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
         [HttpGet("find-all")]
         [AllowAnonymous]
-        public async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
+        [CacheResponse(CacheProfiles.MediumCache, "products", varyByQueryString: true)]
+        public override async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
         {
-            try
-            {
-                return new(await _productService.FindAll(input));
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+            return await base.FindAll(input);
         }
 
         /// <summary>
-        /// Danh sách sản phẩm theo slug danh mục sản phẩm
-        /// /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        /// 
+        /// Get products by category slug with caching
+        /// </summary>
         [HttpGet("category/{slug}")]
         [AllowAnonymous]
+        [CacheResponse(CacheProfiles.MediumCache, "products-category", varyByQueryString: true)]
         public async Task<ApiResponse> FindAllByCategorySlug([FromQuery] PagingRequestBaseDto input, string slug)
         {
-            try {
-                return new(await _productService.FindAllByCategorySlug(input, slug));
-            }
-            catch (Exception ex)
+            return await ExecuteAsync(async () =>
             {
-                return OkException(ex);
-            }
+                var result = await _service.FindAllByCategorySlug(input, slug);
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "Ok");
+            });
         }
 
         /// <summary>
-        /// Thông tin chi tiết sản phẩm
+        /// Get product by ID with caching
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpGet("find-by-id/{id}")]
         [AllowAnonymous]
-        public async Task<ApiResponse> FindById(int id)
+        [CacheResponse(CacheProfiles.LongCache, "product-detail")]
+        public override async Task<ApiResponse> FindById(int id)
         {
-            try
-            {
-                return new(await _productService.FindById(id));
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+            return await base.FindById(id);
         }
 
         /// <summary>
-        /// Lấy chi tiết sản phẩm theo slug
+        /// Get product by slug with caching
         /// </summary>
         [HttpGet("detail/{slug}")]
         [AllowAnonymous]
-        public async Task<ApiResponse> FindBySlug(string slug)
+        [CacheResponse(CacheProfiles.LongCache, "product-detail")]
+        public override async Task<ApiResponse> FindBySlug(string slug)
         {
-            try
-            {
-                return new(await _productService.FindBySlug(slug));
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+            return await base.FindBySlug(slug);
         }
 
         /// <summary>
-        /// Thêm mới sản phẩm
+        /// Create new product
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
         [HttpPost("create")]
-        [Authorize]
         [PermissionFilter(PermissionKeys.CreateProduct)]
-        public async Task<ApiResponse> Create([FromBody] CreateProductDto input)
+        public override async Task<ApiResponse> Create([FromBody] CreateProductDto input)
         {
-            try
-            {
-                var result = await _productService.Create(input);
-                return new ApiResponse(result);
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+            return await base.Create(input);
         }
 
         /// <summary>
-        /// Cập nhật sản phẩm
+        /// Update product
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
         [HttpPut("update")]
-        [Authorize]
         [PermissionFilter(PermissionKeys.EditProduct)]
-        public async Task<ApiResponse> Update([FromBody] UpdateProductDto input)
+        public override async Task<ApiResponse> Update([FromBody] UpdateProductDto input)
         {
-            try
-            {
-                await _productService.Update(input);
-                return new();
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+            return await base.Update(input);
         }
 
         /// <summary>
-        /// Xóa sản phẩm
+        /// Delete product
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpDelete("delete/{id}")]
-        [Authorize]
         [PermissionFilter(PermissionKeys.DeleteProduct)]
-        public async Task<ApiResponse> Delete(int id)
+        public override async Task<ApiResponse> Delete(int id)
         {
-            try
-            {
-                await _productService.Delete(id);
-                return new();
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+            return await base.Delete(id);
         }
 
-        /// <summary>
-        /// Khóa/Mở khóa sản phẩm
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="status"></param>
-        /// <returns></returns>
-        [HttpPut("update-status")]
-        [Authorize]
-        [PermissionFilter(PermissionKeys.EditProduct)]
-        public async Task<ApiResponse> UpdateStatus(int id, int status)
+        #region Protected Implementation Methods
+
+        protected override async Task<object> GetFindAllAsync(PagingRequestBaseDto input)
         {
-            try
-            {
-                await _productService.UpdateStatusProduct(id, status);
-                return new();
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+            return await _service.FindAll(input);
         }
+
+        protected override async Task<DetailProductDto> GetFindByIdAsync(int id)
+        {
+            return await _service.FindById(id);
+        }
+
+        protected override async Task<DetailProductDto> GetFindBySlugAsync(string slug)
+        {
+            return await _service.FindBySlug(slug);
+        }
+
+        protected override async Task<object> GetCreateAsync(CreateProductDto input)
+        {
+            return await _service.Create(input);
+        }
+
+        protected override async Task<object?> GetUpdateAsync(UpdateProductDto input)
+        {
+            await _service.Update(input);
+            return null; // Update doesn't return data
+        }
+
+        protected override async Task GetDeleteAsync(int id)
+        {
+            await _service.Delete(id);
+        }
+
+        protected override async Task GetUpdateStatusAsync(AttechServer.Applications.UserModules.Dtos.UpdateStatusDto input)
+        {
+            await _service.UpdateStatusProduct(input.Id, input.Status);
+        }
+
+        #endregion
     }
 }

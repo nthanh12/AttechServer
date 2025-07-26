@@ -1,6 +1,7 @@
 ﻿using AttechServer.Applications.UserModules.Abstracts;
 using AttechServer.Applications.UserModules.Dtos.Post;
 using AttechServer.Shared.ApplicationBase.Common;
+using AttechServer.Shared.Attributes;
 using AttechServer.Shared.WebAPIBase;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,160 +12,126 @@ using AttechServer.Shared.Consts.Permissions;
 namespace AttechServer.Controllers
 {
     [Route("api/notification")]
-    [ApiController]
-    public class NotificationController : ApiControllerBase
+    public class NotificationController : BaseCrudController<IPostService, PostDto, DetailPostDto, CreatePostDto, UpdatePostDto>
     {
-        private readonly IPostService _postService;
-
-        public NotificationController(
-            ILogger<NotificationController> logger,
-            IPostService postService) : base(logger)
+        public NotificationController(IPostService postService, ILogger<NotificationController> logger)
+            : base(postService, logger)
         {
-            _postService = postService;
         }
 
-        /// <summary>
-        /// Danh sách thông báo
-        /// </summary>
         [HttpGet("find-all")]
         [AllowAnonymous]
-        public async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
+        public override async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
         {
-            try
+            return await ExecuteAsync(async () =>
             {
-                return new(await _postService.FindAll(input, PostType.Notification));
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+                var result = await _service.FindAll(input, PostType.Notification);
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "Ok");
+            });
         }
 
-        /// <summary>
-        /// Danh sách theo slug danh mục thông báo
-        /// </summary>
         [HttpGet("category/{slug}")]
         [AllowAnonymous]
         public async Task<ApiResponse> FindAllByCategorySlug([FromQuery] PagingRequestBaseDto input, string slug)
         {
-            try 
+            return await ExecuteAsync(async () =>
             {
-                return new(await _postService.FindAllByCategorySlug(input, slug, PostType.Notification));
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+                var result = await _service.FindAllByCategorySlug(input, slug, PostType.Notification);
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "Ok");
+            });
         }
 
-        /// <summary>
-        /// Thông tin chi tiết thông báo
-        /// </summary>
         [HttpGet("find-by-id/{id}")]
         [AllowAnonymous]
-        public async Task<ApiResponse> FindById(int id)
+        public override async Task<ApiResponse> FindById(int id)
         {
-            try
+            return await ExecuteAsync(async () =>
             {
-                return new(await _postService.FindById(id, PostType.Notification));
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+                var result = await _service.FindById(id, PostType.Notification);
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "Ok");
+            });
         }
 
-        /// <summary>
-        /// Lấy chi tiết thông báo theo slug
-        /// </summary>
         [HttpGet("detail/{slug}")]
         [AllowAnonymous]
-        public async Task<ApiResponse> FindBySlug(string slug)
+        public override async Task<ApiResponse> FindBySlug(string slug)
         {
-            try
+            return await ExecuteAsync(async () =>
             {
-                return new(await _postService.FindBySlug(slug, PostType.Notification));
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+                var result = await _service.FindBySlug(slug, PostType.Notification);
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "Ok");
+            });
         }
 
-        /// <summary>
-        /// Thêm mới thông báo
-        /// </summary>
         [HttpPost("create")]
         [Authorize]
         [PermissionFilter(PermissionKeys.CreateNotification)]
-        public async Task<ApiResponse> Create([FromBody] CreatePostDto input)
+        public override async Task<ApiResponse> Create([FromBody] CreatePostDto input)
         {
-            try
+            return await ExecuteAsync(async () =>
             {
-                var result = await _postService.Create(input, PostType.Notification);
-                return new ApiResponse(result);
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+                var result = await _service.Create(input, PostType.Notification);
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "Ok");
+            });
         }
 
-        /// <summary>
-        /// Cập nhật thông báo
-        /// </summary>
         [HttpPut("update")]
         [Authorize]
         [PermissionFilter(PermissionKeys.EditNotification)]
-        public async Task<ApiResponse> Update([FromBody] UpdatePostDto input)
+        public override async Task<ApiResponse> Update([FromBody] UpdatePostDto input)
         {
-            try
+            return await ExecuteAsync(async () =>
             {
-                var result = await _postService.Update(input, PostType.Notification);
-                return new ApiResponse(result);
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+                var result = await _service.Update(input, PostType.Notification);
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "Ok");
+            });
         }
 
-        /// <summary>
-        /// Xóa thông báo
-        /// </summary>
+        // Chuẩn hóa override các method protected abstract giống NewsController
+        protected override async Task<object> GetFindAllAsync(PagingRequestBaseDto input)
+        {
+            return await _service.FindAll(input, PostType.Notification);
+        }
+
+        protected override async Task<DetailPostDto> GetFindByIdAsync(int id)
+        {
+            return await _service.FindById(id, PostType.Notification);
+        }
+
+        protected override async Task<DetailPostDto> GetFindBySlugAsync(string slug)
+        {
+            return await _service.FindBySlug(slug, PostType.Notification);
+        }
+
+        protected override async Task<object> GetCreateAsync(CreatePostDto input)
+        {
+            return await _service.Create(input, PostType.Notification);
+        }
+
+        protected override async Task<object?> GetUpdateAsync(UpdatePostDto input)
+        {
+            return await _service.Update(input, PostType.Notification);
+        }
+
+        protected override async Task GetUpdateStatusAsync(AttechServer.Applications.UserModules.Dtos.UpdateStatusDto input)
+        {
+            await _service.UpdateStatusPost(input.Id, input.Status, PostType.Notification);
+        }
+
+        protected override async Task GetDeleteAsync(int id)
+        {
+            await _service.Delete(id, PostType.Notification);
+        }
+
         [HttpDelete("delete/{id}")]
         [Authorize]
         [PermissionFilter(PermissionKeys.DeleteNotification)]
-        public async Task<ApiResponse> Delete(int id)
+        public override async Task<ApiResponse> Delete(int id)
         {
-            try
+            return await ExecuteVoidAsync(async () =>
             {
-                await _postService.Delete(id, PostType.Notification);
-                return new();
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
-        }
-
-        /// <summary>
-        /// Khóa/Mở khóa thông báo
-        /// </summary>
-        [HttpPut("update-status")]
-        [Authorize]
-        [PermissionFilter(PermissionKeys.EditNotification)]
-        public async Task<ApiResponse> UpdateStatus([FromBody] UpdatePostStatusDto input)
-        {
-            try
-            {
-                await _postService.UpdateStatusPost(input.Id, input.Status, PostType.Notification);
-                return new();
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+                await _service.Delete(id, PostType.Notification);
+            });
         }
     }
 }

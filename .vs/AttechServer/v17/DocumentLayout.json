@@ -3,8 +3,32 @@
   "WorkspaceRootPath": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\domains\\entities\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\domains\\entities\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\controllers\\productcategorycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\controllers\\productcategorycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\applications\\usermodules\\dtos\\product\\updateproductstatusdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\applications\\usermodules\\dtos\\product\\updateproductstatusdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\applications\\usermodules\\dtos\\postcategory\\updatepostcategorystatusdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\applications\\usermodules\\dtos\\postcategory\\updatepostcategorystatusdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\applications\\usermodules\\dtos\\post\\updatepoststatusdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\applications\\usermodules\\dtos\\post\\updatepoststatusdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\controllers\\newscategorycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -15,20 +39,48 @@
       "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\controllers\\notificationcategorycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\infrastructures\\contentprocessing\\wysiwygfileprocessor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\infrastructures\\contentprocessing\\wysiwygfileprocessor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\applications\\usermodules\\implements\\postservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\applications\\usermodules\\implements\\postservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\controllers\\notificationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\controllers\\notificationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\controllers\\newscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\controllers\\newscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\applications\\usermodules\\dtos\\postcategory\\updatepostcategorystatusdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\applications\\usermodules\\dtos\\postcategory\\updatepostcategorystatusdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\shared\\middlewares\\globalexceptionmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\shared\\middlewares\\globalexceptionmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\applications\\usermodules\\implements\\mediaservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\applications\\usermodules\\implements\\mediaservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\shared\\webapibase\\apicontrollerbase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\shared\\webapibase\\apicontrollerbase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\infrastructures\\persistances\\dbinitializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\infrastructures\\persistances\\dbinitializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\controllers\\uploadcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\controllers\\uploadcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\controllers\\rolecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\controllers\\rolecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\infrastructures\\contentprocessing\\wysiwygfileprocessor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\infrastructures\\contentprocessing\\wysiwygfileprocessor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\applications\\usermodules\\implements\\postservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\applications\\usermodules\\implements\\postservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\applications\\usermodules\\dtos\\postcategory\\updatepostcategorydto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -47,20 +99,12 @@
       "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\applications\\usermodules\\dtos\\postcategory\\createpostcategorydto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\controllers\\notificationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\controllers\\notificationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\applications\\usermodules\\dtos\\post\\createpostdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\applications\\usermodules\\dtos\\post\\createpostdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\domains\\entities\\main\\route.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\domains\\entities\\main\\route.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\infrastructures\\persistances\\dbinitializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\infrastructures\\persistances\\dbinitializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\applications\\usermodules\\implements\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -73,10 +117,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\applications\\usermodules\\dtos\\post\\detailpostdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\applications\\usermodules\\dtos\\post\\detailpostdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\migrations\\20250715064912_addorderprioritytomenu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -131,10 +171,6 @@
       "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\applications\\usermodules\\implements\\productservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\applications\\usermodules\\implements\\mediaservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\applications\\usermodules\\implements\\mediaservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\applications\\usermodules\\dtos\\productcategory\\updateproductcategorystatusdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\applications\\usermodules\\dtos\\productcategory\\updateproductcategorystatusdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -149,10 +185,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\applications\\usermodules\\dtos\\product\\detailproductdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\applications\\usermodules\\dtos\\product\\detailproductdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\applications\\usermodules\\dtos\\post\\updatepoststatusdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|solutionrelative:attechserver\\applications\\usermodules\\dtos\\post\\updatepoststatusdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{70243A99-3853-4425-951C-BAC4EBFA76EB}|AttechServer\\AttechServer.csproj|c:\\users\\thanh\\source\\repos\\backend\\attechserver\\attechserver\\applications\\usermodules\\dtos\\post\\updatepostdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -219,479 +251,68 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "ProductCategoryController.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\ProductCategoryController.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Controllers\\ProductCategoryController.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\ProductCategoryController.cs",
-              "RelativeToolTip": "AttechServer\\Controllers\\ProductCategoryController.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAoAAAAiAAAAAAAAAA==",
+              "Title": "User.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Domains\\Entities\\User.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Domains\\Entities\\User.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Domains\\Entities\\User.cs",
+              "RelativeToolTip": "AttechServer\\Domains\\Entities\\User.cs",
+              "ViewState": "AgIAABEAAAAAAAAAAAA9wCIAAAAzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-23T02:38:44.811Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "WysiwygFileProcessor.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Infrastructures\\ContentProcessing\\WysiwygFileProcessor.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Infrastructures\\ContentProcessing\\WysiwygFileProcessor.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Infrastructures\\ContentProcessing\\WysiwygFileProcessor.cs",
-              "RelativeToolTip": "AttechServer\\Infrastructures\\ContentProcessing\\WysiwygFileProcessor.cs",
-              "ViewState": "AgIAAFoAAAAAAAAAAAAjwG0AAABOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-23T02:02:38.964Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "NewsController.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\NewsController.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Controllers\\NewsController.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\NewsController.cs",
-              "RelativeToolTip": "AttechServer\\Controllers\\NewsController.cs",
-              "ViewState": "AgIAAFoAAAAAAAAAAAAowGMAAAAwAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-21T06:57:34.46Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "PostService.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\PostService.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Implements\\PostService.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\PostService.cs",
-              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Implements\\PostService.cs",
-              "ViewState": "AgIAAE4AAAAAAAAAAAAowF0AAABNAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T03:29:26.145Z",
+              "WhenOpened": "2025-07-26T12:38:53.588Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "NotificationCategoryController.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\NotificationCategoryController.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Controllers\\NotificationCategoryController.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\NotificationCategoryController.cs",
-              "RelativeToolTip": "AttechServer\\Controllers\\NotificationCategoryController.cs",
-              "ViewState": "AgIAAA4AAAAAAAAAAAAAwAkAAAAnAAAAAAAAAA==",
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Program.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Program.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Program.cs",
+              "RelativeToolTip": "AttechServer\\Program.cs",
+              "ViewState": "AgIAAJ8AAAAAAAAAAAAAALoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-21T07:01:23.577Z",
+              "WhenOpened": "2025-07-25T03:59:26.078Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 7,
               "Title": "NewsCategoryController.cs",
               "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\NewsCategoryController.cs",
               "RelativeDocumentMoniker": "AttechServer\\Controllers\\NewsCategoryController.cs",
               "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\NewsCategoryController.cs",
               "RelativeToolTip": "AttechServer\\Controllers\\NewsCategoryController.cs",
-              "ViewState": "AgIAABMAAAAAAAAAAAAvwA4AAAAFAAAAAAAAAA==",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAkwA8AAAA1AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T06:14:21.435Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "UpdatePostCategoryStatusDto.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\UpdatePostCategoryStatusDto.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\UpdatePostCategoryStatusDto.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\UpdatePostCategoryStatusDto.cs",
-              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\UpdatePostCategoryStatusDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T03:24:44.068Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "UpdatePostCategoryDto.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\UpdatePostCategoryDto.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\UpdatePostCategoryDto.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\UpdatePostCategoryDto.cs",
-              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\UpdatePostCategoryDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAMAAAAvAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T03:24:42.447Z"
+              "WhenOpened": "2025-07-15T06:14:21.435Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 8,
-              "Title": "PostCategoryDto.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\PostCategoryDto.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\PostCategoryDto.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\PostCategoryDto.cs",
-              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\PostCategoryDto.cs",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAowBQAAAAnAAAAAAAAAA==",
+              "Title": "NotificationCategoryController.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\NotificationCategoryController.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Controllers\\NotificationCategoryController.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\NotificationCategoryController.cs",
+              "RelativeToolTip": "AttechServer\\Controllers\\NotificationCategoryController.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAASwA8AAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T03:24:18.133Z"
+              "WhenOpened": "2025-07-21T07:01:23.577Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "DetailPostCategoryDto.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\DetailPostCategoryDto.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\DetailPostCategoryDto.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\DetailPostCategoryDto.cs",
-              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\DetailPostCategoryDto.cs",
-              "ViewState": "AgIAABAAAAAAAAAAAAAkwBUAAAAnAAAAAAAAAA==",
+              "DocumentIndex": 3,
+              "Title": "ProductCategoryController.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\ProductCategoryController.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Controllers\\ProductCategoryController.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\ProductCategoryController.cs",
+              "RelativeToolTip": "AttechServer\\Controllers\\ProductCategoryController.cs",
+              "ViewState": "AgIAAFAAAAAAAAAAAAAMwFQAAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T03:23:16.021Z"
+              "WhenOpened": "2025-07-23T02:38:44.811Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "CreatePostCategoryDto.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\CreatePostCategoryDto.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\CreatePostCategoryDto.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\CreatePostCategoryDto.cs",
-              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\CreatePostCategoryDto.cs",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAAwBAAAABBAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T03:22:57.79Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "NotificationController.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\NotificationController.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Controllers\\NotificationController.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\NotificationController.cs",
-              "RelativeToolTip": "AttechServer\\Controllers\\NotificationController.cs",
-              "ViewState": "AgIAAIsAAAAAAAAAAADwv44AAAAdAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-21T07:01:24.647Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "CreatePostDto.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Post\\CreatePostDto.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\Post\\CreatePostDto.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Post\\CreatePostDto.cs",
-              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\Post\\CreatePostDto.cs",
-              "ViewState": "AgIAABsAAAAAAAAAAAAywBoAAAAdAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T03:20:10.696Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "Route.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Domains\\Entities\\Main\\Route.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Domains\\Entities\\Main\\Route.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Domains\\Entities\\Main\\Route.cs",
-              "RelativeToolTip": "AttechServer\\Domains\\Entities\\Main\\Route.cs",
-              "ViewState": "AgIAABsAAAAAAAAAAAAIwCMAAAA0AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-21T04:25:35.654Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "AuthService.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\AuthService.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Implements\\AuthService.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\AuthService.cs",
-              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Implements\\AuthService.cs",
-              "ViewState": "AgIAAF0AAAAAAAAAAAAowGUAAAAiAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-21T04:24:50.965Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 18,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\appsettings.json",
-              "RelativeDocumentMoniker": "AttechServer\\appsettings.json",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\appsettings.json",
-              "RelativeToolTip": "AttechServer\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAKAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-07-17T08:35:07.1Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 17,
-              "Title": "DetailPostDto.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Post\\DetailPostDto.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\Post\\DetailPostDto.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Post\\DetailPostDto.cs",
-              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\Post\\DetailPostDto.cs",
-              "ViewState": "AgIAABsAAAAAAAAAAAAjwCQAAAA8AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T03:21:31.208Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "Post.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Domains\\Entities\\Main\\Post.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Domains\\Entities\\Main\\Post.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Domains\\Entities\\Main\\Post.cs",
-              "RelativeToolTip": "AttechServer\\Domains\\Entities\\Main\\Post.cs",
-              "ViewState": "AgIAADEAAAAAAAAAAAAowDoAAAA8AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T03:05:55.05Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "DbInitializer.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Infrastructures\\Persistances\\DbInitializer.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Infrastructures\\Persistances\\DbInitializer.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Infrastructures\\Persistances\\DbInitializer.cs",
-              "RelativeToolTip": "AttechServer\\Infrastructures\\Persistances\\DbInitializer.cs",
-              "ViewState": "AgIAAEUGAAAAAAAAAAAkwEwGAAAsAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T03:11:12.623Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 48,
-              "Title": "20250715061904_AddMenuTable.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Migrations\\20250715061904_AddMenuTable.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Migrations\\20250715061904_AddMenuTable.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Migrations\\20250715061904_AddMenuTable.cs",
-              "RelativeToolTip": "AttechServer\\Migrations\\20250715061904_AddMenuTable.cs",
-              "ViewState": "AgIAAAEAAAAAAAAAAAAcwAYAAAAWAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T06:19:05.492Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 49,
-              "Title": "20250715042019_UpdatePostCategoryTable.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Migrations\\20250715042019_UpdatePostCategoryTable.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Migrations\\20250715042019_UpdatePostCategoryTable.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Migrations\\20250715042019_UpdatePostCategoryTable.cs",
-              "RelativeToolTip": "AttechServer\\Migrations\\20250715042019_UpdatePostCategoryTable.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAWAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T04:20:20.411Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 19,
-              "Title": "20250715064912_AddOrderPriorityToMenu.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Migrations\\20250715064912_AddOrderPriorityToMenu.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Migrations\\20250715064912_AddOrderPriorityToMenu.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Migrations\\20250715064912_AddOrderPriorityToMenu.cs",
-              "RelativeToolTip": "AttechServer\\Migrations\\20250715064912_AddOrderPriorityToMenu.cs",
-              "ViewState": "AgIAABIAAAAAAAAAAAAcwBQAAAAaAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T06:49:12.943Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 24,
-              "Title": "DetailServiceDto.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Service\\DetailServiceDto.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\Service\\DetailServiceDto.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Service\\DetailServiceDto.cs",
-              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\Service\\DetailServiceDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T04:12:13.231Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 23,
-              "Title": "ServiceDto.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Service\\ServiceDto.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\Service\\ServiceDto.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Service\\ServiceDto.cs",
-              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\Service\\ServiceDto.cs",
-              "ViewState": "AgIAABIAAAAAAAAAAAA7wBUAAAA8AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T04:11:08.603Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 20,
-              "Title": "ServiceService.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\ServiceService.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Implements\\ServiceService.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\ServiceService.cs",
-              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Implements\\ServiceService.cs",
-              "ViewState": "AgIAAA0AAAAAAAAAAAAUwBoAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T03:15:36.802Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 22,
-              "Title": "ProductCategoryService.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\ProductCategoryService.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Implements\\ProductCategoryService.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\ProductCategoryService.cs",
-              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Implements\\ProductCategoryService.cs",
-              "ViewState": "AgIAAOUAAAAAAAAAAAAcwNUAAAAnAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T04:04:44.742Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 21,
-              "Title": "PostCategoryService.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\PostCategoryService.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Implements\\PostCategoryService.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\PostCategoryService.cs",
-              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Implements\\PostCategoryService.cs",
-              "ViewState": "AgIAAJMAAAAAAAAAAAAgwJUAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T04:05:15.067Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 25,
-              "Title": "CreateServiceDto.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Service\\CreateServiceDto.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\Service\\CreateServiceDto.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Service\\CreateServiceDto.cs",
-              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\Service\\CreateServiceDto.cs",
-              "ViewState": "AgIAABEAAAAAAAAAAAAgwBgAAAA8AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T04:12:10.256Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 26,
-              "Title": "UpdateServiceDto.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Service\\UpdateServiceDto.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\Service\\UpdateServiceDto.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Service\\UpdateServiceDto.cs",
-              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\Service\\UpdateServiceDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T04:12:08.359Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 27,
-              "Title": "CreateProductCategoryDto.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\CreateProductCategoryDto.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\CreateProductCategoryDto.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\CreateProductCategoryDto.cs",
-              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\CreateProductCategoryDto.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAuwAwAAAAaAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T03:27:20.709Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 28,
-              "Title": "UpdateProductCategoryDto.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\UpdateProductCategoryDto.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\UpdateProductCategoryDto.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\UpdateProductCategoryDto.cs",
-              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\UpdateProductCategoryDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAMAAAA2AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T03:28:33.555Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 30,
-              "Title": "UpdateProductDto.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Product\\UpdateProductDto.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\Product\\UpdateProductDto.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Product\\UpdateProductDto.cs",
-              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\Product\\UpdateProductDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T03:27:19.691Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 31,
-              "Title": "ProductService.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\ProductService.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Implements\\ProductService.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\ProductService.cs",
-              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Implements\\ProductService.cs",
-              "ViewState": "AgIAAGUBAAAAAAAAAAAUwFsBAAAVAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T03:41:02.818Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 32,
-              "Title": "MediaService.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\MediaService.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Implements\\MediaService.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\MediaService.cs",
-              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Implements\\MediaService.cs",
-              "ViewState": "AgIAABQAAAAAAAAAAAAAwBQAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T03:29:16.009Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 29,
-              "Title": "CreateProductDto.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Product\\CreateProductDto.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\Product\\CreateProductDto.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Product\\CreateProductDto.cs",
-              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\Product\\CreateProductDto.cs",
-              "ViewState": "AgIAABAAAAAAAAAAAAA5wAwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T03:24:45.917Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 33,
-              "Title": "UpdateProductCategoryStatusDto.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\UpdateProductCategoryStatusDto.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\UpdateProductCategoryStatusDto.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\UpdateProductCategoryStatusDto.cs",
-              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\UpdateProductCategoryStatusDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAnAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T03:28:35.387Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 34,
-              "Title": "ProductCategoryDto.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\ProductCategoryDto.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\ProductCategoryDto.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\ProductCategoryDto.cs",
-              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\ProductCategoryDto.cs",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAQwBIAAAAjAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T03:28:07.658Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 35,
-              "Title": "DetailProductCategoryDto.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\DetailProductCategoryDto.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\DetailProductCategoryDto.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\DetailProductCategoryDto.cs",
-              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\DetailProductCategoryDto.cs",
-              "ViewState": "AgIAAA4AAAAAAAAAAAA3wBUAAAAnAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T03:27:36.994Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 36,
-              "Title": "DetailProductDto.cs",
-              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Product\\DetailProductDto.cs",
-              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\Product\\DetailProductDto.cs",
-              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Product\\DetailProductDto.cs",
-              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\Product\\DetailProductDto.cs",
-              "ViewState": "AgIAAB8AAAAAAAAAAAA0wCMAAAA8AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T03:25:24.172Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 6,
               "Title": "UpdatePostStatusDto.cs",
               "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Post\\UpdatePostStatusDto.cs",
               "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\Post\\UpdatePostStatusDto.cs",
@@ -703,7 +324,512 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\appsettings.json",
+              "RelativeDocumentMoniker": "AttechServer\\appsettings.json",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\appsettings.json",
+              "RelativeToolTip": "AttechServer\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-07-17T08:35:07.1Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "UpdateProductStatusDto.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Product\\UpdateProductStatusDto.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\Product\\UpdateProductStatusDto.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Product\\UpdateProductStatusDto.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\Product\\UpdateProductStatusDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T10:25:51.08Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "UpdatePostCategoryStatusDto.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\UpdatePostCategoryStatusDto.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\UpdatePostCategoryStatusDto.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\UpdatePostCategoryStatusDto.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\UpdatePostCategoryStatusDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T03:24:44.068Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "NotificationController.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\NotificationController.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Controllers\\NotificationController.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\NotificationController.cs",
+              "RelativeToolTip": "AttechServer\\Controllers\\NotificationController.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAAAA8AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-21T07:01:24.647Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "NewsController.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\NewsController.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Controllers\\NewsController.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\NewsController.cs",
+              "RelativeToolTip": "AttechServer\\Controllers\\NewsController.cs",
+              "ViewState": "AgIAACwAAAAAAAAAAAAgwCwAAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T09:10:09.899Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "GlobalExceptionMiddleware.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Shared\\Middlewares\\GlobalExceptionMiddleware.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Shared\\Middlewares\\GlobalExceptionMiddleware.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Shared\\Middlewares\\GlobalExceptionMiddleware.cs",
+              "RelativeToolTip": "AttechServer\\Shared\\Middlewares\\GlobalExceptionMiddleware.cs",
+              "ViewState": "AgIAADQAAAAAAAAAAAAgwEIAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T04:15:12.063Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "UserController.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\UserController.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Controllers\\UserController.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\UserController.cs",
+              "RelativeToolTip": "AttechServer\\Controllers\\UserController.cs",
+              "ViewState": "AgIAACEAAAAAAAAAAAAvwCwAAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T03:47:50.454Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "RoleController.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\RoleController.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Controllers\\RoleController.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\RoleController.cs",
+              "RelativeToolTip": "AttechServer\\Controllers\\RoleController.cs",
+              "ViewState": "AgIAAA0AAAAAAAAAAAAnwA4AAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T03:47:49.58Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "UploadController.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\UploadController.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Controllers\\UploadController.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\UploadController.cs",
+              "RelativeToolTip": "AttechServer\\Controllers\\UploadController.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAewC4AAABKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T03:59:39.738Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "ApiControllerBase.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Shared\\WebAPIBase\\ApiControllerBase.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Shared\\WebAPIBase\\ApiControllerBase.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Shared\\WebAPIBase\\ApiControllerBase.cs",
+              "RelativeToolTip": "AttechServer\\Shared\\WebAPIBase\\ApiControllerBase.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAAAnwCQAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T04:12:55.073Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "MediaService.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\MediaService.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Implements\\MediaService.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\MediaService.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Implements\\MediaService.cs",
+              "ViewState": "AgIAAFAAAAAAAAAAAAAnwFkAAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T03:29:16.009Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "DbInitializer.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Infrastructures\\Persistances\\DbInitializer.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Infrastructures\\Persistances\\DbInitializer.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Infrastructures\\Persistances\\DbInitializer.cs",
+              "RelativeToolTip": "AttechServer\\Infrastructures\\Persistances\\DbInitializer.cs",
+              "ViewState": "AgIAABEGAAAAAAAAAAAnwBoGAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T03:11:12.623Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "PostService.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\PostService.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Implements\\PostService.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\PostService.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Implements\\PostService.cs",
+              "ViewState": "AgIAAE4AAAAAAAAAAAAowF0AAABNAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T03:29:26.145Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "WysiwygFileProcessor.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Infrastructures\\ContentProcessing\\WysiwygFileProcessor.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Infrastructures\\ContentProcessing\\WysiwygFileProcessor.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Infrastructures\\ContentProcessing\\WysiwygFileProcessor.cs",
+              "RelativeToolTip": "AttechServer\\Infrastructures\\ContentProcessing\\WysiwygFileProcessor.cs",
+              "ViewState": "AgIAAFoAAAAAAAAAAAAjwG0AAABOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T02:02:38.964Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "UpdatePostCategoryDto.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\UpdatePostCategoryDto.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\UpdatePostCategoryDto.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\UpdatePostCategoryDto.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\UpdatePostCategoryDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAMAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T03:24:42.447Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "PostCategoryDto.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\PostCategoryDto.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\PostCategoryDto.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\PostCategoryDto.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\PostCategoryDto.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAowBQAAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T03:24:18.133Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "DetailPostCategoryDto.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\DetailPostCategoryDto.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\DetailPostCategoryDto.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\DetailPostCategoryDto.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\DetailPostCategoryDto.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAkwBUAAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T03:23:16.021Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "CreatePostCategoryDto.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\CreatePostCategoryDto.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\CreatePostCategoryDto.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\CreatePostCategoryDto.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\PostCategory\\CreatePostCategoryDto.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAAwBAAAABBAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T03:22:57.79Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "CreatePostDto.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Post\\CreatePostDto.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\Post\\CreatePostDto.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Post\\CreatePostDto.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\Post\\CreatePostDto.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAAAywBoAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T03:20:10.696Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "Route.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Domains\\Entities\\Main\\Route.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Domains\\Entities\\Main\\Route.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Domains\\Entities\\Main\\Route.cs",
+              "RelativeToolTip": "AttechServer\\Domains\\Entities\\Main\\Route.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAAAIwCMAAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-21T04:25:35.654Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "AuthService.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\AuthService.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Implements\\AuthService.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\AuthService.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Implements\\AuthService.cs",
+              "ViewState": "AgIAAF0AAAAAAAAAAAAowGUAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-21T04:24:50.965Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "DetailPostDto.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Post\\DetailPostDto.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\Post\\DetailPostDto.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Post\\DetailPostDto.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\Post\\DetailPostDto.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAAAjwCQAAAA8AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T03:21:31.208Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "Post.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Domains\\Entities\\Main\\Post.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Domains\\Entities\\Main\\Post.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Domains\\Entities\\Main\\Post.cs",
+              "RelativeToolTip": "AttechServer\\Domains\\Entities\\Main\\Post.cs",
+              "ViewState": "AgIAADEAAAAAAAAAAAAowDoAAAA8AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T03:05:55.05Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 56,
+              "Title": "20250715061904_AddMenuTable.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Migrations\\20250715061904_AddMenuTable.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Migrations\\20250715061904_AddMenuTable.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Migrations\\20250715061904_AddMenuTable.cs",
+              "RelativeToolTip": "AttechServer\\Migrations\\20250715061904_AddMenuTable.cs",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAcwAYAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T06:19:05.492Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 57,
+              "Title": "20250715042019_UpdatePostCategoryTable.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Migrations\\20250715042019_UpdatePostCategoryTable.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Migrations\\20250715042019_UpdatePostCategoryTable.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Migrations\\20250715042019_UpdatePostCategoryTable.cs",
+              "RelativeToolTip": "AttechServer\\Migrations\\20250715042019_UpdatePostCategoryTable.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T04:20:20.411Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "20250715064912_AddOrderPriorityToMenu.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Migrations\\20250715064912_AddOrderPriorityToMenu.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Migrations\\20250715064912_AddOrderPriorityToMenu.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Migrations\\20250715064912_AddOrderPriorityToMenu.cs",
+              "RelativeToolTip": "AttechServer\\Migrations\\20250715064912_AddOrderPriorityToMenu.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAAAcwBQAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T06:49:12.943Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "DetailServiceDto.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Service\\DetailServiceDto.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\Service\\DetailServiceDto.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Service\\DetailServiceDto.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\Service\\DetailServiceDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T04:12:13.231Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "ServiceDto.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Service\\ServiceDto.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\Service\\ServiceDto.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Service\\ServiceDto.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\Service\\ServiceDto.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAAA7wBUAAAA8AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T04:11:08.603Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "ServiceService.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\ServiceService.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Implements\\ServiceService.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\ServiceService.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Implements\\ServiceService.cs",
+              "ViewState": "AgIAAA0AAAAAAAAAAAAUwBoAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T03:15:36.802Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "ProductCategoryService.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\ProductCategoryService.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Implements\\ProductCategoryService.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\ProductCategoryService.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Implements\\ProductCategoryService.cs",
+              "ViewState": "AgIAAOUAAAAAAAAAAAAcwNUAAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T04:04:44.742Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "PostCategoryService.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\PostCategoryService.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Implements\\PostCategoryService.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\PostCategoryService.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Implements\\PostCategoryService.cs",
+              "ViewState": "AgIAAJMAAAAAAAAAAAAgwJUAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T04:05:15.067Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "CreateServiceDto.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Service\\CreateServiceDto.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\Service\\CreateServiceDto.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Service\\CreateServiceDto.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\Service\\CreateServiceDto.cs",
+              "ViewState": "AgIAABEAAAAAAAAAAAAgwBgAAAA8AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T04:12:10.256Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "UpdateServiceDto.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Service\\UpdateServiceDto.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\Service\\UpdateServiceDto.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Service\\UpdateServiceDto.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\Service\\UpdateServiceDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T04:12:08.359Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 37,
+              "Title": "CreateProductCategoryDto.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\CreateProductCategoryDto.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\CreateProductCategoryDto.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\CreateProductCategoryDto.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\CreateProductCategoryDto.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAuwAwAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T03:27:20.709Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 38,
+              "Title": "UpdateProductCategoryDto.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\UpdateProductCategoryDto.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\UpdateProductCategoryDto.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\UpdateProductCategoryDto.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\UpdateProductCategoryDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAMAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T03:28:33.555Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 40,
+              "Title": "UpdateProductDto.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Product\\UpdateProductDto.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\Product\\UpdateProductDto.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Product\\UpdateProductDto.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\Product\\UpdateProductDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T03:27:19.691Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 41,
+              "Title": "ProductService.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\ProductService.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Implements\\ProductService.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Implements\\ProductService.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Implements\\ProductService.cs",
+              "ViewState": "AgIAAGUBAAAAAAAAAAAUwFsBAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T03:41:02.818Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 39,
+              "Title": "CreateProductDto.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Product\\CreateProductDto.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\Product\\CreateProductDto.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Product\\CreateProductDto.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\Product\\CreateProductDto.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAA5wAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T03:24:45.917Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 42,
+              "Title": "UpdateProductCategoryStatusDto.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\UpdateProductCategoryStatusDto.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\UpdateProductCategoryStatusDto.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\UpdateProductCategoryStatusDto.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\UpdateProductCategoryStatusDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T03:28:35.387Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 43,
+              "Title": "ProductCategoryDto.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\ProductCategoryDto.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\ProductCategoryDto.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\ProductCategoryDto.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\ProductCategoryDto.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAQwBIAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T03:28:07.658Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 44,
+              "Title": "DetailProductCategoryDto.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\DetailProductCategoryDto.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\DetailProductCategoryDto.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\DetailProductCategoryDto.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\ProductCategory\\DetailProductCategoryDto.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAA3wBUAAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T03:27:36.994Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 45,
+              "Title": "DetailProductDto.cs",
+              "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Product\\DetailProductDto.cs",
+              "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\Product\\DetailProductDto.cs",
+              "ToolTip": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Product\\DetailProductDto.cs",
+              "RelativeToolTip": "AttechServer\\Applications\\UserModules\\Dtos\\Product\\DetailProductDto.cs",
+              "ViewState": "AgIAAB8AAAAAAAAAAAA0wCMAAAA8AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T03:25:24.172Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 46,
               "Title": "UpdatePostDto.cs",
               "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Applications\\UserModules\\Dtos\\Post\\UpdatePostDto.cs",
               "RelativeDocumentMoniker": "AttechServer\\Applications\\UserModules\\Dtos\\Post\\UpdatePostDto.cs",
@@ -715,7 +841,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 39,
+              "DocumentIndex": 47,
               "Title": "KeyPermission.cs",
               "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Domains\\Entities\\KeyPermission.cs",
               "RelativeDocumentMoniker": "AttechServer\\Domains\\Entities\\KeyPermission.cs",
@@ -727,7 +853,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 40,
+              "DocumentIndex": 48,
               "Title": "ApiEndpoint.cs",
               "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Domains\\Entities\\ApiEndpoint.cs",
               "RelativeDocumentMoniker": "AttechServer\\Domains\\Entities\\ApiEndpoint.cs",
@@ -739,7 +865,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 41,
+              "DocumentIndex": 49,
               "Title": "PostType.cs",
               "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Domains\\Entities\\Main\\PostType.cs",
               "RelativeDocumentMoniker": "AttechServer\\Domains\\Entities\\Main\\PostType.cs",
@@ -751,7 +877,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 42,
+              "DocumentIndex": 50,
               "Title": "Service.cs",
               "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Domains\\Entities\\Main\\Service.cs",
               "RelativeDocumentMoniker": "AttechServer\\Domains\\Entities\\Main\\Service.cs",
@@ -763,7 +889,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 43,
+              "DocumentIndex": 51,
               "Title": "ProductCategory.cs",
               "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Domains\\Entities\\Main\\ProductCategory.cs",
               "RelativeDocumentMoniker": "AttechServer\\Domains\\Entities\\Main\\ProductCategory.cs",
@@ -775,7 +901,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 44,
+              "DocumentIndex": 52,
               "Title": "Product.cs",
               "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Domains\\Entities\\Main\\Product.cs",
               "RelativeDocumentMoniker": "AttechServer\\Domains\\Entities\\Main\\Product.cs",
@@ -787,7 +913,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 45,
+              "DocumentIndex": 53,
               "Title": "ApiEndpointController.cs",
               "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\ApiEndpointController.cs",
               "RelativeDocumentMoniker": "AttechServer\\Controllers\\ApiEndpointController.cs",
@@ -799,7 +925,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 47,
+              "DocumentIndex": 55,
               "Title": "PermissionMiddleWare.cs",
               "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Shared\\Middlewares\\PermissionMiddleWare.cs",
               "RelativeDocumentMoniker": "AttechServer\\Shared\\Middlewares\\PermissionMiddleWare.cs",
@@ -811,7 +937,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 46,
+              "DocumentIndex": 54,
               "Title": "PermissionController.cs",
               "DocumentMoniker": "C:\\Users\\thanh\\source\\repos\\Backend\\AttechServer\\AttechServer\\Controllers\\PermissionController.cs",
               "RelativeDocumentMoniker": "AttechServer\\Controllers\\PermissionController.cs",

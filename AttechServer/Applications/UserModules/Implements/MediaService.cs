@@ -41,7 +41,7 @@ namespace AttechServer.Applications.UserModules.Implements
                     FilePath = f.FilePath.Replace('\\', '/'),
                     EntityType = f.EntityType,
                     EntityId = f.EntityId,
-                    CreatedDate = f.CreatedDate
+                    CreatedDate = f.CreatedDate ?? DateTime.MinValue
                 })
                 .FirstOrDefaultAsync();
 
@@ -87,7 +87,7 @@ namespace AttechServer.Applications.UserModules.Implements
                     FilePath = f.FilePath.Replace('\\', '/'),
                     EntityType = f.EntityType,
                     EntityId = f.EntityId,
-                    CreatedDate = f.CreatedDate
+                    CreatedDate = f.CreatedDate ?? DateTime.MinValue
                 })
                 .ToListAsync();
 
@@ -139,7 +139,7 @@ namespace AttechServer.Applications.UserModules.Implements
                     FilePath = f.FilePath.Replace('\\', '/'),
                     EntityType = f.EntityType,
                     EntityId = f.EntityId,
-                    CreatedDate = f.CreatedDate
+                    CreatedDate = f.CreatedDate ?? DateTime.MinValue
                 })
                 .ToListAsync();
 

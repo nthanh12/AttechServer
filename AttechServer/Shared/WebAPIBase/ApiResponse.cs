@@ -2,12 +2,12 @@
 {
     public class ApiResponse
     {
-        public StatusCode Status { get; set; }
+        public ApiStatusCode Status { get; set; }
         public object? Data { get; set; }
         public int Code { get; set; }
         public string Message { get; set; }
 
-        public ApiResponse(StatusCode status, object? data, int code, string message)
+        public ApiResponse(ApiStatusCode status, object? data, int code, string message)
         {
             Status = status;
             Data = data;
@@ -17,7 +17,7 @@
 
         public ApiResponse(object? data)
         {
-            Status = StatusCode.Success;
+            Status = ApiStatusCode.Success;
             Data = data;
             Code = 200;
             Message = "Ok";
@@ -25,7 +25,7 @@
 
         public ApiResponse()
         {
-            Status = StatusCode.Success;
+            Status = ApiStatusCode.Success;
             Data = null;
             Code = 200;
             Message = "Ok";
@@ -36,7 +36,7 @@
     {
         public new T Data { get; set; }
 
-        public ApiResponse(StatusCode status, T data, int code, string message) : base(status, data, code, message)
+        public ApiResponse(ApiStatusCode status, T data, int code, string message) : base(status, data, code, message)
         {
             Status = status;
             Data = data;
@@ -50,7 +50,7 @@
         }
     }
 
-    public enum StatusCode
+    public enum ApiStatusCode
     {
         Success = 1,
         Error = 0

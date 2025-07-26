@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace AttechServer.Domains.Entities.Main
 {
     [Table("Route")]
-    public class Route
+    public class AppRoute
     {
         [Key]
         public int Id { get; set; }
@@ -20,8 +20,8 @@ namespace AttechServer.Domains.Entities.Main
 
         public int? ParentId { get; set; }
         [ForeignKey("ParentId")]
-        public Route? Parent { get; set; }
-        public List<Route> Children { get; set; } = new();
+        public AppRoute? Parent { get; set; }
+        public List<AppRoute> Children { get; set; } = new();
 
         public int OrderIndex { get; set; }
         public bool IsActive { get; set; } = true;

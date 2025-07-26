@@ -20,7 +20,7 @@ namespace AttechServer.Shared.WebAPIBase
 
             {
                 return new ApiResponse(
-                WebAPIBase.StatusCode.Error,
+                ApiStatusCode.Error,
                 null,
                 errorCode,
                 errorMessage
@@ -34,7 +34,7 @@ namespace AttechServer.Shared.WebAPIBase
                 );
             }
             return new ApiResponse(
-                WebAPIBase.StatusCode.Error,
+                ApiStatusCode.Error,
                 null,
                 ErrorCode.InternalServerError,
                 ErrorMessage.InternalServerError

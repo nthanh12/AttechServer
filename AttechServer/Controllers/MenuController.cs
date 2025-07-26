@@ -1,6 +1,7 @@
 using AttechServer.Applications.UserModules.Abstracts;
 using AttechServer.Applications.UserModules.Dtos.Menu;
 using AttechServer.Shared.WebAPIBase;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AttechServer.Shared.Consts.Permissions;
 using AttechServer.Shared.Filters;
@@ -9,6 +10,7 @@ namespace AttechServer.Controllers
 {
     [Route("api/menu")]
     [ApiController]
+    [Authorize]
     public class MenuController : ApiControllerBase
     {
         private readonly IMenuService _menuService;
@@ -18,6 +20,8 @@ namespace AttechServer.Controllers
         }
 
         [HttpGet("find-all")]
+        [AllowAnonymous]
+        [PermissionFilter(PermissionKeys.Menu_View)]
         public async Task<ApiResponse> FindAll()
         {
             try { return new(await _menuService.GetAllFlat()); }
@@ -25,6 +29,7 @@ namespace AttechServer.Controllers
         }
 
         [HttpGet("tree")]
+        [AllowAnonymous] // Public menu structure
         public async Task<ApiResponse> GetTree()
         {
             try { return new(await _menuService.GetTree()); }
@@ -32,6 +37,8 @@ namespace AttechServer.Controllers
         }
 
         [HttpGet("find-by-id/{id}")]
+        [AllowAnonymous]
+        [PermissionFilter(PermissionKeys.Menu_View)]
         public async Task<ApiResponse> FindById(int id)
         {
             try { return new(await _menuService.FindById(id)); }

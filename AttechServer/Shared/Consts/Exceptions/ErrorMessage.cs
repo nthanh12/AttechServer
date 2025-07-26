@@ -35,5 +35,15 @@
         public const string InvalidClientRequest = "Yêu cầu không hợp lệ";
         public const string InvalidRefreshToken = "Mã làm mới không hợp lệ";
 
+        // File Upload Error Messages
+        public const string InvalidFileType = "Loại file không được hỗ trợ";
+        public const string FileTooLarge = "File vượt quá kích thước cho phép";
+        public const string InvalidFileExtension = "Phần mở rộng file không hợp lệ";
+        public const string InvalidMimeType = "MIME type không hợp lệ";
+        public const string SuspiciousFile = "File có dấu hiệu đáng nghi";
+        public const string ImageTooLarge = "Kích thước ảnh quá lớn";
+        public const string InvalidImage = "File ảnh không hợp lệ";
+        public const string TooManyFiles = "Vượt quá số lượng file cho phép";
+
     }
 }

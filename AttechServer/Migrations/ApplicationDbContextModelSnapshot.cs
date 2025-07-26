@@ -122,6 +122,68 @@ namespace AttechServer.Migrations
                     b.ToTable("KeyPermissions", (string)null);
                 });
 
+            modelBuilder.Entity("AttechServer.Domains.Entities.Main.AppRoute", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Component")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("DescriptionVi")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Icon")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LabelEn")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("LabelVi")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Layout")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("OrderIndex")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<bool>("Protected")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentId");
+
+                    b.ToTable("Route");
+                });
+
             modelBuilder.Entity("AttechServer.Domains.Entities.Main.FileUpload", b =>
                 {
                     b.Property<int>("Id")
@@ -130,8 +192,19 @@ namespace AttechServer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
 
                     b.Property<int>("EntityId")
                         .HasColumnType("int");
@@ -139,13 +212,39 @@ namespace AttechServer.Migrations
                     b.Property<int>("EntityType")
                         .HasColumnType("int");
 
+                    b.Property<string>("FileHash")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
                     b.Property<string>("FilePath")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<long>("FileSizeInBytes")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("FileType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("IsSafe")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsScanned")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OriginalFileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.HasKey("Id");
 
@@ -274,6 +373,9 @@ namespace AttechServer.Migrations
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
+
+                    b.Property<bool>("isOutstanding")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -927,6 +1029,15 @@ namespace AttechServer.Migrations
                     b.Navigation("Parent");
                 });
 
+            modelBuilder.Entity("AttechServer.Domains.Entities.Main.AppRoute", b =>
+                {
+                    b.HasOne("AttechServer.Domains.Entities.Main.AppRoute", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId");
+
+                    b.Navigation("Parent");
+                });
+
             modelBuilder.Entity("AttechServer.Domains.Entities.Main.Menu", b =>
                 {
                     b.HasOne("AttechServer.Domains.Entities.Main.Menu", "Parent")
@@ -1053,6 +1164,11 @@ namespace AttechServer.Migrations
                     b.Navigation("Children");
 
                     b.Navigation("PermissionForApiEndpoints");
+                });
+
+            modelBuilder.Entity("AttechServer.Domains.Entities.Main.AppRoute", b =>
+                {
+                    b.Navigation("Children");
                 });
 
             modelBuilder.Entity("AttechServer.Domains.Entities.Main.Menu", b =>

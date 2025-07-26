@@ -495,7 +495,7 @@
     ]
   },
   {
-    "ContainingType": "AttechServer.Controllers.NewsCategoryController",
+    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IPostCategoryService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.PostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.DetailPostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.CreatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
     "Method": "Create",
     "RelativePath": "api/news-categories/create",
     "HttpMethod": "POST",
@@ -521,7 +521,7 @@
     ]
   },
   {
-    "ContainingType": "AttechServer.Controllers.NewsCategoryController",
+    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IPostCategoryService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.PostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.DetailPostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.CreatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
     "Method": "Delete",
     "RelativePath": "api/news-categories/delete/{id}",
     "HttpMethod": "DELETE",
@@ -531,6 +531,32 @@
       {
         "Name": "id",
         "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.NewsCategoryController",
+    "Method": "FindBySlug",
+    "RelativePath": "api/news-categories/detail/{slug}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "slug",
+        "Type": "System.String",
         "IsRequired": true
       }
     ],
@@ -614,7 +640,7 @@
     ]
   },
   {
-    "ContainingType": "AttechServer.Controllers.NewsCategoryController",
+    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IPostCategoryService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.PostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.DetailPostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.CreatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
     "Method": "Update",
     "RelativePath": "api/news-categories/update",
     "HttpMethod": "PUT",
@@ -640,7 +666,7 @@
     ]
   },
   {
-    "ContainingType": "AttechServer.Controllers.NewsCategoryController",
+    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IPostCategoryService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.PostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.DetailPostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.CreatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
     "Method": "UpdateStatus",
     "RelativePath": "api/news-categories/update-status",
     "HttpMethod": "PUT",
@@ -649,7 +675,7 @@
     "Parameters": [
       {
         "Name": "input",
-        "Type": "AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryStatusDto",
+        "Type": "AttechServer.Applications.UserModules.Dtos.UpdateStatusDto",
         "IsRequired": true
       }
     ],
@@ -883,7 +909,7 @@
     ]
   },
   {
-    "ContainingType": "AttechServer.Controllers.NewsController",
+    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IPostService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Post.PostDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Post.DetailPostDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Post.CreatePostDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Post.UpdatePostDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
     "Method": "UpdateStatus",
     "RelativePath": "api/news/update-status",
     "HttpMethod": "PUT",
@@ -892,7 +918,7 @@
     "Parameters": [
       {
         "Name": "input",
-        "Type": "AttechServer.Applications.UserModules.Dtos.Post.UpdatePostStatusDto",
+        "Type": "AttechServer.Applications.UserModules.Dtos.UpdateStatusDto",
         "IsRequired": true
       }
     ],
@@ -909,7 +935,7 @@
     ]
   },
   {
-    "ContainingType": "AttechServer.Controllers.NotificationCategoryController",
+    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IPostCategoryService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.PostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.DetailPostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.CreatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
     "Method": "Create",
     "RelativePath": "api/notification-categories/create",
     "HttpMethod": "POST",
@@ -935,7 +961,7 @@
     ]
   },
   {
-    "ContainingType": "AttechServer.Controllers.NotificationCategoryController",
+    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IPostCategoryService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.PostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.DetailPostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.CreatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
     "Method": "Delete",
     "RelativePath": "api/notification-categories/delete/{id}",
     "HttpMethod": "DELETE",
@@ -945,6 +971,32 @@
       {
         "Name": "id",
         "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.NotificationCategoryController",
+    "Method": "FindBySlug",
+    "RelativePath": "api/notification-categories/detail/{slug}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "slug",
+        "Type": "System.String",
         "IsRequired": true
       }
     ],
@@ -1028,7 +1080,7 @@
     ]
   },
   {
-    "ContainingType": "AttechServer.Controllers.NotificationCategoryController",
+    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IPostCategoryService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.PostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.DetailPostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.CreatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
     "Method": "Update",
     "RelativePath": "api/notification-categories/update",
     "HttpMethod": "PUT",
@@ -1054,7 +1106,7 @@
     ]
   },
   {
-    "ContainingType": "AttechServer.Controllers.NotificationCategoryController",
+    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IPostCategoryService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.PostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.DetailPostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.CreatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
     "Method": "UpdateStatus",
     "RelativePath": "api/notification-categories/update-status",
     "HttpMethod": "PUT",
@@ -1063,7 +1115,7 @@
     "Parameters": [
       {
         "Name": "input",
-        "Type": "AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryStatusDto",
+        "Type": "AttechServer.Applications.UserModules.Dtos.UpdateStatusDto",
         "IsRequired": true
       }
     ],
@@ -1297,7 +1349,7 @@
     ]
   },
   {
-    "ContainingType": "AttechServer.Controllers.NotificationController",
+    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IPostService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Post.PostDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Post.DetailPostDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Post.CreatePostDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Post.UpdatePostDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
     "Method": "UpdateStatus",
     "RelativePath": "api/notification/update-status",
     "HttpMethod": "PUT",
@@ -1306,7 +1358,7 @@
     "Parameters": [
       {
         "Name": "input",
-        "Type": "AttechServer.Applications.UserModules.Dtos.Post.UpdatePostStatusDto",
+        "Type": "AttechServer.Applications.UserModules.Dtos.UpdateStatusDto",
         "IsRequired": true
       }
     ],
@@ -1632,7 +1684,7 @@
     ]
   },
   {
-    "ContainingType": "AttechServer.Controllers.ProductCategoryController",
+    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IProductCategoryService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.ProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.DetailProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.CreateProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.UpdateProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
     "Method": "Create",
     "RelativePath": "api/product-categories/create",
     "HttpMethod": "POST",
@@ -1658,7 +1710,7 @@
     ]
   },
   {
-    "ContainingType": "AttechServer.Controllers.ProductCategoryController",
+    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IProductCategoryService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.ProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.DetailProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.CreateProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.UpdateProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
     "Method": "Delete",
     "RelativePath": "api/product-categories/delete/{id}",
     "HttpMethod": "DELETE",
@@ -1668,6 +1720,32 @@
       {
         "Name": "id",
         "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.ProductCategoryController",
+    "Method": "FindBySlug",
+    "RelativePath": "api/product-categories/detail/{slug}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "slug",
+        "Type": "System.String",
         "IsRequired": true
       }
     ],
@@ -1751,7 +1829,7 @@
     ]
   },
   {
-    "ContainingType": "AttechServer.Controllers.ProductCategoryController",
+    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IProductCategoryService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.ProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.DetailProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.CreateProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.UpdateProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
     "Method": "Update",
     "RelativePath": "api/product-categories/update",
     "HttpMethod": "PUT",
@@ -1777,7 +1855,7 @@
     ]
   },
   {
-    "ContainingType": "AttechServer.Controllers.ProductCategoryController",
+    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IProductCategoryService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.ProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.DetailProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.CreateProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.UpdateProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
     "Method": "UpdateStatus",
     "RelativePath": "api/product-categories/update-status",
     "HttpMethod": "PUT",
@@ -1786,7 +1864,7 @@
     "Parameters": [
       {
         "Name": "input",
-        "Type": "AttechServer.Applications.UserModules.Dtos.ProductCategory.UpdateProductCategoryStatusDto",
+        "Type": "AttechServer.Applications.UserModules.Dtos.UpdateStatusDto",
         "IsRequired": true
       }
     ],
@@ -2020,7 +2098,7 @@
     ]
   },
   {
-    "ContainingType": "AttechServer.Controllers.ProductController",
+    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IProductService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Product.ProductDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Product.DetailProductDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Product.CreateProductDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Product.UpdateProductDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
     "Method": "UpdateStatus",
     "RelativePath": "api/product/update-status",
     "HttpMethod": "PUT",
@@ -2028,14 +2106,9 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "status",
-        "Type": "System.Int32",
-        "IsRequired": false
+        "Name": "input",
+        "Type": "AttechServer.Applications.UserModules.Dtos.UpdateStatusDto",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": [
@@ -2398,7 +2471,7 @@
     ]
   },
   {
-    "ContainingType": "AttechServer.Controllers.ServiceController",
+    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IServiceService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Service.ServiceDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Service.DetailServiceDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Service.CreateServiceDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Service.UpdateServiceDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
     "Method": "UpdateStatus",
     "RelativePath": "api/service/update-status",
     "HttpMethod": "PUT",
@@ -2406,14 +2479,9 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "status",
-        "Type": "System.Int32",
-        "IsRequired": false
+        "Name": "input",
+        "Type": "AttechServer.Applications.UserModules.Dtos.UpdateStatusDto",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": [
@@ -2452,7 +2520,17 @@
         "IsRequired": false
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "AttechServer.Controllers.UploadController",
@@ -2535,7 +2613,17 @@
         "IsRequired": false
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "AttechServer.Controllers.UploadController",
@@ -2561,7 +2649,17 @@
         "IsRequired": false
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "AttechServer.Controllers.UploadController",
@@ -2587,7 +2685,17 @@
         "IsRequired": false
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "AttechServer.Controllers.UserController",

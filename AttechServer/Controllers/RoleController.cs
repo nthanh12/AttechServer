@@ -4,6 +4,7 @@ using AttechServer.Shared.ApplicationBase.Common;
 using AttechServer.Shared.Consts.Permissions;
 using AttechServer.Shared.Filters;
 using AttechServer.Shared.WebAPIBase;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +12,7 @@ namespace AttechServer.Controllers
 {
     [Route("api/role")]
     [ApiController]
+    [Authorize]
     public class RoleController : ApiControllerBase
     {
         private readonly IRoleService _roleService;
@@ -64,6 +66,7 @@ namespace AttechServer.Controllers
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost("create")]
+        [PermissionFilter(PermissionKeys.CreateRole)]
         public async Task<ApiResponse> Create([FromBody] CreateRoleDto input)
         {
             try
@@ -103,6 +106,7 @@ namespace AttechServer.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("delete/{id}")]
+        [PermissionFilter(PermissionKeys.DeleteRole)]
         public async Task<ApiResponse> Delete(int id)
         {
             try
@@ -123,6 +127,7 @@ namespace AttechServer.Controllers
         /// <param name="status"></param>
         /// <returns></returns>
         [HttpPut("update-status")]
+        [PermissionFilter(PermissionKeys.ButtonUpdateStatusRole)]
         public async Task<ApiResponse> UpdateStatus(int id, int status)
         {
             try

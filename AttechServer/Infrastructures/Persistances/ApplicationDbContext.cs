@@ -22,6 +22,7 @@ namespace AttechServer.Infrastructures.Persistances
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<ApiEndpoint> ApiEndpoints { get; set; }
         public DbSet<PermissionForApiEndpoint> PermissionForApiEndpoints { get; set; }
+        public DbSet<AppRoute> AppRoutes { get; set; }
         #endregion
 
         #region Main

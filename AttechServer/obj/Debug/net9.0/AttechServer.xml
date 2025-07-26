@@ -400,6 +400,11 @@
             <see cref="T:AttechServer.Shared.Consts.CommonStatus"/>
             </summary>
         </member>
+        <member name="T:AttechServer.Applications.UserModules.Implements.CacheKeys">
+            <summary>
+            Cache key generators for different entity types
+            </summary>
+        </member>
         <member name="M:AttechServer.Applications.UserModules.Implements.ProductService.FindAllByCategorySlug(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.String)">
             <summary>
             Lấy danh sách sản phẩm theo SlugVi danh mục, bao gồm cả category chính và sub-categories
@@ -473,138 +478,67 @@
         </member>
         <member name="M:AttechServer.Controllers.NewsCategoryController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
             <summary>
-            Danh sách danh mục tin tức
+            Get all news categories - Public endpoint
             </summary>
-            <param name="input"></param>
-            <returns></returns>
         </member>
         <member name="M:AttechServer.Controllers.NewsCategoryController.FindById(System.Int32)">
             <summary>
-            Thông tin chi tiết danh mục tin tức
+            Get news category by ID - Public endpoint
             </summary>
-            <param name="id"></param>
-            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.NewsCategoryController.FindBySlug(System.String)">
+            <summary>
+            Get news category by slug - Public endpoint
+            </summary>
         </member>
         <member name="M:AttechServer.Controllers.NewsController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
             <summary>
-            Danh sách tin tức
+            Get all news with caching
             </summary>
         </member>
         <member name="M:AttechServer.Controllers.NewsController.FindAllByCategorySlug(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.String)">
             <summary>
-            Danh sách theo slug danh mục tin tức, bao gồm cả sub-categories
+            Get news by category slug with caching
             </summary>
         </member>
         <member name="M:AttechServer.Controllers.NewsController.FindById(System.Int32)">
             <summary>
-            Thông tin chi tiết tin tức
+            Get news by ID with caching
             </summary>
         </member>
         <member name="M:AttechServer.Controllers.NewsController.FindBySlug(System.String)">
             <summary>
-            Lấy chi tiết tin tức theo slug
+            Get news by slug with caching
             </summary>
         </member>
         <member name="M:AttechServer.Controllers.NewsController.Create(AttechServer.Applications.UserModules.Dtos.Post.CreatePostDto)">
             <summary>
-            Thêm mới tin tức
+            Create new news
             </summary>
         </member>
         <member name="M:AttechServer.Controllers.NewsController.Update(AttechServer.Applications.UserModules.Dtos.Post.UpdatePostDto)">
             <summary>
-            Cập nhật tin tức
+            Update news
             </summary>
         </member>
         <member name="M:AttechServer.Controllers.NewsController.Delete(System.Int32)">
             <summary>
-            Xóa tin tức
-            </summary>
-        </member>
-        <member name="M:AttechServer.Controllers.NewsController.UpdateStatus(AttechServer.Applications.UserModules.Dtos.Post.UpdatePostStatusDto)">
-            <summary>
-            Khóa/Mở khóa tin tức
+            Delete news
             </summary>
         </member>
         <member name="M:AttechServer.Controllers.NotificationCategoryController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
             <summary>
-            Danh sách danh mục thông báo
+            Get all notification categories - Public endpoint
             </summary>
-            <param name="input"></param>
-            <returns></returns>
         </member>
         <member name="M:AttechServer.Controllers.NotificationCategoryController.FindById(System.Int32)">
             <summary>
-            Thông tin chi tiết danh mục thông báo
-            </summary>
-            <param name="id"></param>
-            <returns></returns>
-        </member>
-        <member name="M:AttechServer.Controllers.NotificationCategoryController.Create(AttechServer.Applications.UserModules.Dtos.PostCategory.CreatePostCategoryDto)">
-            <summary>
-            Thêm mới danh mục thông báo
-            </summary>
-            <param name="input"></param>
-            <returns></returns>
-        </member>
-        <member name="M:AttechServer.Controllers.NotificationCategoryController.Update(AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryDto)">
-            <summary>
-            Cập nhật danh mục thông báo
-            </summary>
-            <param name="input"></param>
-            <returns></returns>
-        </member>
-        <member name="M:AttechServer.Controllers.NotificationCategoryController.Delete(System.Int32)">
-            <summary>
-            Xóa danh mục thông báo
-            </summary>
-            <param name="id"></param>
-            <returns></returns>
-        </member>
-        <member name="M:AttechServer.Controllers.NotificationCategoryController.UpdateStatus(AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryStatusDto)">
-            <summary>
-            Khóa/Mở khóa danh mục thông báo
-            </summary>
-            <param name="input"></param>
-            <returns></returns>
-        </member>
-        <member name="M:AttechServer.Controllers.NotificationController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
-            <summary>
-            Danh sách thông báo
+            Get notification category by ID - Public endpoint
             </summary>
         </member>
-        <member name="M:AttechServer.Controllers.NotificationController.FindAllByCategorySlug(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.String)">
+        <member name="M:AttechServer.Controllers.NotificationCategoryController.FindBySlug(System.String)">
             <summary>
-            Danh sách theo slug danh mục thông báo
-            </summary>
-        </member>
-        <member name="M:AttechServer.Controllers.NotificationController.FindById(System.Int32)">
-            <summary>
-            Thông tin chi tiết thông báo
-            </summary>
-        </member>
-        <member name="M:AttechServer.Controllers.NotificationController.FindBySlug(System.String)">
-            <summary>
-            Lấy chi tiết thông báo theo slug
-            </summary>
-        </member>
-        <member name="M:AttechServer.Controllers.NotificationController.Create(AttechServer.Applications.UserModules.Dtos.Post.CreatePostDto)">
-            <summary>
-            Thêm mới thông báo
-            </summary>
-        </member>
-        <member name="M:AttechServer.Controllers.NotificationController.Update(AttechServer.Applications.UserModules.Dtos.Post.UpdatePostDto)">
-            <summary>
-            Cập nhật thông báo
-            </summary>
-        </member>
-        <member name="M:AttechServer.Controllers.NotificationController.Delete(System.Int32)">
-            <summary>
-            Xóa thông báo
-            </summary>
-        </member>
-        <member name="M:AttechServer.Controllers.NotificationController.UpdateStatus(AttechServer.Applications.UserModules.Dtos.Post.UpdatePostStatusDto)">
-            <summary>
-            Khóa/Mở khóa thông báo
+            Get notification category by slug - Public endpoint
             </summary>
         </member>
         <member name="M:AttechServer.Controllers.PermissionController.FindAll">
@@ -689,102 +623,53 @@
         </member>
         <member name="M:AttechServer.Controllers.ProductCategoryController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
             <summary>
-            Danh sách danh mục sản phẩm
+            Get all product categories - Public endpoint
             </summary>
-            <param name="input"></param>
-            <returns></returns>
         </member>
         <member name="M:AttechServer.Controllers.ProductCategoryController.FindById(System.Int32)">
             <summary>
-            Thông tin chi tiết danh mục sản phẩm
+            Get product category by ID - Public endpoint
             </summary>
-            <param name="id"></param>
-            <returns></returns>
         </member>
-        <member name="M:AttechServer.Controllers.ProductCategoryController.Create(AttechServer.Applications.UserModules.Dtos.ProductCategory.CreateProductCategoryDto)">
+        <member name="M:AttechServer.Controllers.ProductCategoryController.FindBySlug(System.String)">
             <summary>
-            Thêm mới danh mục sản phẩm
+            Get product category by slug - Public endpoint
             </summary>
-            <param name="input"></param>
-            <returns></returns>
-        </member>
-        <member name="M:AttechServer.Controllers.ProductCategoryController.Update(AttechServer.Applications.UserModules.Dtos.ProductCategory.UpdateProductCategoryDto)">
-            <summary>
-            Cập nhật danh mục sản phẩm
-            </summary>
-            <param name="input"></param>
-            <returns></returns>
-        </member>
-        <member name="M:AttechServer.Controllers.ProductCategoryController.Delete(System.Int32)">
-            <summary>
-            Xóa danh mục sản phẩm
-            </summary>
-            <param name="id"></param>
-            <returns></returns>
-        </member>
-        <member name="M:AttechServer.Controllers.ProductCategoryController.UpdateStatus(AttechServer.Applications.UserModules.Dtos.ProductCategory.UpdateProductCategoryStatusDto)">
-            <summary>
-            Khóa/Mở khóa danh mục sản phẩm
-            </summary>
-            <param name="id"></param>
-            <param name="status"></param>
-            <returns></returns>
         </member>
         <member name="M:AttechServer.Controllers.ProductController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
             <summary>
-            Danh sách sản phẩm
+            Get all products with caching
             </summary>
-            <param name="input"></param>
-            <returns></returns>
         </member>
         <member name="M:AttechServer.Controllers.ProductController.FindAllByCategorySlug(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.String)">
             <summary>
-            Danh sách sản phẩm theo slug danh mục sản phẩm
-            /// </summary>
-            <param name="input"></param>
-            <returns></returns>
-            
+            Get products by category slug with caching
+            </summary>
         </member>
         <member name="M:AttechServer.Controllers.ProductController.FindById(System.Int32)">
             <summary>
-            Thông tin chi tiết sản phẩm
+            Get product by ID with caching
             </summary>
-            <param name="id"></param>
-            <returns></returns>
         </member>
         <member name="M:AttechServer.Controllers.ProductController.FindBySlug(System.String)">
             <summary>
-            Lấy chi tiết sản phẩm theo slug
+            Get product by slug with caching
             </summary>
         </member>
         <member name="M:AttechServer.Controllers.ProductController.Create(AttechServer.Applications.UserModules.Dtos.Product.CreateProductDto)">
             <summary>
-            Thêm mới sản phẩm
+            Create new product
             </summary>
-            <param name="input"></param>
-            <returns></returns>
         </member>
         <member name="M:AttechServer.Controllers.ProductController.Update(AttechServer.Applications.UserModules.Dtos.Product.UpdateProductDto)">
             <summary>
-            Cập nhật sản phẩm
+            Update product
             </summary>
-            <param name="input"></param>
-            <returns></returns>
         </member>
         <member name="M:AttechServer.Controllers.ProductController.Delete(System.Int32)">
             <summary>
-            Xóa sản phẩm
+            Delete product
             </summary>
-            <param name="id"></param>
-            <returns></returns>
-        </member>
-        <member name="M:AttechServer.Controllers.ProductController.UpdateStatus(System.Int32,System.Int32)">
-            <summary>
-            Khóa/Mở khóa sản phẩm
-            </summary>
-            <param name="id"></param>
-            <param name="status"></param>
-            <returns></returns>
         </member>
         <member name="M:AttechServer.Controllers.RoleController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
             <summary>
@@ -829,53 +714,39 @@
             <param name="status"></param>
             <returns></returns>
         </member>
-        <member name="M:AttechServer.Controllers.ServiceController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+        <member name="M:AttechServer.Controllers.UploadController.MultiUpload(Microsoft.AspNetCore.Http.IFormFile[],System.Nullable{AttechServer.Shared.ApplicationBase.Common.EntityType},System.Nullable{System.Int32})">
             <summary>
-            Danh sách dịch vụ
+            Upload multiple files at once
             </summary>
-            <param name="input"></param>
-            <returns></returns>
+            <param name="files">Files to upload</param>
+            <param name="entityType">Entity type for file association</param>
+            <param name="entityId">Entity ID for file association</param>
+            <returns>List of uploaded file URLs</returns>
         </member>
-        <member name="M:AttechServer.Controllers.ServiceController.FindById(System.Int32)">
+        <member name="M:AttechServer.Controllers.UploadController.UploadImage(Microsoft.AspNetCore.Http.IFormFile,System.Nullable{AttechServer.Shared.ApplicationBase.Common.EntityType},System.Nullable{System.Int32})">
             <summary>
-            Thông tin chi tiết dịch vụ
-            </summary>
-            <param name="id"></param>
-            <returns></returns>
-        </member>
-        <member name="M:AttechServer.Controllers.ServiceController.FindBySlug(System.String)">
-            <summary>
-            Lấy chi tiết dịch vụ theo slug
+            Upload image file
             </summary>
         </member>
-        <member name="M:AttechServer.Controllers.ServiceController.Create(AttechServer.Applications.UserModules.Dtos.Service.CreateServiceDto)">
+        <member name="M:AttechServer.Controllers.UploadController.UploadVideo(Microsoft.AspNetCore.Http.IFormFile,System.Nullable{AttechServer.Shared.ApplicationBase.Common.EntityType},System.Nullable{System.Int32})">
             <summary>
-            Thêm mới dịch vụ
+            Upload video file
             </summary>
-            <param name="input"></param>
-            <returns></returns>
         </member>
-        <member name="M:AttechServer.Controllers.ServiceController.Update(AttechServer.Applications.UserModules.Dtos.Service.UpdateServiceDto)">
+        <member name="M:AttechServer.Controllers.UploadController.UploadDocument(Microsoft.AspNetCore.Http.IFormFile,System.Nullable{AttechServer.Shared.ApplicationBase.Common.EntityType},System.Nullable{System.Int32})">
             <summary>
-            Cập nhật dịch vụ
+            Upload document file
             </summary>
-            <param name="input"></param>
-            <returns></returns>
         </member>
-        <member name="M:AttechServer.Controllers.ServiceController.Delete(System.Int32)">
+        <member name="M:AttechServer.Controllers.UploadController.GetFile(System.String,System.String,System.String,System.String,System.String)">
             <summary>
-            Xóa dịch vụ
+            Get file by path (with date folder structure)
             </summary>
-            <param name="id"></param>
-            <returns></returns>
         </member>
-        <member name="M:AttechServer.Controllers.ServiceController.UpdateStatus(System.Int32,System.Int32)">
+        <member name="M:AttechServer.Controllers.UploadController.GetFile(System.String,System.String)">
             <summary>
-            Khóa/Mở khóa dịch vụ
+            Legacy endpoint for backward compatibility
             </summary>
-            <param name="id"></param>
-            <param name="status"></param>
-            <returns></returns>
         </member>
         <member name="M:AttechServer.Controllers.UserController.Create(AttechServer.Applications.UserModules.Dtos.CreateUserDto)">
             <summary>
@@ -1233,6 +1104,18 @@
         <member name="M:AttechServer.Migrations.AddOrderPriorityToMenu.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
+        <member name="T:AttechServer.Migrations.addisOutstandingcolumn">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.addisOutstandingcolumn.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.addisOutstandingcolumn.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.addisOutstandingcolumn.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
         <member name="T:AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto">
             <summary>
             Base class for pagination request DTOs
@@ -1289,6 +1172,36 @@
             Cho phép một trong các giá trị, nếu là null thì bỏ qua
             </summary>
         </member>
+        <member name="T:AttechServer.Shared.Attributes.CacheResponseAttribute">
+            <summary>
+            Custom response caching attribute with configurable cache duration and cache keys
+            </summary>
+        </member>
+        <member name="T:AttechServer.Shared.Attributes.CacheProfiles">
+            <summary>
+            Cache configuration options
+            </summary>
+        </member>
+        <member name="F:AttechServer.Shared.Attributes.CacheProfiles.ShortCache">
+            <summary>
+            Short cache for frequently changing data (1 minute)
+            </summary>
+        </member>
+        <member name="F:AttechServer.Shared.Attributes.CacheProfiles.MediumCache">
+            <summary>
+            Medium cache for moderately changing data (5 minutes)
+            </summary>
+        </member>
+        <member name="F:AttechServer.Shared.Attributes.CacheProfiles.LongCache">
+            <summary>
+            Long cache for rarely changing data (15 minutes)
+            </summary>
+        </member>
+        <member name="F:AttechServer.Shared.Attributes.CacheProfiles.ExtraLongCache">
+            <summary>
+            Extra long cache for very stable data (1 hour)
+            </summary>
+        </member>
         <member name="T:AttechServer.Shared.Consts.CommonStatus">
             <summary>
             Trạng thái 
@@ -1328,6 +1241,116 @@
             <param name="password">Mật khẩu chưa được mã hóa</param>
             <param name="hashedPassword">Mật mã đã được mã hóa</param>
             <returns></returns>
+        </member>
+        <member name="T:AttechServer.Shared.WebAPIBase.BaseCrudController`5">
+            <summary>
+            Base controller for CRUD operations with standardized patterns
+            </summary>
+            <typeparam name="TService">Service interface type</typeparam>
+            <typeparam name="TDto">List DTO type</typeparam>
+            <typeparam name="TDetailDto">Detail DTO type</typeparam>
+            <typeparam name="TCreateDto">Create DTO type</typeparam>
+            <typeparam name="TUpdateDto">Update DTO type</typeparam>
+        </member>
+        <member name="M:AttechServer.Shared.WebAPIBase.BaseCrudController`5.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Get paginated list of items
+            </summary>
+        </member>
+        <member name="M:AttechServer.Shared.WebAPIBase.BaseCrudController`5.FindById(System.Int32)">
+            <summary>
+            Get item by ID
+            </summary>
+        </member>
+        <member name="M:AttechServer.Shared.WebAPIBase.BaseCrudController`5.FindBySlug(System.String)">
+            <summary>
+            Get item by slug (if supported)
+            </summary>
+        </member>
+        <member name="M:AttechServer.Shared.WebAPIBase.BaseCrudController`5.Create(`3)">
+            <summary>
+            Create new item
+            </summary>
+        </member>
+        <member name="M:AttechServer.Shared.WebAPIBase.BaseCrudController`5.Update(`4)">
+            <summary>
+            Update existing item
+            </summary>
+        </member>
+        <member name="M:AttechServer.Shared.WebAPIBase.BaseCrudController`5.Delete(System.Int32)">
+            <summary>
+            Delete item by ID
+            </summary>
+        </member>
+        <member name="M:AttechServer.Shared.WebAPIBase.BaseCrudController`5.UpdateStatus(AttechServer.Applications.UserModules.Dtos.UpdateStatusDto)">
+            <summary>
+            Update item status
+            </summary>
+        </member>
+        <member name="M:AttechServer.Shared.WebAPIBase.BaseCrudController`5.GetFindAllAsync(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Override this method to implement FindAll logic
+            </summary>
+        </member>
+        <member name="M:AttechServer.Shared.WebAPIBase.BaseCrudController`5.GetFindByIdAsync(System.Int32)">
+            <summary>
+            Override this method to implement FindById logic
+            </summary>
+        </member>
+        <member name="M:AttechServer.Shared.WebAPIBase.BaseCrudController`5.GetFindBySlugAsync(System.String)">
+            <summary>
+            Override this method to implement FindBySlug logic (optional)
+            </summary>
+        </member>
+        <member name="M:AttechServer.Shared.WebAPIBase.BaseCrudController`5.GetCreateAsync(`3)">
+            <summary>
+            Override this method to implement Create logic
+            </summary>
+        </member>
+        <member name="M:AttechServer.Shared.WebAPIBase.BaseCrudController`5.GetUpdateAsync(`4)">
+            <summary>
+            Override this method to implement Update logic
+            </summary>
+        </member>
+        <member name="M:AttechServer.Shared.WebAPIBase.BaseCrudController`5.GetDeleteAsync(System.Int32)">
+            <summary>
+            Override this method to implement Delete logic
+            </summary>
+        </member>
+        <member name="M:AttechServer.Shared.WebAPIBase.BaseCrudController`5.GetUpdateStatusAsync(AttechServer.Applications.UserModules.Dtos.UpdateStatusDto)">
+            <summary>
+            Override this method to implement UpdateStatus logic
+            </summary>
+        </member>
+        <member name="M:AttechServer.Shared.WebAPIBase.BaseCrudController`5.ExecuteAsync(System.Func{System.Threading.Tasks.Task{AttechServer.Shared.WebAPIBase.ApiResponse}})">
+            <summary>
+            Execute operation with standardized error handling
+            </summary>
+        </member>
+        <member name="M:AttechServer.Shared.WebAPIBase.BaseCrudController`5.ExecuteAsync``1(System.Func{System.Threading.Tasks.Task{``0}})">
+            <summary>
+            Execute operation with standardized error handling and return data
+            </summary>
+        </member>
+        <member name="M:AttechServer.Shared.WebAPIBase.BaseCrudController`5.ExecuteVoidAsync(System.Func{System.Threading.Tasks.Task})">
+            <summary>
+            Execute void operation with standardized error handling
+            </summary>
+        </member>
+        <member name="T:AttechServer.Shared.WebAPIBase.BaseContentController`5">
+            <summary>
+            Base controller for content with categories (News, Notifications)
+            </summary>
+        </member>
+        <member name="M:AttechServer.Shared.WebAPIBase.BaseContentController`5.FindAllByCategorySlug(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.String)">
+            <summary>
+            Get items by category slug
+            </summary>
+        </member>
+        <member name="M:AttechServer.Shared.WebAPIBase.BaseContentController`5.GetFindAllByCategorySlugAsync(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.String)">
+            <summary>
+            Override this method to implement FindAllByCategorySlug logic
+            </summary>
         </member>
     </members>
 </doc>

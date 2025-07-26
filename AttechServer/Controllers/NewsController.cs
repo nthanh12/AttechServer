@@ -1,166 +1,140 @@
-﻿using AttechServer.Applications.UserModules.Abstracts;
+using AttechServer.Applications.UserModules.Abstracts;
 using AttechServer.Applications.UserModules.Dtos.Post;
+using AttechServer.Domains.Entities.Main;
 using AttechServer.Shared.ApplicationBase.Common;
+using AttechServer.Shared.Attributes;
 using AttechServer.Shared.WebAPIBase;
 using Microsoft.AspNetCore.Mvc;
-using AttechServer.Domains.Entities.Main;
-using Microsoft.AspNetCore.Authorization;
 using AttechServer.Shared.Filters;
 using AttechServer.Shared.Consts.Permissions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AttechServer.Controllers
 {
     [Route("api/news")]
-    [ApiController]
-    public class NewsController : ApiControllerBase
+    public class NewsController : BaseCrudController<IPostService, PostDto, DetailPostDto, CreatePostDto, UpdatePostDto>
     {
-        private readonly IPostService _postService;
-
-        public NewsController(ILogger<NewsController> logger, IPostService postService) : base(logger)
+        public NewsController(IPostService postService, ILogger<NewsController> logger) 
+            : base(postService, logger)
         {
-            _postService = postService;
         }
 
         /// <summary>
-        /// Danh sách tin tức
+        /// Get all news with caching
         /// </summary>
         [HttpGet("find-all")]
         [AllowAnonymous]
-        public async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
+        [CacheResponse(CacheProfiles.ShortCache, "news", varyByQueryString: true)]
+        public override async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
         {
-            try
-            {
-                return new(await _postService.FindAll(input, PostType.News));
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+            return await base.FindAll(input);
         }
 
         /// <summary>
-        /// Danh sách theo slug danh mục tin tức, bao gồm cả sub-categories
+        /// Get news by category slug with caching
         /// </summary>
         [HttpGet("category/{slug}")]
         [AllowAnonymous]
+        [CacheResponse(CacheProfiles.ShortCache, "news-category", varyByQueryString: true)]
         public async Task<ApiResponse> FindAllByCategorySlug([FromQuery] PagingRequestBaseDto input, string slug)
         {
-            try
+            return await ExecuteAsync(async () =>
             {
-                return new(await _postService.FindAllByCategorySlug(input, slug, PostType.News));
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+                var result = await _service.FindAllByCategorySlug(input, slug, PostType.News);
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "Ok");
+            });
         }
 
         /// <summary>
-        /// Thông tin chi tiết tin tức
+        /// Get news by ID with caching
         /// </summary>
         [HttpGet("find-by-id/{id}")]
         [AllowAnonymous]
-        public async Task<ApiResponse> FindById(int id)
+        [CacheResponse(CacheProfiles.MediumCache, "news-detail")]
+        public override async Task<ApiResponse> FindById(int id)
         {
-            try
-            {
-                return new(await _postService.FindById(id, PostType.News));
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+            return await base.FindById(id);
         }
 
         /// <summary>
-        /// Lấy chi tiết tin tức theo slug
+        /// Get news by slug with caching
         /// </summary>
         [HttpGet("detail/{slug}")]
         [AllowAnonymous]
-        public async Task<ApiResponse> FindBySlug(string slug)
+        [CacheResponse(CacheProfiles.MediumCache, "news-detail")]
+        public override async Task<ApiResponse> FindBySlug(string slug)
         {
-            try
-            {
-                return new(await _postService.FindBySlug(slug, PostType.News));
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+            return await base.FindBySlug(slug);
         }
 
         /// <summary>
-        /// Thêm mới tin tức
+        /// Create new news
         /// </summary>
         [HttpPost("create")]
-        public async Task<ApiResponse> Create([FromBody] CreatePostDto input)
+        [PermissionFilter(PermissionKeys.CreateNews)]
+        public override async Task<ApiResponse> Create([FromBody] CreatePostDto input)
         {
-            try
-            {
-                var result = await _postService.Create(input, PostType.News);
-                return new ApiResponse(result);
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+            return await base.Create(input);
         }
 
         /// <summary>
-        /// Cập nhật tin tức
+        /// Update news
         /// </summary>
         [HttpPut("update")]
-        [Authorize]
         [PermissionFilter(PermissionKeys.EditNews)]
-        public async Task<ApiResponse> Update([FromBody] UpdatePostDto input)
+        public override async Task<ApiResponse> Update([FromBody] UpdatePostDto input)
         {
-            try
-            {
-                var result = await _postService.Update(input, PostType.News);
-                return new ApiResponse(result);
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+            return await base.Update(input);
         }
 
         /// <summary>
-        /// Xóa tin tức
+        /// Delete news
         /// </summary>
         [HttpDelete("delete/{id}")]
-        [Authorize]
         [PermissionFilter(PermissionKeys.DeleteNews)]
-        public async Task<ApiResponse> Delete(int id)
+        public override async Task<ApiResponse> Delete(int id)
         {
-            try
-            {
-                await _postService.Delete(id, PostType.News);
-                return new ApiResponse();
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+            return await base.Delete(id);
         }
 
-        /// <summary>
-        /// Khóa/Mở khóa tin tức
-        /// </summary>
-        [HttpPut("update-status")]
-        [Authorize]
-        [PermissionFilter(PermissionKeys.EditNews)]
-        public async Task<ApiResponse> UpdateStatus([FromBody] UpdatePostStatusDto input)
+        #region Protected Implementation Methods
+
+        protected override async Task<object> GetFindAllAsync(PagingRequestBaseDto input)
         {
-            try
-            {
-                await _postService.UpdateStatusPost(input.Id, input.Status, PostType.News);
-                return new ApiResponse();
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+            return await _service.FindAll(input, PostType.News);
         }
+
+
+        protected override async Task<DetailPostDto> GetFindByIdAsync(int id)
+        {
+            return await _service.FindById(id, PostType.News);
+        }
+
+        protected override async Task<DetailPostDto> GetFindBySlugAsync(string slug)
+        {
+            return await _service.FindBySlug(slug, PostType.News);
+        }
+
+        protected override async Task<object> GetCreateAsync(CreatePostDto input)
+        {
+            return await _service.Create(input, PostType.News);
+        }
+
+        protected override async Task<object?> GetUpdateAsync(UpdatePostDto input)
+        {
+            return await _service.Update(input, PostType.News);
+        }
+
+        protected override async Task GetDeleteAsync(int id)
+        {
+            await _service.Delete(id, PostType.News);
+        }
+
+        protected override async Task GetUpdateStatusAsync(AttechServer.Applications.UserModules.Dtos.UpdateStatusDto input)
+        {
+            await _service.UpdateStatusPost(input.Id, input.Status, PostType.News);
+        }
+
+        #endregion
     }
 }

@@ -1,133 +1,85 @@
 ﻿using AttechServer.Applications.UserModules.Abstracts;
 using AttechServer.Applications.UserModules.Dtos.PostCategory;
 using AttechServer.Shared.ApplicationBase.Common;
+using AttechServer.Shared.Attributes;
+using AttechServer.Shared.Consts.Permissions;
+using AttechServer.Shared.Filters;
 using AttechServer.Shared.WebAPIBase;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AttechServer.Domains.Entities.Main;
 
 namespace AttechServer.Controllers
 {
     [Route("api/notification-categories")]
-    [ApiController]
-    public class NotificationCategoryController : ApiControllerBase
+    [Authorize]
+    public class NotificationCategoryController : BaseCrudController<IPostCategoryService, PostCategoryDto, DetailPostCategoryDto, CreatePostCategoryDto, UpdatePostCategoryDto>
     {
-        private readonly IPostCategoryService _pcService;
-
-        public NotificationCategoryController(ILogger<NotificationCategoryController> logger, IPostCategoryService pcService) : base(logger)
+        public NotificationCategoryController(IPostCategoryService pcService, ILogger<NotificationCategoryController> logger)
+            : base(pcService, logger)
         {
-            _pcService = pcService;
         }
 
         /// <summary>
-        /// Danh sách danh mục thông báo
+        /// Get all notification categories - Public endpoint
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
         [HttpGet("find-all")]
-        public async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
+        [AllowAnonymous]
+        public override async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
         {
-            try
-            {
-                return new(await _pcService.FindAll(input, PostType.Notification));
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+            return await base.FindAll(input);
         }
 
         /// <summary>
-        /// Thông tin chi tiết danh mục thông báo
+        /// Get notification category by ID - Public endpoint
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpGet("find-by-id/{id}")]
-        public async Task<ApiResponse> FindById(int id)
+        [AllowAnonymous]
+        public override async Task<ApiResponse> FindById(int id)
         {
-            try
-            {
-                return new(await _pcService.FindById(id, PostType.Notification));
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+            return await base.FindById(id);
         }
 
         /// <summary>
-        /// Thêm mới danh mục thông báo
+        /// Get notification category by slug - Public endpoint
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        [HttpPost("create")]
-        public async Task<ApiResponse> Create([FromBody] CreatePostCategoryDto input)
+        [HttpGet("detail/{slug}")]
+        [AllowAnonymous]
+        public override async Task<ApiResponse> FindBySlug(string slug)
         {
-            try
-            {
-                var result = await _pcService.Create(input, PostType.Notification);
-                return new ApiResponse(result);
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+            return await base.FindBySlug(slug);
         }
 
-        /// <summary>
-        /// Cập nhật danh mục thông báo
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        [HttpPut("update")]
-        public async Task<ApiResponse> Update([FromBody] UpdatePostCategoryDto input)
+        // Giữ lại các method protected override và UpdateStatus nhận DTO
+        protected override async Task<object> GetCreateAsync(CreatePostCategoryDto input)
         {
-            try
-            {
-                var result = await _pcService.Update(input, PostType.Notification);
-                return new ApiResponse(result);
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+            return await _service.Create(input, PostType.Notification);
         }
 
-        /// <summary>
-        /// Xóa danh mục thông báo
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpDelete("delete/{id}")]
-        public async Task<ApiResponse> Delete(int id)
+        protected override async Task<DetailPostCategoryDto> GetFindByIdAsync(int id)
         {
-            try
-            {
-                await _pcService.Delete(id, PostType.Notification);
-                return new();
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+            return await _service.FindById(id, PostType.Notification);
         }
 
-        /// <summary>
-        /// Khóa/Mở khóa danh mục thông báo
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        [HttpPut("update-status")]
-        public async Task<ApiResponse> UpdateStatus(UpdatePostCategoryStatusDto input)
+        protected override async Task<object?> GetUpdateAsync(UpdatePostCategoryDto input)
         {
-            try
-            {
-                await _pcService.UpdateStatusPostCategory(input.Id, input.Status, PostType.Notification);
-                return new();
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
+            return await _service.Update(input, PostType.Notification);
+        }
+
+        protected override async Task<object> GetFindAllAsync(PagingRequestBaseDto input)
+        {
+            return await _service.FindAll(input, PostType.Notification);
+        }
+
+        protected override async Task GetDeleteAsync(int id)
+        {
+            await _service.Delete(id, PostType.Notification);
+        }
+
+        // Chỉ giữ lại override cho protected GetUpdateStatusAsync
+        protected override async Task GetUpdateStatusAsync(AttechServer.Applications.UserModules.Dtos.UpdateStatusDto input)
+        {
+            await _service.UpdateStatusPostCategory(input.Id, input.Status, PostType.Notification);
         }
     }
 }

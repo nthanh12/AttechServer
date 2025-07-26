@@ -18,6 +18,7 @@
 	<ItemGroup>
 	  <Compile Remove="Controllers\PostCategoryController.cs" />
 	  <Compile Remove="Controllers\PostController.cs" />
+	  <Compile Remove="Controllers\Backup\**" />
 	</ItemGroup>
 
 	<ItemGroup>

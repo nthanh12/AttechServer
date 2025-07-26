@@ -1,6 +1,8 @@
 using AttechServer.Applications.UserModules.Abstracts;
 using AttechServer.Applications.UserModules.Dtos.FileUpload;
 using AttechServer.Shared.ApplicationBase.Common;
+using AttechServer.Shared.Consts.Permissions;
+using AttechServer.Shared.Filters;
 using AttechServer.Shared.WebAPIBase;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +11,7 @@ namespace AttechServer.Controllers
 {
     [Route("api/media")]
     [ApiController]
+    [Authorize]
     public class MediaController : ApiControllerBase
     {
         private readonly IMediaService _mediaService;
@@ -22,7 +25,7 @@ namespace AttechServer.Controllers
         /// Danh sách file
         /// </summary>
         [HttpGet("find-all")]
-        //[Authorize]
+        [PermissionFilter(PermissionKeys.FileUpload)]
         public async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
         {
             try
