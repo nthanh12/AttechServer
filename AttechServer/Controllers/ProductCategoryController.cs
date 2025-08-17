@@ -1,4 +1,4 @@
-ï»¿using AttechServer.Applications.UserModules.Abstracts;
+using AttechServer.Applications.UserModules.Abstracts;
 using AttechServer.Applications.UserModules.Dtos.ProductCategory;
 using AttechServer.Shared.ApplicationBase.Common;
 using AttechServer.Shared.Attributes;
@@ -10,78 +10,116 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace AttechServer.Controllers
 {
-    [Route("api/product-categories")]
+    [Route("api/product-category")]
+    [ApiController]
     [Authorize]
-    public class ProductCategoryController : BaseCrudController<IProductCategoryService, ProductCategoryDto, DetailProductCategoryDto, CreateProductCategoryDto, UpdateProductCategoryDto>
+    public class ProductCategoryController : ApiControllerBase
     {
+        private readonly IProductCategoryService _productCategoryService;
+
         public ProductCategoryController(IProductCategoryService pcService, ILogger<ProductCategoryController> logger)
-            : base(pcService, logger)
+            : base(logger)
         {
+            _productCategoryService = pcService;
         }
 
         /// <summary>
-        /// Get all product categories - Public endpoint
+        /// Get all product categories with caching
         /// </summary>
         [HttpGet("find-all")]
         [AllowAnonymous]
-        public override async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
+        [CacheResponse(CacheProfiles.ShortCache, "product-categories", varyByQueryString: true)]
+        public async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
         {
-            return await base.FindAll(input);
+            try
+            {
+                var result = await _productCategoryService.FindAll(input);
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "Ok");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting all");
+                return OkException(ex);
+            }
         }
 
         /// <summary>
-        /// Get product category by ID - Public endpoint
+        /// Get product category by ID with caching
         /// </summary>
         [HttpGet("find-by-id/{id}")]
         [AllowAnonymous]
-        public override async Task<ApiResponse> FindById(int id)
+        [CacheResponse(CacheProfiles.MediumCache, "product-category-detail")]
+        public async Task<ApiResponse> FindById(int id)
         {
-            return await base.FindById(id);
+            try
+            {
+                var result = await _productCategoryService.FindById(id);
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "Ok");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting by id");
+                return OkException(ex);
+            }
         }
 
         /// <summary>
-        /// Get product category by slug - Public endpoint
+        /// Create new product category
         /// </summary>
-        [HttpGet("detail/{slug}")]
-        [AllowAnonymous]
-        public override async Task<ApiResponse> FindBySlug(string slug)
+        [HttpPost("create")]
+        [PermissionFilter(PermissionKeys.CreateProductCategory)]
+        public async Task<ApiResponse> Create([FromBody] CreateProductCategoryDto input)
         {
-            return await base.FindBySlug(slug);
+            try
+            {
+                var result = await _productCategoryService.Create(input);
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "T?o thành công");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating");
+                return OkException(ex);
+            }
         }
 
-        #region Protected Implementation Methods
-
-        protected override async Task<object> GetFindAllAsync(PagingRequestBaseDto input)
+        /// <summary>
+        /// Update product category
+        /// </summary>
+        [HttpPut("update")]
+        [PermissionFilter(PermissionKeys.EditProductCategory)]
+        public async Task<ApiResponse> Update([FromBody] UpdateProductCategoryDto input)
         {
-            return await _service.FindAll(input);
+            try
+            {
+                var result = await _productCategoryService.Update(input);
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "C?p nh?t danh m?c s?n ph?m thành công");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating product category");
+                return OkException(ex);
+            }
         }
 
-        protected override async Task<DetailProductCategoryDto> GetFindByIdAsync(int id)
+        /// <summary>
+        /// Delete product category
+        /// </summary>
+        [HttpDelete("delete/{id}")]
+        [PermissionFilter(PermissionKeys.DeleteProductCategory)]
+        public async Task<ApiResponse> Delete(int id)
         {
-            return await _service.FindById(id);
+            try
+            {
+                await _productCategoryService.Delete(id);
+                return new ApiResponse(ApiStatusCode.Success, null, 200, "Xóa danh m?c s?n ph?m thành công");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting product category");
+                return OkException(ex);
+            }
         }
 
-        protected override async Task<object> GetCreateAsync(CreateProductCategoryDto input)
-        {
-            return await _service.Create(input);
-        }
-
-        protected override async Task<object?> GetUpdateAsync(UpdateProductCategoryDto input)
-        {
-            await _service.Update(input);
-            return null;
-        }
-
-        protected override async Task GetDeleteAsync(int id)
-        {
-            await _service.Delete(id);
-        }
-
-        protected override async Task GetUpdateStatusAsync(AttechServer.Applications.UserModules.Dtos.UpdateStatusDto input)
-        {
-            await _service.UpdateStatusProductCategory(input.Id, input.Status);
-        }
-
-        #endregion
+        
     }
 }

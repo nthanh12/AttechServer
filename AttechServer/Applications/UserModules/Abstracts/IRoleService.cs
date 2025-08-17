@@ -1,5 +1,4 @@
-﻿using AttechServer.Applications.UserModules.Dtos.Role;
-using AttechServer.Shared.AppicationBase.Common;
+using AttechServer.Applications.UserModules.Dtos.Role;
 using AttechServer.Shared.ApplicationBase.Common;
 
 namespace AttechServer.Applications.UserModules.Abstracts
@@ -42,11 +41,10 @@ namespace AttechServer.Applications.UserModules.Abstracts
         public Task Delete(int id);
 
         /// <summary>
-        /// Khóa/Mở khóa nhóm quyền
+        /// Lấy danh sách permissions của role
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="status"></param>
         /// <returns></returns>
-        public Task UpdateStatusRole(int id, int status);
+        public Task<List<string>> GetRolePermissions(int id);
     }
 }

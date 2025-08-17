@@ -1,4 +1,4 @@
-﻿namespace AttechServer.Applications.UserModules.Dtos.ConfigPermission
+namespace AttechServer.Applications.UserModules.Dtos.ConfigPermission
 {
     public class PermissionApiDto
     {

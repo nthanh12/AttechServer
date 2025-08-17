@@ -1,0 +1,72 @@
+13/02/2025
+
+I, Từ vựng
+
+1, admission (n): sự nhận vào
+2, possibility (n): khả năng
+3, deadline (n): thời hạn
+4, output (n): đầu ra
+5, absent (adj): vắng mặt
+6, fortunate (adj): may mắn
+7, approximate (adj): xấp xỉ
+8, respective (adj): tương ứng
+9, selection (n): sự lựa chọn
+10, reflection (n): sự phản ánh
+11, component (n): thành phần
+12, preference (n): sự yêu thích hơn
+13, candidate (n): ứng viên
+14, practice (n): hành nghề
+15, restroom (n): phòng vệ sinh
+16, faucet (n): vòi nước
+17, leaky (adj): rò rỉ
+18, subsequently (adv): sau đó
+19, totally (dv): hoàn toàn
+20, beneficially (adv): có lợi
+21, during: trong thời gian
+22, about: về
+23, while: trong khi
+24, since: kể từ khi
+25, cooperated (v): hợp tác
+26, entertained (v): giải trí
+27, loosened (v): nới lỏng
+28, reserved (v): dành riêng
+29, banquet (n): ngành phim ảnh
+30, ambitious (adj): đầy tham vọng
+31, interact (v): tương tác
+32, landlords (n): những người cho thuê nhà
+33, reinforce (v): củng cố
+34, comply (v): tuân thủ
+35, fulfill (v): thực hiện
+36, interfere (v): can thiệp
+37, regulation (n): luật lệ
+38, structural (adj): liên quan đến cấu trúc
+39, proposed (v): đề xuất
+40, deferred (v): hoãn lại
+41, dedicated (v): tận tâm
+42, observed (v): quan sát
+43, gave up (v): từ bỏ
+44, figured out (v): tìm ra
+45, brought down (v): đưa xuống
+46, went on (v): sau đó
+47, publisher (n): nhà xuất bản
+48, treat (v): đối đãi
+49, attachment (n): vật đính kèm
+50, expedite (v): xúc tiến
+51, witness (adj): nhân chứng
+52, solitary (adj): đơn độc
+53, spare (adj): thừa, dự trữ
+54, crimr (n): vụ án
+55, committed (v): xảy ra
+56, innovatively (adv): cải tiến
+57, suitcase (n): vali
+58, fold up: gập lại
+59, harvesting (v): thu hoạch
+60, in addition: ngoài ra
+61, given: cho trước
+62, for example: ví dụ
+63, upon: khi
+
+
+II, Cấu trúc:
+1, integrate A into B -> Bị động: A + to be + integrated into B
+2, Sau chỗ trống là 1 cụm V-ing -> vì vậy trước chỗ trống phải là giới từ

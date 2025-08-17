@@ -1,4 +1,4 @@
-﻿using AttechServer.Applications.UserModules.Abstracts;
+using AttechServer.Applications.UserModules.Abstracts;
 using AttechServer.Applications.UserModules.Dtos;
 using AttechServer.Applications.UserModules.Dtos.User;
 using AttechServer.Shared.ApplicationBase.Common;
@@ -11,6 +11,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AttechServer.Controllers
 {
+    /// <summary>
+    /// User Management Controller
+    /// </summary>
     [Route("api/user")]
     [ApiController]
     [Authorize]
@@ -18,36 +21,23 @@ namespace AttechServer.Controllers
     {
         private readonly IUserService _userService;
         private readonly IAuthService _authService;
+        private readonly IActivityLogService _activityLogService;
 
         public UserController(
             ILogger<UserController> logger,
             IUserService userService,
-            IAuthService authService) : base(logger)
+            IAuthService authService,
+            IActivityLogService activityLogService) : base(logger)
         {
             _userService = userService;
             _authService = authService;
+            _activityLogService = activityLogService;
         }
 
-        /// <summary>
-        /// Tạo tài khoản mới (chỉ dành cho Admin)
-        /// </summary>
-        [HttpPost]
-        [PermissionFilter(PermissionKeys.CreateUser)]
-        public ApiResponse Create([FromBody] CreateUserDto input)
-        {
-            try
-            {
-                _authService.RegisterUser(input);
-                return new();
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
-        }
+
 
         /// <summary>
-        /// Lấy danh sách người dùng
+        /// Get user list
         /// </summary>
         [HttpGet]
         [PermissionFilter(PermissionKeys.ViewUsers)]
@@ -64,7 +54,7 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Lấy thông tin người dùng theo ID
+        /// Get user details by ID
         /// </summary>
         [HttpGet("{id}")]
         [PermissionFilter(PermissionKeys.ViewUsers)]
@@ -81,10 +71,11 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Cập nhật thông tin người dùng
+        /// Edit user details
         /// </summary>
         [HttpPut]
         [PermissionFilter(PermissionKeys.EditUser)]
+        [SuperAdminProtectionFilter]
         public async Task<ApiResponse> Update([FromBody] UpdateUserDto input)
         {
             try
@@ -99,10 +90,11 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Xóa người dùng
+        /// Delete user
         /// </summary>
         [HttpDelete("{id}")]
         [PermissionFilter(PermissionKeys.DeleteUser)]
+        [SuperAdminProtectionFilter]
         public async Task<ApiResponse> Delete(int id)
         {
             try
@@ -117,10 +109,11 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Thêm role cho người dùng
+        /// Add role to user
         /// </summary>
         [HttpPost("{userId}/roles/{roleId}")]
         [PermissionFilter(PermissionKeys.EditUser)]
+        [SuperAdminProtectionFilter]
         public ApiResponse AddRoleToUser(int userId, int roleId)
         {
             try
@@ -135,10 +128,11 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Xóa role của người dùng
+        /// Remove role from user
         /// </summary>
         [HttpDelete("{userId}/roles/{roleId}")]
         [PermissionFilter(PermissionKeys.EditUser)]
+        [SuperAdminProtectionFilter]
         public ApiResponse RemoveRoleFromUser(int userId, int roleId)
         {
             try

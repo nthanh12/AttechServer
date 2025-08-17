@@ -192,17 +192,26 @@ namespace AttechServer.Applications.UserModules.Implements
             if (string.IsNullOrEmpty(path) || string.IsNullOrEmpty(method))
                 return false;
 
+            // Clear cache temporarily for debugging
             var cacheKey = string.Format(API_PERMISSIONS_CACHE_KEY, path, method);
+            _cache.Remove(cacheKey);
 
             return await _cache.GetOrCreateAsync(cacheKey, async entry =>
             {
                 entry.SlidingExpiration = TimeSpan.FromMinutes(5);
 
+                // Normalize paths by removing leading slash for comparison
+                var normalizedPath = path.TrimStart('/').ToLower();
+                
+                _logger.LogInformation($"CheckApiPermission: path='{path}', normalizedPath='{normalizedPath}', method='{method}', userId={userId}");
+                
                 var endpoint = await _dbContext.ApiEndpoints
                     .Include(a => a.PermissionForApiEndpoints)
                     .FirstOrDefaultAsync(a => !a.Deleted
-                        && a.Path.ToLower() == path.ToLower()
+                        && a.Path.TrimStart('/').ToLower() == normalizedPath
                         && a.HttpMethod.ToUpper() == method.ToUpper());
+
+                _logger.LogInformation($"Found endpoint: {endpoint?.Path} {endpoint?.HttpMethod}, RequireAuth: {endpoint?.RequireAuthentication}");
 
                 if (endpoint == null)
                     return false;

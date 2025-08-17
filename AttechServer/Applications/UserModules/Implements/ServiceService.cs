@@ -1,5 +1,6 @@
-﻿using AttechServer.Applications.UserModules.Abstracts;
+using AttechServer.Applications.UserModules.Abstracts;
 using AttechServer.Applications.UserModules.Dtos.Service;
+using AttechServer.Applications.UserModules.Dtos.Attachment;
 using AttechServer.Domains.Entities.Main;
 using AttechServer.Infrastructures.Abstractions;
 using AttechServer.Infrastructures.Persistances;
@@ -9,130 +10,290 @@ using AttechServer.Shared.Consts.Exceptions;
 using AttechServer.Shared.Exceptions;
 using Ganss.Xss;
 using Microsoft.EntityFrameworkCore;
-using System.Globalization;
-using System.Text;
+using System.Security.Claims;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 
 namespace AttechServer.Applications.UserModules.Implements
 {
     public class ServiceService : IServiceService
     {
+        private const int MAX_CONTENT_LENGTH = 100000; // 100KB
         private readonly ILogger<ServiceService> _logger;
         private readonly ApplicationDbContext _dbContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IWysiwygFileProcessor _wysiwygFileProcessor;
+        private readonly IActivityLogService _activityLogService;
+        private readonly IAttachmentService _attachmentService;
 
-        public ServiceService(ApplicationDbContext dbContext, ILogger<ServiceService> logger, IHttpContextAccessor httpContextAccessor, IWysiwygFileProcessor wysiwygFileProcessor)
+        public ServiceService(ApplicationDbContext dbContext, ILogger<ServiceService> logger, IHttpContextAccessor httpContextAccessor, IWysiwygFileProcessor wysiwygFileProcessor, IActivityLogService activityLogService, IAttachmentService attachmentService)
         {
             _dbContext = dbContext;
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
             _wysiwygFileProcessor = wysiwygFileProcessor;
+            _activityLogService = activityLogService;
+            _attachmentService = attachmentService;
         }
+
+        private string TruncateDescription(string description, int maxLength = 160)
+        {
+            if (string.IsNullOrEmpty(description)) return string.Empty;
+            return description.Length <= maxLength ? description : description.Substring(0, maxLength - 3) + "...";
+        }
+
         public async Task<ServiceDto> Create(CreateServiceDto input)
         {
-            _logger.LogInformation($"{nameof(Create)}: input = {JsonSerializer.Serialize(input)}");
+            _logger.LogInformation($"{nameof(Create)}: Creating service with all data in one atomic operation");
+
             using (var transaction = await _dbContext.Database.BeginTransactionAsync())
             {
                 try
                 {
-                    // Validate input
-                    if (string.IsNullOrWhiteSpace(input.NameVi) || string.IsNullOrWhiteSpace(input.SlugVi) || string.IsNullOrWhiteSpace(input.ContentVi))
+                    // Step 1: Validate input
+                    if (string.IsNullOrWhiteSpace(input.TitleVi) || string.IsNullOrWhiteSpace(input.ContentVi))
                     {
-                        throw new ArgumentException("Tên, Slug (VI) và nội dung là bắt buộc.");
+                        throw new ArgumentException("Tiêu đề và nội dung là bắt buộc.");
                     }
-                    if (string.IsNullOrWhiteSpace(input.NameEn) || string.IsNullOrWhiteSpace(input.SlugEn) || string.IsNullOrWhiteSpace(input.ContentEn))
+
+                    if (!string.IsNullOrEmpty(input.DescriptionVi) && input.DescriptionVi.Length > 700)
                     {
-                        throw new ArgumentException("Tên, Slug (EN) và nội dung là bắt buộc.");
+                        input.DescriptionVi = input.DescriptionVi.Substring(0, 697) + "...";
                     }
-                    if (input.DescriptionVi.Length > 160)
+                    if (!string.IsNullOrEmpty(input.DescriptionEn) && input.DescriptionEn.Length > 700)
                     {
-                        input.DescriptionVi = input.DescriptionVi.Substring(0, 157) + "...";
+                        input.DescriptionEn = input.DescriptionEn.Substring(0, 697) + "...";
                     }
-                    if (input.DescriptionEn.Length > 160)
-                    {
-                        input.DescriptionEn = input.DescriptionEn.Substring(0, 157) + "...";
-                    }
-                    if (input.TimePosted > DateTime.UtcNow)
+
+                    if (input.TimePosted > DateTime.Now)
                     {
                         throw new ArgumentException("Thời gian đăng bài không phù hợp.");
                     }
 
-                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value, out var id) ? id : 0;
-                    var sanitizer = new HtmlSanitizer();
-                    var safeContentVi = sanitizer.Sanitize(input.ContentVi);
-                    var safeContentEn = sanitizer.Sanitize(input.ContentEn);
+                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("user_id")?.Value, out var id) ? id : 0;
 
-                    // Kiểm tra trùng slug
-                    var slugViExists = await _dbContext.Services.AnyAsync(p => p.SlugVi == input.SlugVi && !p.Deleted);
-                    if (slugViExists)
+
+                    // Step 3: Check for duplicate titles
+                    var titleViExists = await _dbContext.Services.AnyAsync(n => n.TitleVi == input.TitleVi && !n.Deleted);
+                    if (titleViExists)
                     {
-                        throw new ArgumentException("Slug VI đã tồn tại.");
-                    }
-                    var slugEnExists = await _dbContext.Services.AnyAsync(p => p.SlugEn == input.SlugEn && !p.Deleted);
-                    if (slugEnExists)
-                    {
-                        throw new ArgumentException("Slug EN đã tồn tại.");
+                        throw new ArgumentException("Tiêu đề tiếng Việt đã tồn tại.");
                     }
 
+                    if (!string.IsNullOrEmpty(input.TitleEn))
+                    {
+                        var titleEnExists = await _dbContext.Services.AnyAsync(n => n.TitleEn == input.TitleEn && !n.Deleted);
+                        if (titleEnExists)
+                        {
+                            throw new ArgumentException("Tiêu đề tiếng Anh đã tồn tại.");
+                        }
+                    }
+
+                    // Step 4: Sanitize content
+                    var sanitizedContentVi = SanitizeContent(input.ContentVi);
+                    var sanitizedContentEn = SanitizeContent(input.ContentEn ?? string.Empty);
+
+                    // Step 5: Create service entity
                     var newService = new Service
                     {
                         SlugVi = input.SlugVi,
                         SlugEn = input.SlugEn,
-                        NameVi = input.NameVi,
-                        NameEn = input.NameEn,
-                        DescriptionVi = input.DescriptionVi,
-                        DescriptionEn = input.DescriptionEn,
-                        ContentVi = safeContentVi,
-                        ContentEn = safeContentEn,
+                        TitleVi = input.TitleVi.Trim(),
+                        TitleEn = input.TitleEn?.Trim() ?? string.Empty,
+                        DescriptionVi = input.DescriptionVi?.Trim() ?? string.Empty,
+                        DescriptionEn = input.DescriptionEn?.Trim() ?? string.Empty,
+                        ContentVi = sanitizedContentVi,
+                        ContentEn = sanitizedContentEn,
                         TimePosted = input.TimePosted,
-                        Status = CommonStatus.ACTIVE,
-                        CreatedDate = DateTime.UtcNow,
+                        Status = input.Status,
+                        IsOutstanding = input.IsOutstanding,
                         CreatedBy = userId,
-                        Deleted = false,
-                        ImageUrl = input.ImageUrl ?? string.Empty
+                        CreatedDate = DateTime.Now,
+                        Deleted = false
                     };
 
                     _dbContext.Services.Add(newService);
                     await _dbContext.SaveChangesAsync();
 
-                    var (processedContentVi, _) = await _wysiwygFileProcessor.ProcessContentAsync(safeContentVi, EntityType.Service, newService.Id);
-                    var (processedContentEn, _) = await _wysiwygFileProcessor.ProcessContentAsync(safeContentEn, EntityType.Service, newService.Id);
+                    // Step 6: Smart content processing - extract unique attachment IDs first
+                    var contentAttachmentIds = await _wysiwygFileProcessor.ExtractUniqueAttachmentIdsAsync(newService.ContentVi, newService.ContentEn);
+                    
+                    // Associate content attachments first
+                    if (contentAttachmentIds.Any())
+                    {
+                        await _attachmentService.AssociateAttachmentsAsync(contentAttachmentIds, ObjectType.Service, newService.Id, isFeaturedImage: false, isContentImage: true);
+                    }
+                    
+                    // Process both content - now attachments are permanent
+                    var (processedContentVi, fileEntriesVi) = await _wysiwygFileProcessor.ProcessContentAsync(newService.ContentVi, ObjectType.Service, newService.Id);
+                    var (processedContentEn, fileEntriesEn) = await _wysiwygFileProcessor.ProcessContentAsync(newService.ContentEn, ObjectType.Service, newService.Id);
+                    
+                    // Update content with processed paths
                     newService.ContentVi = processedContentVi;
                     newService.ContentEn = processedContentEn;
-                    await _dbContext.SaveChangesAsync();
 
+                    // Step 7: Finalize gallery attachments (IsPrimary = false) - exclude content attachments
+                    if (input.AttachmentIds != null && input.AttachmentIds.Any())
+                    {
+                        try
+                        {
+                            
+                            // Gallery attachments = attachmentIds - contentAttachmentIds (to avoid duplicates)
+                            var galleryAttachmentIds = input.AttachmentIds.Except(contentAttachmentIds).ToList();
+                            if (galleryAttachmentIds.Any())
+                            {
+                                await _attachmentService.AssociateAttachmentsAsync(galleryAttachmentIds, ObjectType.Service, newService.Id, isFeaturedImage: false, isContentImage: false);
+                                _logger.LogInformation($"Finalized {galleryAttachmentIds.Count} gallery attachments for service ID: {newService.Id}");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, $"Error finalizing gallery attachments for service ID: {newService.Id}");
+                            throw new UserFriendlyException(ErrorCode.InvalidClientRequest);
+                        }
+                    }
+
+                    // Step 7.5: Handle featured image (IsPrimary = true)
+                    if (input.FeaturedImageId.HasValue)
+                    {
+                        try
+                        {
+                            await _attachmentService.AssociateAttachmentsAsync(new List<int> { input.FeaturedImageId.Value }, ObjectType.Service, newService.Id, isFeaturedImage: true, isContentImage: false);
+                            
+                            // ImageUrl will be set automatically by AttachmentService to /uploads/images/yyyy/MM/filename.ext
+                            // No need to override it here
+                            
+                            _logger.LogInformation($"Finalized featured image {input.FeaturedImageId.Value} for service ID: {newService.Id}");
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, $"Error finalizing featured image for service ID: {newService.Id}");
+                            throw new UserFriendlyException(ErrorCode.InvalidClientRequest);
+                        }
+                    }
+
+                    // Step 9: Save all changes and commit transaction
+                    await _dbContext.SaveChangesAsync();
+                    
+                    // Log activity
+                    await _activityLogService.LogAsync("SERVICE_CREATE", "Tạo dịch vụ với file đính kèm", newService.TitleVi, "Info");
+                    
                     await transaction.CommitAsync();
 
-                    return new ServiceDto
+                    // Step 10: Return ServiceDto
+                    var response = new ServiceDto
                     {
                         Id = newService.Id,
-                        NameVi = newService.NameVi,
-                        NameEn = newService.NameEn,
                         SlugVi = newService.SlugVi,
                         SlugEn = newService.SlugEn,
+                        TitleVi = newService.TitleVi,
+                        TitleEn = newService.TitleEn,
                         DescriptionVi = newService.DescriptionVi,
                         DescriptionEn = newService.DescriptionEn,
                         TimePosted = newService.TimePosted,
                         Status = newService.Status,
-                        ImageUrl = newService.ImageUrl
+                        IsOutstanding = newService.IsOutstanding
                     };
+
+                    _logger.LogInformation($"Successfully created service. ServiceId: {newService.Id}");
+                    return response;
+                }
+                catch (UserFriendlyException)
+                {
+                    await transaction.RollbackAsync();
+                    throw;
                 }
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    _logger.LogError(ex, "Error creating Service");
+                    _logger.LogError(ex, $"Error creating service with attachments: {ex.Message}");
+                    throw new UserFriendlyException(ErrorCode.InvalidClientRequest);
+                }
+            }
+        }
+
+        public async Task Delete(int id)
+        {
+            _logger.LogInformation($"{nameof(Delete)}: id = {id}");
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var service = await _dbContext.Services
+                        .FirstOrDefaultAsync(n => n.Id == id && !n.Deleted)
+                        ?? throw new UserFriendlyException(ErrorCode.ServiceNotFound);
+
+                    // Delete all associated files (featured, album, attachments)
+                    await DeleteAssociatedFilesAsync(service.Id);
+
+                    // Delete WYSIWYG files
+                    await _wysiwygFileProcessor.DeleteFilesAsync(ObjectType.Service, service.Id);
+
+                    service.Deleted = true;
+                    await _dbContext.SaveChangesAsync();
+
+                    // Log activity
+                    await _activityLogService.LogAsync("SERVICE_DELETE", "Xóa dịch vụ", service.TitleVi, "Info");
+
+                    await transaction.CommitAsync();
+
+                    _logger.LogInformation($"Successfully deleted service ID: {id} and all associated files");
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    _logger.LogError(ex, $"Error deleting service with id = {id}");
                     throw;
                 }
             }
         }
-        public async Task Delete(int id)
+
+        /// <summary>
+        /// Delete all files associated with a service article
+        /// </summary>
+        private async Task DeleteAssociatedFilesAsync(int serviceId)
         {
-            _logger.LogInformation($"{nameof(Delete)}: id = {id}");
-            var service = _dbContext.Services.FirstOrDefault(pc => pc.Id == id) ?? throw new UserFriendlyException(ErrorCode.ServiceNotFound);
-            service.Deleted = true;
-            await _dbContext.SaveChangesAsync();
+            try
+            {
+                // Get all files associated with this service
+                var associatedFiles = await _dbContext.Attachments
+                    .Where(f => f.ObjectType == ObjectType.Service && f.ObjectId == serviceId && !f.Deleted)
+                    .ToListAsync();
+
+                if (associatedFiles.Any())
+                {
+                    _logger.LogInformation($"Found {associatedFiles.Count} files to delete for service ID: {serviceId}");
+
+                    foreach (var file in associatedFiles)
+                    {
+                        try
+                        {
+                            // Delete physical file
+                            var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "AttechServer", "Uploads", file.FilePath);
+                            if (File.Exists(fullPath))
+                            {
+                                File.Delete(fullPath);
+                                _logger.LogInformation($"Deleted physical file: {file.FilePath}");
+                            }
+
+                            // Mark file as deleted in database
+                            file.Deleted = true;
+                            file.ModifiedDate = DateTime.Now;
+                            file.ModifiedBy = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("user_id")?.Value, out var userIdValue) ? userIdValue : 0;
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogWarning(ex, $"Could not delete file {file.FilePath}. Continuing with other files.");
+                        }
+                    }
+
+                    await _dbContext.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error deleting associated files for service ID: {serviceId}");
+                throw;
+            }
         }
 
         public async Task<PagingResult<ServiceDto>> FindAll(PagingRequestBaseDto input)
@@ -140,27 +301,45 @@ namespace AttechServer.Applications.UserModules.Implements
             _logger.LogInformation($"{nameof(FindAll)}: input = {JsonSerializer.Serialize(input)}");
 
             var baseQuery = _dbContext.Services.AsNoTracking()
-                .Where(p => !p.Deleted && p.Status == CommonStatus.ACTIVE
-                    && (string.IsNullOrEmpty(input.Keyword) || p.NameVi.Contains(input.Keyword) || p.NameEn.Contains(input.Keyword)));
+                .Where(n => !n.Deleted);
+
+            // Tìm kiếm
+            if (!string.IsNullOrEmpty(input.Keyword))
+            {
+                baseQuery = baseQuery.Where(n =>
+                    n.TitleVi.Contains(input.Keyword) ||
+                    n.DescriptionVi.Contains(input.Keyword) ||
+                    n.ContentVi.Contains(input.Keyword) ||
+                    n.TitleEn.Contains(input.Keyword) ||
+                    n.DescriptionEn.Contains(input.Keyword) ||
+                    n.ContentEn.Contains(input.Keyword));
+            }
 
             var totalItems = await baseQuery.CountAsync();
 
-            var pagedItems = await baseQuery
-                .OrderBy(pc => pc.Id)
+            // Sắp xếp
+            var query = baseQuery.OrderByDescending(n => n.TimePosted);
+            if (input.Sort.Any())
+            {
+                // TODO: Implement dynamic sorting based on input.Sort
+            }
+
+            var pagedItems = await query
                 .Skip(input.GetSkip())
                 .Take(input.PageSize)
-                .Select(p => new ServiceDto
+                .Select(n => new ServiceDto
                 {
-                    Id = p.Id,
-                    SlugVi = p.SlugVi,
-                    SlugEn = p.SlugEn,
-                    NameVi = p.NameVi,
-                    NameEn = p.NameEn,
-                    DescriptionVi = p.DescriptionVi,
-                    DescriptionEn = p.DescriptionEn,
-                    Status = p.Status,
-                    TimePosted = p.TimePosted,
-                    ImageUrl = p.ImageUrl
+                    Id = n.Id,
+                    SlugVi = n.SlugVi,
+                    SlugEn = n.SlugEn,
+                    TitleVi = n.TitleVi,
+                    TitleEn = n.TitleEn,
+                    DescriptionVi = n.DescriptionVi,
+                    DescriptionEn = n.DescriptionEn,
+                    TimePosted = n.TimePosted,
+                    Status = n.Status,
+                    IsOutstanding = n.IsOutstanding,
+                    ImageUrl = n.ImageUrl
                 })
                 .ToListAsync();
 
@@ -176,26 +355,57 @@ namespace AttechServer.Applications.UserModules.Implements
             _logger.LogInformation($"{nameof(FindById)}: id = {id}");
 
             var service = await _dbContext.Services
-                .Where(p => !p.Deleted && p.Id == id && p.Status == CommonStatus.ACTIVE)
-                .Select(p => new DetailServiceDto
+                .Where(n => n.Id == id && !n.Deleted)
+                .Select(n => new DetailServiceDto
                 {
-                    Id = p.Id,
-                    NameVi = p.NameVi,
-                    NameEn = p.NameEn,
-                    SlugVi = p.SlugVi,
-                    SlugEn = p.SlugEn,
-                    DescriptionVi = p.DescriptionVi,
-                    DescriptionEn = p.DescriptionEn,
-                    ContentVi = p.ContentVi,
-                    ContentEn = p.ContentEn,
-                    TimePosted = p.TimePosted,
-                    Status = p.Status,
-                    ImageUrl = p.ImageUrl
+                    Id = n.Id,
+                    SlugVi = n.SlugVi,
+                    TitleVi = n.TitleVi,
+                    DescriptionVi = n.DescriptionVi,
+                    ContentVi = n.ContentVi,
+                    SlugEn = n.SlugEn,
+                    TitleEn = n.TitleEn,
+                    DescriptionEn = n.DescriptionEn,
+                    ContentEn = n.ContentEn,
+                    TimePosted = n.TimePosted,
+                    Status = n.Status,
+                    IsOutstanding = n.IsOutstanding,
+                    ImageUrl = n.ImageUrl
                 })
                 .FirstOrDefaultAsync();
 
             if (service == null)
+            {
                 throw new UserFriendlyException(ErrorCode.ServiceNotFound);
+            }
+
+            // Load attachments
+            var attachments = await _dbContext.Attachments
+                .Where(a => a.ObjectType == ObjectType.Service && a.ObjectId == id && !a.Deleted)
+                .Select(a => new AttachmentDto
+                {
+                    Id = a.Id,
+                    FilePath = a.FilePath,
+                    Url = a.Url,
+                    OriginalFileName = a.OriginalFileName,
+                    FileSize = a.FileSize,
+                    ContentType = a.ContentType,
+                    ObjectType = a.ObjectType,
+                    ObjectId = a.ObjectId,
+                    RelationType = a.RelationType,
+                    IsPrimary = a.IsPrimary,
+                    IsContentImage = a.IsContentImage,
+                    IsTemporary = a.IsTemporary,
+                    CreatedDate = a.CreatedDate
+                })
+                .ToListAsync();
+
+            // Group attachments by type
+            service.Attachments = new AttachmentsGroupDto
+            {
+                Images = attachments.Where(a => a.ContentType.StartsWith("image/") && !a.IsPrimary && !a.IsContentImage).ToList(),
+                Documents = attachments.Where(a => !a.ContentType.StartsWith("image/")).ToList()
+            };
 
             return service;
         }
@@ -204,26 +414,55 @@ namespace AttechServer.Applications.UserModules.Implements
         {
             _logger.LogInformation($"{nameof(FindBySlug)}: slug = {slug}");
             var service = await _dbContext.Services
-                .Where(p => (p.SlugVi == slug || p.SlugEn == slug) && !p.Deleted)
-                .Select(p => new DetailServiceDto
+                .Where(n => (n.SlugVi == slug || n.SlugEn == slug) && !n.Deleted)
+                .Select(n => new DetailServiceDto
                 {
-                    Id = p.Id,
-                    NameVi = p.NameVi,
-                    NameEn = p.NameEn,
-                    SlugVi = p.SlugVi,
-                    SlugEn = p.SlugEn,
-                    DescriptionVi = p.DescriptionVi,
-                    DescriptionEn = p.DescriptionEn,
-                    ContentVi = p.ContentVi,
-                    ContentEn = p.ContentEn,
-                    TimePosted = p.TimePosted,
-                    Status = p.Status,
-                    ImageUrl = p.ImageUrl
+                    Id = n.Id,
+                    TitleVi = n.TitleVi,
+                    TitleEn = n.TitleEn,
+                    SlugVi = n.SlugVi,
+                    SlugEn = n.SlugEn,
+                    DescriptionVi = n.DescriptionVi,
+                    DescriptionEn = n.DescriptionEn,
+                    ContentVi = n.ContentVi,
+                    ContentEn = n.ContentEn,
+                    TimePosted = n.TimePosted,
+                    Status = n.Status,
+                    IsOutstanding = n.IsOutstanding,
+                    ImageUrl = n.ImageUrl
                 })
                 .FirstOrDefaultAsync();
 
             if (service == null)
                 throw new UserFriendlyException(ErrorCode.ServiceNotFound);
+
+            // Load attachments
+            var attachments = await _dbContext.Attachments
+                .Where(a => a.ObjectType == ObjectType.Service && a.ObjectId == service.Id && !a.Deleted)
+                .Select(a => new AttachmentDto
+                {
+                    Id = a.Id,
+                    FilePath = a.FilePath,
+                    Url = a.Url,
+                    OriginalFileName = a.OriginalFileName,
+                    FileSize = a.FileSize,
+                    ContentType = a.ContentType,
+                    ObjectType = a.ObjectType,
+                    ObjectId = a.ObjectId,
+                    RelationType = a.RelationType,
+                    IsPrimary = a.IsPrimary,
+                    IsContentImage = a.IsContentImage,
+                    IsTemporary = a.IsTemporary,
+                    CreatedDate = a.CreatedDate
+                })
+                .ToListAsync();
+
+            // Group attachments by type
+            service.Attachments = new AttachmentsGroupDto
+            {
+                Images = attachments.Where(a => a.ContentType.StartsWith("image/") && !a.IsPrimary && !a.IsContentImage).ToList(),
+                Documents = attachments.Where(a => !a.ContentType.StartsWith("image/")).ToList()
+            };
 
             return service;
         }
@@ -235,115 +474,177 @@ namespace AttechServer.Applications.UserModules.Implements
             {
                 try
                 {
-                    var service = await _dbContext.Services.FirstOrDefaultAsync(p => p.Id == input.Id && !p.Deleted)
-                        ?? throw new UserFriendlyException(ErrorCode.ServiceNotFound);
-
                     // Validate input
-                    if (string.IsNullOrWhiteSpace(input.NameVi) || string.IsNullOrWhiteSpace(input.SlugVi) || string.IsNullOrWhiteSpace(input.ContentVi))
+                    if (string.IsNullOrWhiteSpace(input.TitleVi) || string.IsNullOrWhiteSpace(input.ContentVi))
                     {
-                        throw new ArgumentException("Tên, Slug (VI) và nội dung là bắt buộc.");
+                        throw new ArgumentException("Tiêu đề và nội dung là bắt buộc.");
                     }
-                    if (string.IsNullOrWhiteSpace(input.NameEn) || string.IsNullOrWhiteSpace(input.SlugEn) || string.IsNullOrWhiteSpace(input.ContentEn))
-                    {
-                        throw new ArgumentException("Tên, Slug (EN) và nội dung là bắt buộc.");
-                    }
-                    if (input.DescriptionVi.Length > 160)
-                    {
-                        input.DescriptionVi = input.DescriptionVi.Substring(0, 157) + "...";
-                    }
-                    if (input.DescriptionEn.Length > 160)
-                    {
-                        input.DescriptionEn = input.DescriptionEn.Substring(0, 157) + "...";
-                    }
-                    if (input.TimePosted > DateTime.UtcNow)
+                    if (input.TimePosted > DateTime.Now)
                     {
                         throw new ArgumentException("Thời gian đăng bài không phù hợp.");
                     }
 
-                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value, out var id) ? id : 0;
-                    var sanitizer = new HtmlSanitizer();
-                    var safeContentVi = sanitizer.Sanitize(input.ContentVi);
-                    var safeContentEn = sanitizer.Sanitize(input.ContentEn);
+                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("user_id")?.Value, out var id) ? id : 0;
 
-                    // Kiểm tra trùng slug (trừ chính nó)
-                    var slugViExists = await _dbContext.Services.AnyAsync(p => p.SlugVi == input.SlugVi && !p.Deleted && p.Id != input.Id);
-                    if (slugViExists)
+                    // Kiểm tra service tồn tại
+                    var service = await _dbContext.Services
+                        .FirstOrDefaultAsync(n => n.Id == input.Id && !n.Deleted)
+                        ?? throw new UserFriendlyException(ErrorCode.ServiceNotFound);
+
+                    // Check for duplicate titles (excluding current record)
+                    var titleViExists = await _dbContext.Services.AnyAsync(n => n.TitleVi == input.TitleVi && n.Id != input.Id && !n.Deleted);
+                    if (titleViExists)
                     {
-                        throw new ArgumentException("Slug VI đã tồn tại.");
-                    }
-                    var slugEnExists = await _dbContext.Services.AnyAsync(p => p.SlugEn == input.SlugEn && !p.Deleted && p.Id != input.Id);
-                    if (slugEnExists)
-                    {
-                        throw new ArgumentException("Slug EN đã tồn tại.");
+                        throw new ArgumentException("Tiêu đề tiếng Việt đã tồn tại.");
                     }
 
-                    service.NameVi = input.NameVi;
-                    service.NameEn = input.NameEn;
+                    if (!string.IsNullOrEmpty(input.TitleEn))
+                    {
+                        var titleEnExists = await _dbContext.Services.AnyAsync(n => n.TitleEn == input.TitleEn && n.Id != input.Id && !n.Deleted);
+                        if (titleEnExists)
+                        {
+                            throw new ArgumentException("Tiêu đề tiếng Anh đã tồn tại.");
+                        }
+                    }
+
+                    // Xóa các file cũ trong content nếu content thay đổi
+                    if (service.ContentVi != input.ContentVi)
+                    {
+                        await _wysiwygFileProcessor.DeleteFilesAsync(ObjectType.Service, service.Id);
+                    }
+
+                    service.TitleVi = input.TitleVi;
+                    service.TitleEn = input.TitleEn;
                     service.SlugVi = input.SlugVi;
                     service.SlugEn = input.SlugEn;
                     service.DescriptionVi = input.DescriptionVi;
                     service.DescriptionEn = input.DescriptionEn;
-                    service.ContentVi = safeContentVi;
-                    service.ContentEn = safeContentEn;
+                    service.ContentVi = input.ContentVi;
+                    service.ContentEn = input.ContentEn;
                     service.TimePosted = input.TimePosted;
-                    service.ImageUrl = input.ImageUrl ?? string.Empty;
-                    service.ModifiedDate = DateTime.UtcNow;
+                    service.Status = input.Status;
+                    service.IsOutstanding = input.IsOutstanding;
+
                     service.ModifiedBy = userId;
 
+                    // Simple attachment update logic - compare current vs desired state
+                    var currentGalleryAttachmentIds = await _attachmentService.GetCurrentGalleryAttachmentIdsAsync(ObjectType.Service, service.Id);
+                    var currentFeaturedImageId = await _attachmentService.GetCurrentFeaturedImageIdAsync(ObjectType.Service, service.Id);
+                    
+                    var desiredGalleryAttachmentIds = (input.AttachmentIds ?? new List<int>()).OrderBy(x => x).ToList();
+                    var desiredFeaturedImageId = input.FeaturedImageId;
+                    
+                    // Check if gallery attachments changed
+                    bool galleryChanged = !currentGalleryAttachmentIds.SequenceEqual(desiredGalleryAttachmentIds);
+                    bool featuredImageChanged = currentFeaturedImageId != desiredFeaturedImageId;
+                    
+                    // Check if content has new temp files
+                    bool hasNewContentFiles = _wysiwygFileProcessor.HasTempFilesInContent(service.ContentVi) || 
+                                             _wysiwygFileProcessor.HasTempFilesInContent(service.ContentEn ?? string.Empty);
+                    
+                    if (galleryChanged || featuredImageChanged || hasNewContentFiles)
+                    {
+                        // Something changed → Soft delete ALL old attachments and recreate
+                        await _attachmentService.SoftDeleteEntityAttachmentsAsync(ObjectType.Service, service.Id);
+                        
+                        // Process content attachments first - extract unique IDs
+                        var contentAttachmentIds = await _wysiwygFileProcessor.ExtractUniqueAttachmentIdsAsync(service.ContentVi, service.ContentEn);
+                        if (contentAttachmentIds.Any())
+                        {
+                            await _attachmentService.AssociateAttachmentsAsync(contentAttachmentIds, ObjectType.Service, service.Id, isFeaturedImage: false, isContentImage: true);
+                        }
+                        
+                        // Process both content - now attachments are permanent
+                        var (processedContentVi, fileEntriesVi) = await _wysiwygFileProcessor.ProcessContentAsync(service.ContentVi, ObjectType.Service, service.Id);
+                        var (processedContentEn, fileEntriesEn) = await _wysiwygFileProcessor.ProcessContentAsync(service.ContentEn, ObjectType.Service, service.Id);
+                        
+                        // Update content with processed paths
+                        service.ContentVi = processedContentVi;
+                        service.ContentEn = processedContentEn;
+                        
+                        // Handle gallery attachments - exclude content attachments
+                        if (desiredGalleryAttachmentIds.Any())
+                        {
+                            // Gallery attachments = desiredGalleryAttachmentIds - contentAttachmentIds (to avoid duplicates)
+                            var pureGalleryAttachmentIds = desiredGalleryAttachmentIds.Except(contentAttachmentIds).ToList();
+                            if (pureGalleryAttachmentIds.Any())
+                            {
+                                await _attachmentService.AssociateAttachmentsAsync(pureGalleryAttachmentIds, ObjectType.Service, service.Id, isFeaturedImage: false, isContentImage: false);
+                                _logger.LogInformation($"Updated {pureGalleryAttachmentIds.Count} gallery attachments for service ID: {service.Id}");
+                            }
+                        }
+                        
+                        // Handle featured image
+                        if (desiredFeaturedImageId.HasValue)
+                        {
+                            try
+                            {
+                                await _attachmentService.AssociateAttachmentsAsync(new List<int> { desiredFeaturedImageId.Value }, ObjectType.Service, service.Id, isFeaturedImage: true, isContentImage: false);
+                                _logger.LogInformation($"Updated featured image {desiredFeaturedImageId.Value} for service ID: {service.Id}");
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.LogError(ex, $"Error finalizing featured image for service ID: {service.Id}");
+                                throw new UserFriendlyException(ErrorCode.InvalidClientRequest);
+                            }
+                        }
+                        else
+                        {
+                            // Clear featured image if not provided
+                            service.FeaturedImageId = null;
+                            service.ImageUrl = string.Empty;
+                        }
+                    }
+                    // If nothing changed → keep everything as is
+
                     await _dbContext.SaveChangesAsync();
+
+                    // Log activity
+                    await _activityLogService.LogAsync("SERVICE_UPDATE", "Cập nhật dịch vụ", service.TitleVi, "Info");
+
                     await transaction.CommitAsync();
 
                     return new ServiceDto
                     {
                         Id = service.Id,
-                        NameVi = service.NameVi,
-                        NameEn = service.NameEn,
+                        TitleVi = service.TitleVi,
+                        TitleEn = service.TitleEn,
                         SlugVi = service.SlugVi,
                         SlugEn = service.SlugEn,
                         DescriptionVi = service.DescriptionVi,
                         DescriptionEn = service.DescriptionEn,
                         TimePosted = service.TimePosted,
                         Status = service.Status,
+                        IsOutstanding = service.IsOutstanding,
                         ImageUrl = service.ImageUrl
                     };
                 }
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    _logger.LogError(ex, "Error updating Service");
+                    _logger.LogError(ex, $"Error updating service with id = {input.Id}");
                     throw;
+                }
+                finally
+                {
+                    // Temp files will be cleaned by background service
                 }
             }
         }
 
-        public async Task UpdateStatusService(int id, int status)
+        private string SanitizeContent(string content)
         {
-            _logger.LogInformation($"{nameof(UpdateStatusService)}: Id = {id}, status = {status}");
-            var service = await _dbContext.Services.FirstOrDefaultAsync(p => p.Id == id && !p.Deleted)
-                ?? throw new UserFriendlyException(ErrorCode.ServiceNotFound);
-            service.Status = status;
-            await _dbContext.SaveChangesAsync();
+            if (string.IsNullOrEmpty(content)) return string.Empty;
+
+            var sanitizer = new HtmlSanitizer();
+            sanitizer.AllowedTags.Add("img");
+            sanitizer.AllowedAttributes.Add("src");
+            sanitizer.AllowedAttributes.Add("alt");
+            sanitizer.AllowedAttributes.Add("class");
+
+            return sanitizer.Sanitize(content);
         }
-        private string GenerateSlug(string input)
-        {
-            if (string.IsNullOrWhiteSpace(input))
-                return string.Empty;
 
-            // Chuyển về chữ thường, loại bỏ dấu tiếng Việt
-            var slug = input.ToLowerInvariant()
-                .Normalize(NormalizationForm.FormD)
-                .Where(c => char.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
-                .Aggregate(new StringBuilder(), (sb, c) => sb.Append(c))
-                .ToString()
-                .Normalize(NormalizationForm.FormC);
-
-            // Thay khoảng trắng bằng dấu gạch ngang, loại bỏ ký tự không hợp lệ
-            slug = Regex.Replace(slug, @"\s+", "-");
-            slug = Regex.Replace(slug, @"[^a-z0-9-]", "");
-            slug = slug.Trim('-');
-
-            return slug;
-        }
 
     }
 }

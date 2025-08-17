@@ -1,4 +1,4 @@
-﻿using AttechServer.Shared.ApplicationBase.Common.Validations;
+using AttechServer.Shared.ApplicationBase.Common.Validations;
 
 namespace AttechServer.Applications.UserModules.Dtos.Role
 {
@@ -6,6 +6,10 @@ namespace AttechServer.Applications.UserModules.Dtos.Role
     {
         [CustomMaxLength(256)]
         public string Name { get; set; } = null!;
+        [CustomMaxLength(500)]
+        public string? Description { get; set; }
         public List<int>? PermissionIds { get; set; }
+        public int Status { get; set; }
+
     }
 }

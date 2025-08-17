@@ -1,4 +1,4 @@
-﻿using AttechServer.Applications.UserModules.Dtos.Product;
+using AttechServer.Applications.UserModules.Dtos.Product;
 using System.ComponentModel.DataAnnotations;
 
 namespace AttechServer.Applications.UserModules.Dtos.ProductCategory
@@ -8,8 +8,8 @@ namespace AttechServer.Applications.UserModules.Dtos.ProductCategory
         public int Id { get; set; }
 
         [StringLength(100)]
-        public string NameVi { get; set; } = string.Empty;
-        public string NameEn { get; set; } = string.Empty;
+        public string TitleVi { get; set; } = string.Empty;
+        public string TitleEn { get; set; } = string.Empty;
 
         [StringLength(100)]
         public string SlugVi { get; set; } = string.Empty;

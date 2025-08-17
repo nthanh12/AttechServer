@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -16,7 +16,7 @@ namespace AttechServer.Shared.WebAPIBase
                 {
                     Name = "permission",
                     In = ParameterLocation.Query,
-                    Description = "Dùng cho việc check permission trong một api gọi lại nhiều nơi",
+                    Description = "Used for permissions in an API that is called in many places",
                     Required = false,
                     Schema = new OpenApiSchema
                     {

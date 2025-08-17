@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  attechserver:
+    build: .
+    container_name: attechserver
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      - uploads:/app/uploads
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - BASE_URL=https://api.attech.space
+      - ConnectionStrings__Default=Data Source=YOUR_SQL_SERVER;Initial Catalog=AttechServerDb;User ID=sa;Password=YOUR_PASSWORD;Trust Server Certificate=True;
+    networks:
+      - attech-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  nginx:
+    image: nginx:alpine
+    container_name: attech-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - uploads:/var/www/uploads:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - attechserver
+    networks:
+      - attech-network
+
+volumes:
+  uploads:
+    driver: local
+
+networks:
+  attech-network:
+    driver: bridge 

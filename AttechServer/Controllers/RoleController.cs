@@ -1,4 +1,4 @@
-﻿using AttechServer.Applications.UserModules.Abstracts;
+using AttechServer.Applications.UserModules.Abstracts;
 using AttechServer.Applications.UserModules.Dtos.Role;
 using AttechServer.Shared.ApplicationBase.Common;
 using AttechServer.Shared.Consts.Permissions;
@@ -23,7 +23,7 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Danh sách quyền
+        /// Role list
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -42,11 +42,11 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Thông tin chi tiết quyền
+        /// Role details
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [PermissionFilter(PermissionKeys.ButtonDetailRole, PermissionKeys.ButtonUpdateRole)]
+        [PermissionFilter(PermissionKeys.ViewRoles, PermissionKeys.EditRole)]
         [HttpGet("find-by-id/{id}")]
         public async Task<ApiResponse> FindById(int id)
         {
@@ -61,7 +61,26 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Thêm mới quyền
+        /// Get permission by role id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [PermissionFilter(PermissionKeys.ViewRoles)]
+        [HttpGet("permissions/{id}")]
+        public async Task<ApiResponse> GetRolePermissions(int id)
+        {
+            try
+            {
+                return new(await _roleService.GetRolePermissions(id));
+            }
+            catch (Exception ex)
+            {
+                return OkException(ex);
+            }
+        }
+
+        /// <summary>
+        /// Create role
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -81,11 +100,11 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Cập nhật quyền
+        /// Update role
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [PermissionFilter(PermissionKeys.ButtonUpdateRole)]
+        [PermissionFilter(PermissionKeys.EditRole)]
         [HttpPut("update")]
         public async Task<ApiResponse> Update([FromBody] UpdateRoleDto input)
         {
@@ -101,7 +120,7 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Xóa quyền
+        /// Delete role
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -112,27 +131,6 @@ namespace AttechServer.Controllers
             try
             {
                 await _roleService.Delete(id);
-                return new();
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
-        }
-
-        /// <summary>
-        /// Khóa/Mở khóa nhóm quyền
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="status"></param>
-        /// <returns></returns>
-        [HttpPut("update-status")]
-        [PermissionFilter(PermissionKeys.ButtonUpdateStatusRole)]
-        public async Task<ApiResponse> UpdateStatus(int id, int status)
-        {
-            try
-            {
-                await _roleService.UpdateStatusRole(id, status);
                 return new();
             }
             catch (Exception ex)

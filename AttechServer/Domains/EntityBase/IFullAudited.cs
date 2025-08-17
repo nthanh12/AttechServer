@@ -1,10 +1,10 @@
-﻿namespace AttechServer.Domains.EntityBase
+namespace AttechServer.Domains.EntityBase
 {
-    public interface IFullAudited : ICreatedBy, IModifiedBy, ISoftDelted
+    public interface IFullAudited : ICreatedBy, IModifiedBy, ISoftDeleted
     {
     }
 
-    public interface ISoftDelted
+    public interface ISoftDeleted
     {
         public bool Deleted { get; set; }
     }

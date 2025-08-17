@@ -15,7 +15,7 @@ namespace AttechServer.Shared.Middlewares
 
         public async Task InvokeAsync(HttpContext context)
         {
-            var startTime = DateTime.UtcNow;
+            var startTime = DateTime.Now;
             var stopwatch = Stopwatch.StartNew();
             
             // Store start time for use in other middlewares

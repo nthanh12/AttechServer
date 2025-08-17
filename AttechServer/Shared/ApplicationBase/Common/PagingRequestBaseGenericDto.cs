@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System.Linq.Expressions;
 
-namespace AttechServer.Shared.AppicationBase.Common
+namespace AttechServer.Shared.ApplicationBase.Common
 {
     public class PagingRequestBaseGenericDto<TDto>
     {

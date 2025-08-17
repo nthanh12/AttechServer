@@ -11,48 +11,79 @@ using Microsoft.AspNetCore.Authorization;
 namespace AttechServer.Controllers
 {
     [Route("api/product")]
-    public class ProductController : BaseCrudController<IProductService, ProductDto, DetailProductDto, CreateProductDto, UpdateProductDto>
+    [ApiController]
+    [Authorize]
+    public class ProductController : ApiControllerBase
     {
-        public ProductController(IProductService productService, ILogger<ProductController> logger) 
-            : base(productService, logger)
+        private readonly IProductService _productService;
+
+        public ProductController(
+            IProductService productService,
+            ILogger<ProductController> logger)
+            : base(logger)
         {
+            _productService = productService;
         }
 
         /// <summary>
-        /// Get all products with caching
+        /// Get all product with caching
         /// </summary>
         [HttpGet("find-all")]
         [AllowAnonymous]
-        [CacheResponse(CacheProfiles.MediumCache, "products", varyByQueryString: true)]
-        public override async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
+        [CacheResponse(CacheProfiles.ShortCache, "product", varyByQueryString: true)]
+        public async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
         {
-            return await base.FindAll(input);
+            try
+            {
+                var result = await _productService.FindAll(input);
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "Ok");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting all product");
+                return OkException(ex);
+            }
         }
 
         /// <summary>
-        /// Get products by category slug with caching
+        /// Get product by category slug with caching
         /// </summary>
         [HttpGet("category/{slug}")]
         [AllowAnonymous]
-        [CacheResponse(CacheProfiles.MediumCache, "products-category", varyByQueryString: true)]
+        [CacheResponse(CacheProfiles.ShortCache, "product-category", varyByQueryString: true)]
         public async Task<ApiResponse> FindAllByCategorySlug([FromQuery] PagingRequestBaseDto input, string slug)
         {
-            return await ExecuteAsync(async () =>
+            try
             {
-                var result = await _service.FindAllByCategorySlug(input, slug);
+                var result = await _productService.FindAllByCategorySlug(input, slug);
                 return new ApiResponse(ApiStatusCode.Success, result, 200, "Ok");
-            });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting product by category slug");
+                return OkException(ex);
+            }
         }
 
         /// <summary>
-        /// Get product by ID with caching
+        /// Get product by ID with attachments included
         /// </summary>
         [HttpGet("find-by-id/{id}")]
         [AllowAnonymous]
-        [CacheResponse(CacheProfiles.LongCache, "product-detail")]
-        public override async Task<ApiResponse> FindById(int id)
+        [CacheResponse(CacheProfiles.MediumCache, "product-detail")]
+        public async Task<ApiResponse> FindById(int id)
         {
-            return await base.FindById(id);
+            try
+            {
+                var result = await _productService.FindById(id);
+                // TODO: Update service to return ProductWithAttachmentsDto that includes attachments by default
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "Ok");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting product by id");
+                return OkException(ex);
+            }
         }
 
         /// <summary>
@@ -60,80 +91,114 @@ namespace AttechServer.Controllers
         /// </summary>
         [HttpGet("detail/{slug}")]
         [AllowAnonymous]
-        [CacheResponse(CacheProfiles.LongCache, "product-detail")]
-        public override async Task<ApiResponse> FindBySlug(string slug)
+        [CacheResponse(CacheProfiles.MediumCache, "product-detail")]
+        public async Task<ApiResponse> FindBySlug(string slug)
         {
-            return await base.FindBySlug(slug);
+            try
+            {
+                var result = await _productService.FindBySlug(slug);
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "Ok");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting product by slug");
+                return OkException(ex);
+            }
         }
 
         /// <summary>
-        /// Create new product
+        /// Create new product with all data in one request (FormData)
         /// </summary>
         [HttpPost("create")]
         [PermissionFilter(PermissionKeys.CreateProduct)]
-        public override async Task<ApiResponse> Create([FromBody] CreateProductDto input)
+        public async Task<ApiResponse> Create([FromBody] CreateProductDto input)
         {
-            return await base.Create(input);
+            try
+            {
+                _logger.LogInformation("=== DEBUG PRODUCT CREATE START ===");
+                _logger.LogInformation("TitleVi: {Title}", input.TitleVi);
+                _logger.LogInformation("ContentVi length: {Length}", input.ContentVi?.Length ?? 0);
+                _logger.LogInformation("ProductCategoryId: {CategoryId}", input.ProductCategoryId);
+
+                // Log attachment IDs
+                if (input.FeaturedImageId.HasValue)
+                {
+                    _logger.LogInformation("FeaturedImageId: {FeaturedImageId}", input.FeaturedImageId.Value);
+                }
+                else
+                {
+                    _logger.LogInformation("FeaturedImageId: NULL");
+                }
+
+                if (input.AttachmentIds != null && input.AttachmentIds.Any())
+                {
+                    _logger.LogInformation("AttachmentIds: {AttachmentIds}", string.Join(",", input.AttachmentIds));
+                }
+
+                _logger.LogInformation("Calling ProductService.Create...");
+                var result = await _productService.Create(input);
+                _logger.LogInformation("ProductService.Create completed successfully");
+                _logger.LogInformation("=== DEBUG PRODUCT CREATE END ===");
+
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "Tạo sản phẩm thành công");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "=== ERROR CREATING PRODUCT ===");
+                _logger.LogError("Exception Type: {Type}", ex.GetType().Name);
+                _logger.LogError("Exception Message: {Message}", ex.Message);
+                _logger.LogError("Stack Trace: {StackTrace}", ex.StackTrace);
+
+                if (ex.InnerException != null)
+                {
+                    _logger.LogError("Inner Exception: {InnerMessage}", ex.InnerException.Message);
+                }
+
+                return OkException(ex);
+            }
         }
 
+
         /// <summary>
-        /// Update product
+        /// Update product (handles text + files)
         /// </summary>
         [HttpPut("update")]
         [PermissionFilter(PermissionKeys.EditProduct)]
-        public override async Task<ApiResponse> Update([FromBody] UpdateProductDto input)
+        public async Task<ApiResponse> Update([FromBody] UpdateProductDto input)
         {
-            return await base.Update(input);
+            try
+            {
+                _logger.LogInformation("Updating product with all data in one atomic operation");
+                var result = await _productService.Update(input);
+                return result != null
+                    ? new ApiResponse(ApiStatusCode.Success, result, 200, "Cập nhật sản phẩm thành công")
+                    : new ApiResponse(ApiStatusCode.Success, null, 200, "Cập nhật sản phẩm thành công");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating product");
+                return OkException(ex);
+            }
         }
+
 
         /// <summary>
         /// Delete product
         /// </summary>
         [HttpDelete("delete/{id}")]
         [PermissionFilter(PermissionKeys.DeleteProduct)]
-        public override async Task<ApiResponse> Delete(int id)
+        public async Task<ApiResponse> Delete(int id)
         {
-            return await base.Delete(id);
+            try
+            {
+                await _productService.Delete(id);
+                return new ApiResponse(ApiStatusCode.Success, null, 200, "Xóa sản phẩm thành công");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting product");
+                return OkException(ex);
+            }
         }
-
-        #region Protected Implementation Methods
-
-        protected override async Task<object> GetFindAllAsync(PagingRequestBaseDto input)
-        {
-            return await _service.FindAll(input);
-        }
-
-        protected override async Task<DetailProductDto> GetFindByIdAsync(int id)
-        {
-            return await _service.FindById(id);
-        }
-
-        protected override async Task<DetailProductDto> GetFindBySlugAsync(string slug)
-        {
-            return await _service.FindBySlug(slug);
-        }
-
-        protected override async Task<object> GetCreateAsync(CreateProductDto input)
-        {
-            return await _service.Create(input);
-        }
-
-        protected override async Task<object?> GetUpdateAsync(UpdateProductDto input)
-        {
-            await _service.Update(input);
-            return null; // Update doesn't return data
-        }
-
-        protected override async Task GetDeleteAsync(int id)
-        {
-            await _service.Delete(id);
-        }
-
-        protected override async Task GetUpdateStatusAsync(AttechServer.Applications.UserModules.Dtos.UpdateStatusDto input)
-        {
-            await _service.UpdateStatusProduct(input.Id, input.Status);
-        }
-
-        #endregion
     }
 }

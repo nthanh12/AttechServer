@@ -74,7 +74,7 @@ namespace AttechServer.Shared.Attributes
                 {
                     Data = objectResult.Value,
                     StatusCode = objectResult.StatusCode ?? 200,
-                    CachedAt = DateTime.UtcNow
+                    CachedAt = DateTime.Now
                 };
 
                 memoryCache.Set(cacheKey, responseToCache, cacheOptions);

@@ -1,4 +1,4 @@
-﻿using AttechServer.Applications.UserModules.Dtos.Service;
+using AttechServer.Applications.UserModules.Dtos.Service;
 using AttechServer.Shared.ApplicationBase.Common;
 
 namespace AttechServer.Applications.UserModules.Abstracts
@@ -6,53 +6,37 @@ namespace AttechServer.Applications.UserModules.Abstracts
     public interface IServiceService
     {
         /// <summary>
-        /// Lấy danh sách tất cả dịch vụ với phân trang
+        /// Lấy danh sách tất cả tin tức với phân trang
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
         Task<PagingResult<ServiceDto>> FindAll(PagingRequestBaseDto input);
 
         /// <summary>
-        /// Lấy thông tin chi tiết dịch vụ theo Id
+        /// Lấy thông tin chi tiết tin tức theo Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         Task<DetailServiceDto> FindById(int id);
 
         /// <summary>
-        /// Lấy thông tin chi tiết dịch vụ theo slug (song ngữ)
+        /// Lấy thông tin chi tiết tin tức theo slug (song ngữ)
         /// </summary>
-        /// <param name="slug"></param>
-        /// <returns></returns>
         Task<DetailServiceDto> FindBySlug(string slug);
 
         /// <summary>
-        /// Thêm mới dịch vụ
+        /// Thêm mới tin tức với tất cả dữ liệu (text + files) trong một request
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
         Task<ServiceDto> Create(CreateServiceDto input);
 
+
         /// <summary>
-        /// Cập nhật dịch vụ
+        /// Cập nhật tin tức
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
         Task<ServiceDto> Update(UpdateServiceDto input);
 
-        /// <summary>
-        /// Xóa nhóm dịch vụ
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task Delete(int id);
 
         /// <summary>
-        /// Khóa/Mở khóa dịch vụ
+        /// Xóa tin tức
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="status">Trạng thái mới</param>
-        /// <returns></returns>
-        Task UpdateStatusService(int id, int status);
+        Task Delete(int id);
+
+
     }
 }

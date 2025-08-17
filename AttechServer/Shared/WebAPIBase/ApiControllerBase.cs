@@ -1,4 +1,4 @@
-﻿using AttechServer.Shared.Consts.Exceptions;
+using AttechServer.Shared.Consts.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AttechServer.Shared.WebAPIBase

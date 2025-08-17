@@ -1,4 +1,4 @@
-﻿namespace AttechServer.Shared.Exceptions
+namespace AttechServer.Shared.Exceptions
 {
     public class UserFriendlyException : Exception
     {

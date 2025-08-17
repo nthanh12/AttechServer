@@ -1,4 +1,4 @@
-﻿namespace AttechServer.Applications.UserModules.Dtos
+namespace AttechServer.Applications.UserModules.Dtos
 {
     public class TokenApiDto
     {

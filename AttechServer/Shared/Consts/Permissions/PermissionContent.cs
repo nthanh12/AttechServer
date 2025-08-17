@@ -1,4 +1,4 @@
-﻿namespace AttechServer.Shared.Consts.Permissions
+namespace AttechServer.Shared.Consts.Permissions
 {
     public class PermissionContent
     {
@@ -7,7 +7,7 @@
         /// </summary>
         public string? ParentKey { get; set; }
         /// <summary>
-        /// Key permission hiện tại
+        /// Key permission hi?n t?i
         /// </summary>
         public string PermissionKey { get; set; }
         public string PermissionLabel { get; set; }

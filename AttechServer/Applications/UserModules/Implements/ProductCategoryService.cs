@@ -1,4 +1,4 @@
-ï»¿using AttechServer.Applications.UserModules.Abstracts;
+using AttechServer.Applications.UserModules.Abstracts;
 using AttechServer.Applications.UserModules.Dtos.Product;
 using AttechServer.Applications.UserModules.Dtos.ProductCategory;
 using AttechServer.Domains.Entities.Main;
@@ -20,12 +20,14 @@ namespace AttechServer.Applications.UserModules.Implements
         private readonly ILogger<ProductCategoryService> _logger;
         private readonly ApplicationDbContext _dbContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IActivityLogService _activityLogService;
 
-        public ProductCategoryService(ApplicationDbContext dbContext, ILogger<ProductCategoryService> logger, IHttpContextAccessor httpContextAccessor)
+        public ProductCategoryService(ApplicationDbContext dbContext, ILogger<ProductCategoryService> logger, IHttpContextAccessor httpContextAccessor, IActivityLogService activityLogService)
         {
             _dbContext = dbContext;
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
+            _activityLogService = activityLogService;
         }
 
         public async Task<ProductCategoryDto> Create(CreateProductCategoryDto input)
@@ -36,13 +38,13 @@ namespace AttechServer.Applications.UserModules.Implements
                 try
                 {
                     // Validate input
-                    if (string.IsNullOrWhiteSpace(input.NameVi) || string.IsNullOrWhiteSpace(input.SlugVi))
+                    if (string.IsNullOrWhiteSpace(input.TitleVi) || string.IsNullOrWhiteSpace(input.SlugVi))
                     {
-                        throw new ArgumentException("TÃªn danh má»¥c vÃ  Slug (VI) lÃ  báº¯t buá»™c.");
+                        throw new ArgumentException("Tên danh m?c và Slug (VI) là b?t bu?c.");
                     }
-                    if (string.IsNullOrWhiteSpace(input.NameEn) || string.IsNullOrWhiteSpace(input.SlugEn))
+                    if (string.IsNullOrWhiteSpace(input.TitleEn) || string.IsNullOrWhiteSpace(input.SlugEn))
                     {
-                        throw new ArgumentException("TÃªn danh má»¥c vÃ  Slug (EN) lÃ  báº¯t buá»™c.");
+                        throw new ArgumentException("Tên danh m?c và Slug (EN) là b?t bu?c.");
                     }
                     if (input.DescriptionVi.Length > 160)
                     {
@@ -53,30 +55,41 @@ namespace AttechServer.Applications.UserModules.Implements
                         input.DescriptionEn = input.DescriptionEn.Substring(0, 157) + "...";
                     }
 
-                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value, out var id) ? id : 0;
+                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("user_id")?.Value, out var id) ? id : 0;
 
-                    // Kiá»ƒm tra trÃ¹ng slug
+                    // Ki?m tra trùng tên danh m?c
+                    var TitleViExists = await _dbContext.ProductCategories.AnyAsync(c => c.TitleVi == input.TitleVi && !c.Deleted);
+                    if (TitleViExists)
+                    {
+                        throw new ArgumentException("Tên danh m?c (VI) dã t?n t?i.");
+                    }
+                    var nameEnExists = await _dbContext.ProductCategories.AnyAsync(c => c.TitleEn == input.TitleEn && !c.Deleted);
+                    if (nameEnExists)
+                    {
+                        throw new ArgumentException("Tên danh m?c (EN) dã t?n t?i.");
+                    }
+
+                    // Ki?m tra trùng slug
                     var slugViExists = await _dbContext.ProductCategories.AnyAsync(c => c.SlugVi == input.SlugVi && !c.Deleted);
                     if (slugViExists)
                     {
-                        throw new ArgumentException("Slug VI Ä‘Ã£ tá»“n táº¡i.");
+                        throw new ArgumentException("Slug (VI) dã t?n t?i.");
                     }
                     var slugEnExists = await _dbContext.ProductCategories.AnyAsync(c => c.SlugEn == input.SlugEn && !c.Deleted);
                     if (slugEnExists)
                     {
-                        throw new ArgumentException("Slug EN Ä‘Ã£ tá»“n táº¡i.");
+                        throw new ArgumentException("Slug (EN) dã t?n t?i.");
                     }
 
                     var newProductCategory = new ProductCategory
                     {
-                        NameVi = input.NameVi,
-                        NameEn = input.NameEn,
+                        TitleVi = input.TitleVi,
+                        TitleEn = input.TitleEn,
                         SlugVi = input.SlugVi,
                         SlugEn = input.SlugEn,
                         DescriptionVi = input.DescriptionVi,
                         DescriptionEn = input.DescriptionEn,
                         Status = input.Status,
-                        CreatedDate = DateTime.UtcNow,
                         CreatedBy = userId,
                         Deleted = false
                     };
@@ -86,11 +99,25 @@ namespace AttechServer.Applications.UserModules.Implements
 
                     await transaction.CommitAsync();
 
+                    // Log activity
+                    await _activityLogService.LogUserActionAsync(
+                        "CREATE_PRODUCT_CATEGORY",
+                        $"Ðã t?o danh m?c s?n ph?m m?i: {input.TitleVi}",
+                        userId,
+                        JsonSerializer.Serialize(new { 
+                            categoryId = newProductCategory.Id,
+                            TitleVi = input.TitleVi,
+                            nameEn = input.TitleEn,
+                            slugVi = input.SlugVi,
+                            slugEn = input.SlugEn
+                        })
+                    );
+
                     return new ProductCategoryDto
                     {
                         Id = newProductCategory.Id,
-                        NameVi = newProductCategory.NameVi,
-                        NameEn = newProductCategory.NameEn,
+                        TitleVi = newProductCategory.TitleVi,
+                        TitleEn = newProductCategory.TitleEn,
                         SlugVi = newProductCategory.SlugVi,
                         SlugEn = newProductCategory.SlugEn,
                         DescriptionVi = newProductCategory.DescriptionVi,
@@ -101,7 +128,7 @@ namespace AttechServer.Applications.UserModules.Implements
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    _logger.LogError(ex, "Error creating Product category");
+                    _logger.LogError(ex, "Error creating ProductCategory");
                     throw;
                 }
             }
@@ -119,7 +146,7 @@ namespace AttechServer.Applications.UserModules.Implements
                         .FirstOrDefaultAsync(pc => pc.Id == id && !pc.Deleted)
                         ?? throw new UserFriendlyException(ErrorCode.ProductCategoryNotFound);
 
-                    // XÃ³a má»m cÃ¡c Product liÃªn quan
+                    // Xóa m?m các Product liên quan
                     var Products = await _dbContext.Products
                         .Where(p => p.ProductCategoryId == id && !p.Deleted)
                         .ToListAsync();
@@ -148,19 +175,19 @@ namespace AttechServer.Applications.UserModules.Implements
 
             var baseQuery = _dbContext.ProductCategories.AsNoTracking()
                 .Where(pc => !pc.Deleted
-                    && (string.IsNullOrEmpty(input.Keyword) || pc.NameVi.Contains(input.Keyword) || pc.NameEn.Contains(input.Keyword)));
+                    && (string.IsNullOrEmpty(input.Keyword) || pc.TitleVi.Contains(input.Keyword) || pc.TitleEn.Contains(input.Keyword)));
 
             var totalItems = await baseQuery.CountAsync();
 
             var pagedItems = await baseQuery
-                .OrderBy(pc => pc.NameVi)
+                .OrderBy(pc => pc.TitleVi)
                 .Skip(input.GetSkip())
                 .Take(input.PageSize)
                 .Select(pc => new ProductCategoryDto
                 {
                     Id = pc.Id,
-                    NameVi = pc.NameVi,
-                    NameEn = pc.NameEn,
+                    TitleVi = pc.TitleVi,
+                    TitleEn = pc.TitleEn,
                     SlugVi = pc.SlugVi,
                     SlugEn = pc.SlugEn,
                     DescriptionVi = pc.DescriptionVi,
@@ -185,8 +212,8 @@ namespace AttechServer.Applications.UserModules.Implements
                 .Select(pc => new DetailProductCategoryDto
                 {
                     Id = pc.Id,
-                    NameVi = pc.NameVi,
-                    NameEn = pc.NameEn,
+                    TitleVi = pc.TitleVi,
+                    TitleEn = pc.TitleEn,
                     SlugVi = pc.SlugVi,
                     SlugEn = pc.SlugEn,
                     DescriptionVi = pc.DescriptionVi,
@@ -197,8 +224,8 @@ namespace AttechServer.Applications.UserModules.Implements
                         .Select(p => new ProductDto
                         {
                             Id = p.Id,
-                            NameVi = p.NameVi,
-                            NameEn = p.NameEn,
+                            TitleVi = p.TitleVi,
+                            TitleEn = p.TitleEn,
                             SlugVi = p.SlugVi,
                             SlugEn = p.SlugEn,
                             DescriptionVi = p.DescriptionVi,
@@ -206,8 +233,11 @@ namespace AttechServer.Applications.UserModules.Implements
                             TimePosted = p.TimePosted,
                             Status = p.Status,
                             ProductCategoryId = p.ProductCategoryId,
-                            ProductCategoryName = pc.NameVi,
-                            ProductCategorySlug = pc.SlugEn
+                            ProductCategoryTitleVi = pc.TitleVi,
+                            ProductCategoryTitleEn = pc.TitleEn,
+                            ProductCategorySlugVi = pc.SlugVi,
+                            ProductCategorySlugEn = pc.SlugEn,
+                            ImageUrl = p.ImageUrl
                         })
                         .ToList()
                 })
@@ -229,13 +259,13 @@ namespace AttechServer.Applications.UserModules.Implements
                 try
                 {
                     // Validate input
-                    if (string.IsNullOrWhiteSpace(input.NameVi) || string.IsNullOrWhiteSpace(input.SlugVi))
+                    if (string.IsNullOrWhiteSpace(input.TitleVi) || string.IsNullOrWhiteSpace(input.SlugVi))
                     {
-                        throw new ArgumentException("TÃªn danh má»¥c vÃ  Slug (VI) lÃ  báº¯t buá»™c.");
+                        throw new ArgumentException("Tên danh m?c và Slug (VI) là b?t bu?c.");
                     }
-                    if (string.IsNullOrWhiteSpace(input.NameEn) || string.IsNullOrWhiteSpace(input.SlugEn))
+                    if (string.IsNullOrWhiteSpace(input.TitleEn) || string.IsNullOrWhiteSpace(input.SlugEn))
                     {
-                        throw new ArgumentException("TÃªn danh má»¥c vÃ  Slug (EN) lÃ  báº¯t buá»™c.");
+                        throw new ArgumentException("Tên danh m?c và Slug (EN) là b?t bu?c.");
                     }
                     if (input.DescriptionVi.Length > 160)
                     {
@@ -246,28 +276,41 @@ namespace AttechServer.Applications.UserModules.Implements
                         input.DescriptionEn = input.DescriptionEn.Substring(0, 157) + "...";
                     }
 
-                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value, out var id) ? id : 0;
+                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("user_id")?.Value, out var id) ? id : 0;
 
-                    // Kiá»ƒm tra trÃ¹ng slug (trá»« chÃ­nh nÃ³)
+                    // Ki?m tra trùng tên danh m?c (tr? chính nó)
+                    var TitleViExists = await _dbContext.ProductCategories.AnyAsync(c => c.TitleVi == input.TitleVi && !c.Deleted && c.Id != input.Id);
+                    if (TitleViExists)
+                    {
+                        throw new ArgumentException("Tên danh m?c (VI) dã t?n t?i.");
+                    }
+                    var nameEnExists = await _dbContext.ProductCategories.AnyAsync(c => c.TitleEn == input.TitleEn && !c.Deleted && c.Id != input.Id);
+                    if (nameEnExists)
+                    {
+                        throw new ArgumentException("Tên danh m?c (EN) dã t?n t?i.");
+                    }
+
+                    // Ki?m tra trùng slug (tr? chính nó)
                     var slugViExists = await _dbContext.ProductCategories.AnyAsync(c => c.SlugVi == input.SlugVi && !c.Deleted && c.Id != input.Id);
                     if (slugViExists)
                     {
-                        throw new ArgumentException("Slug VI Ä‘Ã£ tá»“n táº¡i.");
+                        throw new ArgumentException("Slug (VI) dã t?n t?i.");
                     }
                     var slugEnExists = await _dbContext.ProductCategories.AnyAsync(c => c.SlugEn == input.SlugEn && !c.Deleted && c.Id != input.Id);
                     if (slugEnExists)
                     {
-                        throw new ArgumentException("Slug EN Ä‘Ã£ tá»“n táº¡i.");
+                        throw new ArgumentException("Slug (EN) dã t?n t?i.");
                     }
 
-                    productCategory.NameVi = input.NameVi;
-                    productCategory.NameEn = input.NameEn;
+                    productCategory.TitleVi = input.TitleVi;
+                    productCategory.TitleEn = input.TitleEn;
                     productCategory.SlugVi = input.SlugVi;
                     productCategory.SlugEn = input.SlugEn;
                     productCategory.DescriptionVi = input.DescriptionVi;
                     productCategory.DescriptionEn = input.DescriptionEn;
+                    productCategory.Status = input.Status;
                     productCategory.ModifiedBy = userId;
-                    productCategory.ModifiedDate = DateTime.UtcNow;
+                    // ModifiedDate s? du?c set t? d?ng trong CheckAudit()
 
                     await _dbContext.SaveChangesAsync();
 
@@ -275,8 +318,8 @@ namespace AttechServer.Applications.UserModules.Implements
                     return new ProductCategoryDto
                     {
                         Id = productCategory.Id,
-                        NameVi = productCategory.NameVi,
-                        NameEn = productCategory.NameEn,
+                        TitleVi = productCategory.TitleVi,
+                        TitleEn = productCategory.TitleEn,
                         SlugVi = productCategory.SlugVi,
                         SlugEn = productCategory.SlugEn,
                         DescriptionVi = productCategory.DescriptionVi,

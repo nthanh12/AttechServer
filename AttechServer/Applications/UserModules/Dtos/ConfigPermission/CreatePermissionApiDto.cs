@@ -1,4 +1,4 @@
-﻿using AttechServer.Applications.UserModules.Dtos.Permission.KeyPermission;
+using AttechServer.Applications.UserModules.Dtos.Permission.KeyPermission;
 using AttechServer.Shared.ApplicationBase.Common.Validations;
 
 namespace AttechServer.Applications.UserModules.Dtos.ConfigPermission

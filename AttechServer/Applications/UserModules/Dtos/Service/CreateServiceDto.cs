@@ -1,19 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace AttechServer.Applications.UserModules.Dtos.Service
 {
     public class CreateServiceDto
     {
         [Required(ErrorMessage = "Tiêu đề là bắt buộc")]
-        [StringLength(200, ErrorMessage = "Tiêu đề không được vượt quá 200 ký tự")]
-        public string NameVi { get; set; } = string.Empty;
-        public string NameEn { get; set; } = string.Empty;
-        public string SlugVi { get; set; } = string.Empty;
-        public string SlugEn { get; set; } = string.Empty;
+        [StringLength(400, ErrorMessage = "Tiêu đề không được vượt quá 400 ký tự")]
+        public string TitleVi { get; set; } = string.Empty;
+        public string TitleEn { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Mô tả là bắt buộc")]
-        [StringLength(160, ErrorMessage = "Mô tả không được vượt quá 160 ký tự")]
+        [StringLength(700, ErrorMessage = "Mô tả không được vượt quá 700 ký tự")]
         public string DescriptionVi { get; set; } = string.Empty;
+        [StringLength(700, ErrorMessage = "Mô tả không được vượt quá 700 ký tự")]
         public string DescriptionEn { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Nội dung là bắt buộc")]
@@ -22,6 +21,19 @@ namespace AttechServer.Applications.UserModules.Dtos.Service
 
         [Required(ErrorMessage = "Thời gian đăng bài là bắt buộc")]
         public DateTime TimePosted { get; set; }
-        public string ImageUrl { get; set; } = string.Empty;
+        
+        [Range(0, 1, ErrorMessage = "Trạng thái phải là 0 (không hoạt động) hoặc 1 (hoạt động)")]
+        public int Status { get; set; } = 1;
+        public bool IsOutstanding { get; set; } = false;
+        
+        [Required(ErrorMessage = "Slug tiếng Việt là bắt buộc")]
+        public string SlugVi { get; set; } = string.Empty;
+        
+        [Required(ErrorMessage = "Slug tiếng Anh là bắt buộc")]
+        public string SlugEn { get; set; } = string.Empty;
+
+        // Attachment IDs from temp uploads
+        public int? FeaturedImageId { get; set; }
+        public List<int>? AttachmentIds { get; set; }
     }
-}
+} 

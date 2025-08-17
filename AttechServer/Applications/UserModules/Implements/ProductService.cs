@@ -1,6 +1,6 @@
-﻿using AttechServer.Applications.UserModules.Abstracts;
+using AttechServer.Applications.UserModules.Abstracts;
 using AttechServer.Applications.UserModules.Dtos.Product;
-using AttechServer.Applications.UserModules.Dtos.ProductCategory;
+using AttechServer.Applications.UserModules.Dtos.Attachment;
 using AttechServer.Domains.Entities.Main;
 using AttechServer.Infrastructures.Abstractions;
 using AttechServer.Infrastructures.Persistances;
@@ -10,145 +10,301 @@ using AttechServer.Shared.Consts.Exceptions;
 using AttechServer.Shared.Exceptions;
 using Ganss.Xss;
 using Microsoft.EntityFrameworkCore;
-using System.Globalization;
-using System.Text;
+using System.Security.Claims;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 
 namespace AttechServer.Applications.UserModules.Implements
 {
     public class ProductService : IProductService
     {
+        private const int MAX_CONTENT_LENGTH = 100000; // 100KB
         private readonly ILogger<ProductService> _logger;
         private readonly ApplicationDbContext _dbContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IWysiwygFileProcessor _wysiwygFileProcessor;
+        private readonly IActivityLogService _activityLogService;
+        private readonly IAttachmentService _attachmentService;
 
-        public ProductService(ApplicationDbContext dbContext, ILogger<ProductService> logger, IHttpContextAccessor httpContextAccessor, IWysiwygFileProcessor wysiwygFileProcessor)
+        public ProductService(ApplicationDbContext dbContext, ILogger<ProductService> logger, IHttpContextAccessor httpContextAccessor, IWysiwygFileProcessor wysiwygFileProcessor, IActivityLogService activityLogService, IAttachmentService attachmentService)
         {
             _dbContext = dbContext;
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
             _wysiwygFileProcessor = wysiwygFileProcessor;
+            _activityLogService = activityLogService;
+            _attachmentService = attachmentService;
         }
+
+        private string TruncateDescription(string description, int maxLength = 160)
+        {
+            if (string.IsNullOrEmpty(description)) return string.Empty;
+            return description.Length <= maxLength ? description : description.Substring(0, maxLength - 3) + "...";
+        }
+
         public async Task<ProductDto> Create(CreateProductDto input)
         {
-            _logger.LogInformation($"{nameof(Create)}: input = {JsonSerializer.Serialize(input)}");
+            _logger.LogInformation($"{nameof(Create)}: Creating product with all data in one atomic operation");
+
             using (var transaction = await _dbContext.Database.BeginTransactionAsync())
             {
                 try
                 {
-                    // Validate input
-                    if (string.IsNullOrWhiteSpace(input.NameVi) || string.IsNullOrWhiteSpace(input.SlugVi) || string.IsNullOrWhiteSpace(input.ContentVi))
+                    // Step 1: Validate input
+                    if (string.IsNullOrWhiteSpace(input.TitleVi) || string.IsNullOrWhiteSpace(input.ContentVi))
                     {
-                        throw new ArgumentException("Tên, Slug (VI) và nội dung là bắt buộc.");
-                    }
-                    if (string.IsNullOrWhiteSpace(input.NameEn) || string.IsNullOrWhiteSpace(input.SlugEn) || string.IsNullOrWhiteSpace(input.ContentEn))
-                    {
-                        throw new ArgumentException("Tên, Slug (EN) và nội dung là bắt buộc.");
-                    }
-                    if (input.DescriptionVi.Length > 160)
-                    {
-                        input.DescriptionVi = input.DescriptionVi.Substring(0, 157) + "...";
-                    }
-                    if (input.DescriptionEn.Length > 160)
-                    {
-                        input.DescriptionEn = input.DescriptionEn.Substring(0, 157) + "...";
+                        throw new ArgumentException("Tiêu đề và nội dung là bắt buộc.");
                     }
 
-                    if (input.TimePosted > DateTime.UtcNow)
+                    if (!string.IsNullOrEmpty(input.DescriptionVi) && input.DescriptionVi.Length > 700)
+                    {
+                        input.DescriptionVi = input.DescriptionVi.Substring(0, 697) + "...";
+                    }
+                    if (!string.IsNullOrEmpty(input.DescriptionEn) && input.DescriptionEn.Length > 700)
+                    {
+                        input.DescriptionEn = input.DescriptionEn.Substring(0, 697) + "...";
+                    }
+
+                    if (input.TimePosted > DateTime.Now)
                     {
                         throw new ArgumentException("Thời gian đăng bài không phù hợp.");
                     }
 
-                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value, out var id) ? id : 0;
-                    var sanitizer = new HtmlSanitizer();
-                    var safeContentVi = sanitizer.Sanitize(input.ContentVi);
-                    var safeContentEn = sanitizer.Sanitize(input.ContentEn);
+                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("user_id")?.Value, out var id) ? id : 0;
 
-                    // Kiểm tra danh mục
+                    // Step 2: Validate category exists
                     var category = await _dbContext.ProductCategories
                         .Where(c => c.Id == input.ProductCategoryId && !c.Deleted)
-                        .Select(c => new { c.Id, c.NameVi, c.SlugVi })
+                        .Select(c => new { c.Id, c.TitleVi, c.TitleEn, c.SlugVi, c.SlugEn })
                         .FirstOrDefaultAsync();
                     if (category == null)
                     {
                         throw new UserFriendlyException(ErrorCode.ProductCategoryNotFound);
                     }
 
-                    // Kiểm tra trùng slug
-                    var slugViExists = await _dbContext.Products.AnyAsync(p => p.SlugVi == input.SlugVi && !p.Deleted);
-                    if (slugViExists)
+                    // Step 3: Check for duplicate titles
+                    var titleViExists = await _dbContext.Products.AnyAsync(n => n.TitleVi == input.TitleVi && !n.Deleted);
+                    if (titleViExists)
                     {
-                        throw new ArgumentException("Slug VI đã tồn tại.");
-                    }
-                    var slugEnExists = await _dbContext.Products.AnyAsync(p => p.SlugEn == input.SlugEn && !p.Deleted);
-                    if (slugEnExists)
-                    {
-                        throw new ArgumentException("Slug EN đã tồn tại.");
+                        throw new ArgumentException("Tiêu đề tiếng Việt đã tồn tại.");
                     }
 
+                    if (!string.IsNullOrEmpty(input.TitleEn))
+                    {
+                        var titleEnExists = await _dbContext.Products.AnyAsync(n => n.TitleEn == input.TitleEn && !n.Deleted);
+                        if (titleEnExists)
+                        {
+                            throw new ArgumentException("Tiêu đề tiếng Anh đã tồn tại.");
+                        }
+                    }
+
+                    // Step 4: Sanitize content
+                    var sanitizedContentVi = SanitizeContent(input.ContentVi);
+                    var sanitizedContentEn = SanitizeContent(input.ContentEn ?? string.Empty);
+
+                    // Step 5: Create product entity
                     var newProduct = new Product
                     {
                         SlugVi = input.SlugVi,
                         SlugEn = input.SlugEn,
-                        NameVi = input.NameVi,
-                        NameEn = input.NameEn,
-                        DescriptionVi = input.DescriptionVi,
-                        DescriptionEn = input.DescriptionEn,
-                        ContentVi = safeContentVi,
-                        ContentEn = safeContentEn,
+                        TitleVi = input.TitleVi.Trim(),
+                        TitleEn = input.TitleEn?.Trim() ?? string.Empty,
+                        DescriptionVi = input.DescriptionVi?.Trim() ?? string.Empty,
+                        DescriptionEn = input.DescriptionEn?.Trim() ?? string.Empty,
+                        ContentVi = sanitizedContentVi,
+                        ContentEn = sanitizedContentEn,
                         TimePosted = input.TimePosted,
-                        Status = CommonStatus.ACTIVE,
+                        Status = input.Status,
+                        IsOutstanding = input.IsOutstanding,
                         ProductCategoryId = input.ProductCategoryId,
-                        CreatedDate = DateTime.UtcNow,
                         CreatedBy = userId,
-                        Deleted = false,
-                        ImageUrl = input.ImageUrl ?? string.Empty
+                        CreatedDate = DateTime.Now,
+                        Deleted = false
                     };
 
                     _dbContext.Products.Add(newProduct);
                     await _dbContext.SaveChangesAsync();
 
-                    var (processedContentVi, _) = await _wysiwygFileProcessor.ProcessContentAsync(safeContentVi, EntityType.Product, newProduct.Id);
-                    var (processedContentEn, _) = await _wysiwygFileProcessor.ProcessContentAsync(safeContentEn, EntityType.Product, newProduct.Id);
+                    // Step 6: Smart content processing - extract unique attachment IDs first
+                    var contentAttachmentIds = await _wysiwygFileProcessor.ExtractUniqueAttachmentIdsAsync(newProduct.ContentVi, newProduct.ContentEn);
+                    
+                    // Associate content attachments first
+                    if (contentAttachmentIds.Any())
+                    {
+                        await _attachmentService.AssociateAttachmentsAsync(contentAttachmentIds, ObjectType.Product, newProduct.Id, isFeaturedImage: false, isContentImage: true);
+                    }
+                    
+                    // Process both content - now attachments are permanent
+                    var (processedContentVi, fileEntriesVi) = await _wysiwygFileProcessor.ProcessContentAsync(newProduct.ContentVi, ObjectType.Product, newProduct.Id);
+                    var (processedContentEn, fileEntriesEn) = await _wysiwygFileProcessor.ProcessContentAsync(newProduct.ContentEn, ObjectType.Product, newProduct.Id);
+                    
+                    // Update content with processed paths
                     newProduct.ContentVi = processedContentVi;
                     newProduct.ContentEn = processedContentEn;
+
+                    // Step 7: Finalize gallery attachments (IsPrimary = false) - exclude content attachments
+                    if (input.AttachmentIds != null && input.AttachmentIds.Any())
+                    {
+                        try
+                        {
+                            
+                            // Gallery attachments = attachmentIds - contentAttachmentIds (to avoid duplicates)
+                            var galleryAttachmentIds = input.AttachmentIds.Except(contentAttachmentIds).ToList();
+                            if (galleryAttachmentIds.Any())
+                            {
+                                await _attachmentService.AssociateAttachmentsAsync(galleryAttachmentIds, ObjectType.Product, newProduct.Id, isFeaturedImage: false, isContentImage: false);
+                                _logger.LogInformation($"Finalized {galleryAttachmentIds.Count} gallery attachments for product ID: {newProduct.Id}");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, $"Error finalizing gallery attachments for product ID: {newProduct.Id}");
+                            throw new UserFriendlyException(ErrorCode.InvalidClientRequest);
+                        }
+                    }
+
+                    // Step 7.5: Handle featured image (IsPrimary = true)
+                    if (input.FeaturedImageId.HasValue)
+                    {
+                        try
+                        {
+                            await _attachmentService.AssociateAttachmentsAsync(new List<int> { input.FeaturedImageId.Value }, ObjectType.Product, newProduct.Id, isFeaturedImage: true, isContentImage: false);
+                            
+                            // ImageUrl will be set automatically by AttachmentService to /uploads/images/yyyy/MM/filename.ext
+                            // No need to override it here
+                            
+                            _logger.LogInformation($"Finalized featured image {input.FeaturedImageId.Value} for product ID: {newProduct.Id}");
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, $"Error finalizing featured image for product ID: {newProduct.Id}");
+                            throw new UserFriendlyException(ErrorCode.InvalidClientRequest);
+                        }
+                    }
+
+                    // Step 9: Save all changes and commit transaction
                     await _dbContext.SaveChangesAsync();
+                    
+                    // Log activity
+                    await _activityLogService.LogAsync("PRODUCT_CREATE", "Tạo sản phẩm với file đính kèm", newProduct.TitleVi, "Info");
 
                     await transaction.CommitAsync();
 
-                    return new ProductDto
+                    // Step 10: Return ProductDto
+                    var response = new ProductDto
                     {
                         Id = newProduct.Id,
-                        NameVi = newProduct.NameVi,
-                        NameEn = newProduct.NameEn,
                         SlugVi = newProduct.SlugVi,
                         SlugEn = newProduct.SlugEn,
+                        TitleVi = newProduct.TitleVi,
+                        TitleEn = newProduct.TitleEn,
                         DescriptionVi = newProduct.DescriptionVi,
                         DescriptionEn = newProduct.DescriptionEn,
+                        ProductCategoryId = newProduct.ProductCategoryId,
                         TimePosted = newProduct.TimePosted,
                         Status = newProduct.Status,
-                        ProductCategoryId = newProduct.ProductCategoryId,
-                        ProductCategoryName = category.NameVi,
-                        ProductCategorySlug = category.SlugVi,
-                        ImageUrl = newProduct.ImageUrl
+                        IsOutstanding = newProduct.IsOutstanding
                     };
+
+                    _logger.LogInformation($"Successfully created product. ProductId: {newProduct.Id}");
+                    return response;
+                }
+                catch (UserFriendlyException)
+                {
+                    await transaction.RollbackAsync();
+                    throw;
                 }
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    _logger.LogError(ex, "Error creating Product");
+                    _logger.LogError(ex, $"Error creating product with attachments: {ex.Message}");
+                    throw new UserFriendlyException(ErrorCode.InvalidClientRequest);
+                }
+            }
+        }
+
+        public async Task Delete(int id)
+        {
+            _logger.LogInformation($"{nameof(Delete)}: id = {id}");
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var product = await _dbContext.Products
+                        .FirstOrDefaultAsync(n => n.Id == id && !n.Deleted)
+                        ?? throw new UserFriendlyException(ErrorCode.ProductNotFound);
+
+                    // Delete all associated files (featured, album, attachments)
+                    await DeleteAssociatedFilesAsync(product.Id);
+
+                    // Delete WYSIWYG files
+                    await _wysiwygFileProcessor.DeleteFilesAsync(ObjectType.Product, product.Id);
+
+                    product.Deleted = true;
+                    await _dbContext.SaveChangesAsync();
+
+                    // Log activity
+                    await _activityLogService.LogAsync("PRODUCT_DELETE", "Xóa sản phẩm", product.TitleVi, "Info");
+
+                    await transaction.CommitAsync();
+
+                    _logger.LogInformation($"Successfully deleted product ID: {id} and all associated files");
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    _logger.LogError(ex, $"Error deleting product with id = {id}");
                     throw;
                 }
             }
         }
-        public async Task Delete(int id)
+
+        /// <summary>
+        /// Delete all files associated with a product article
+        /// </summary>
+        private async Task DeleteAssociatedFilesAsync(int productId)
         {
-            _logger.LogInformation($"{nameof(Delete)}: id = {id}");
-            var product = _dbContext.Products.FirstOrDefault(pc => pc.Id == id) ?? throw new UserFriendlyException(ErrorCode.ProductNotFound);
-            product.Deleted = true;
-            await _dbContext.SaveChangesAsync();
+            try
+            {
+                // Get all files associated with this product
+                var associatedFiles = await _dbContext.Attachments
+                    .Where(f => f.ObjectType == ObjectType.Product && f.ObjectId == productId && !f.Deleted)
+                    .ToListAsync();
+
+                if (associatedFiles.Any())
+                {
+                    _logger.LogInformation($"Found {associatedFiles.Count} files to delete for product ID: {productId}");
+
+                    foreach (var file in associatedFiles)
+                    {
+                        try
+                        {
+                            // Delete physical file
+                            var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "AttechServer", "Uploads", file.FilePath);
+                            if (File.Exists(fullPath))
+                            {
+                                File.Delete(fullPath);
+                                _logger.LogInformation($"Deleted physical file: {file.FilePath}");
+                            }
+
+                            // Mark file as deleted in database
+                            file.Deleted = true;
+                            file.ModifiedDate = DateTime.Now;
+                            file.ModifiedBy = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("user_id")?.Value, out var userIdValue) ? userIdValue : 0;
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogWarning(ex, $"Could not delete file {file.FilePath}. Continuing with other files.");
+                        }
+                    }
+
+                    await _dbContext.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error deleting associated files for product ID: {productId}");
+                throw;
+            }
         }
 
         public async Task<PagingResult<ProductDto>> FindAll(PagingRequestBaseDto input)
@@ -156,29 +312,50 @@ namespace AttechServer.Applications.UserModules.Implements
             _logger.LogInformation($"{nameof(FindAll)}: input = {JsonSerializer.Serialize(input)}");
 
             var baseQuery = _dbContext.Products.AsNoTracking()
-                .Where(p => !p.Deleted && p.Status == CommonStatus.ACTIVE
-                    && (string.IsNullOrEmpty(input.Keyword) || p.NameVi.Contains(input.Keyword) || p.NameEn.Contains(input.Keyword)));
+                .Where(n => !n.Deleted);
+
+            // Tìm kiếm
+            if (!string.IsNullOrEmpty(input.Keyword))
+            {
+                baseQuery = baseQuery.Where(n =>
+                    n.TitleVi.Contains(input.Keyword) ||
+                    n.DescriptionVi.Contains(input.Keyword) ||
+                    n.ContentVi.Contains(input.Keyword) ||
+                    n.TitleEn.Contains(input.Keyword) ||
+                    n.DescriptionEn.Contains(input.Keyword) ||
+                    n.ContentEn.Contains(input.Keyword));
+            }
 
             var totalItems = await baseQuery.CountAsync();
 
-            var pagedItems = await baseQuery
-                .OrderBy(pc => pc.Id)
+            // Sắp xếp
+            var query = baseQuery.OrderByDescending(n => n.TimePosted);
+            if (input.Sort.Any())
+            {
+                // TODO: Implement dynamic sorting based on input.Sort
+            }
+
+            var pagedItems = await query
                 .Skip(input.GetSkip())
                 .Take(input.PageSize)
-                .Select(p => new ProductDto
+                .Select(n => new ProductDto
                 {
-                    Id = p.Id,
-                    SlugVi = p.SlugVi,
-                    SlugEn = p.SlugEn,
-                    NameVi = p.NameVi,
-                    NameEn = p.NameEn,
-                    DescriptionVi = p.DescriptionVi,
-                    DescriptionEn = p.DescriptionEn,
-                    Status = p.Status,
-                    ProductCategoryId = p.ProductCategoryId,
-                    ProductCategoryName = p.ProductCategory.NameVi,
-                    ProductCategorySlug = p.ProductCategory.SlugVi,
-                    ImageUrl = p.ImageUrl
+                    Id = n.Id,
+                    SlugVi = n.SlugVi,
+                    SlugEn = n.SlugEn,
+                    TitleVi = n.TitleVi,
+                    TitleEn = n.TitleEn,
+                    DescriptionVi = n.DescriptionVi,
+                    DescriptionEn = n.DescriptionEn,
+                    TimePosted = n.TimePosted,
+                    Status = n.Status,
+                    ProductCategoryId = n.ProductCategoryId,
+                    ProductCategoryTitleVi = n.ProductCategory.TitleVi,
+                    ProductCategoryTitleEn = n.ProductCategory.TitleEn,
+                    ProductCategorySlugVi = n.ProductCategory.SlugVi,
+                    ProductCategorySlugEn = n.ProductCategory.SlugEn,
+                    IsOutstanding = n.IsOutstanding,
+                    ImageUrl = n.ImageUrl
                 })
                 .ToListAsync();
 
@@ -193,83 +370,137 @@ namespace AttechServer.Applications.UserModules.Implements
         {
             _logger.LogInformation($"{nameof(FindAllByCategoryId)}: input = {JsonSerializer.Serialize(input)}, categoryId = {categoryId}");
 
+            // Kiểm tra danh mục tồn tại
+            var exists = await _dbContext.ProductCategories
+                .AnyAsync(c => c.Id == categoryId && !c.Deleted);
+            if (!exists)
+                throw new UserFriendlyException(ErrorCode.ProductCategoryNotFound);
+
+            // Build query
             var baseQuery = _dbContext.Products.AsNoTracking()
-                .Where(p => p.ProductCategoryId == categoryId && !p.Deleted && p.Status == CommonStatus.ACTIVE
-                    && (string.IsNullOrEmpty(input.Keyword) || p.NameVi.Contains(input.Keyword) || p.NameEn.Contains(input.Keyword)));
+                .Where(n => !n.Deleted && n.ProductCategoryId == categoryId);
+
+            // Tìm kiếm
+            if (!string.IsNullOrEmpty(input.Keyword))
+            {
+                baseQuery = baseQuery.Where(n =>
+                    n.TitleVi.Contains(input.Keyword) ||
+                    n.DescriptionVi.Contains(input.Keyword) ||
+                    n.ContentVi.Contains(input.Keyword) ||
+                    n.TitleEn.Contains(input.Keyword) ||
+                    n.DescriptionEn.Contains(input.Keyword) ||
+                    n.ContentEn.Contains(input.Keyword));
+            }
 
             var totalItems = await baseQuery.CountAsync();
 
-            var pagedItems = await baseQuery
-                .OrderByDescending(p => p.TimePosted)
+            // Phân trang và sắp xếp
+            var items = await baseQuery
+                .OrderByDescending(n => n.TimePosted)
                 .Skip(input.GetSkip())
                 .Take(input.PageSize)
-                .Select(p => new ProductDto
+                .Select(n => new ProductDto
                 {
-                    Id = p.Id,
-                    NameVi = p.NameVi,
-                    NameEn = p.NameEn,
-                    SlugVi = p.SlugVi,
-                    SlugEn = p.SlugEn,
-                    DescriptionVi = p.DescriptionVi,
-                    DescriptionEn = p.DescriptionEn,
-                    TimePosted = p.TimePosted,
-                    Status = p.Status,
-                    ProductCategoryId = p.ProductCategoryId,
-                    ProductCategoryName = p.ProductCategory.NameVi,
-                    ProductCategorySlug = p.ProductCategory.SlugVi,
-                    ImageUrl = p.ImageUrl
+                    Id = n.Id,
+                    SlugVi = n.SlugVi,
+                    SlugEn = n.SlugEn,
+                    TitleVi = n.TitleVi,
+                    TitleEn = n.TitleEn,
+                    DescriptionVi = n.DescriptionVi,
+                    DescriptionEn = n.DescriptionEn,
+                    TimePosted = n.TimePosted,
+                    Status = n.Status,
+                    ProductCategoryId = n.ProductCategoryId,
+                    ProductCategoryTitleVi = n.ProductCategory.TitleVi,
+                    ProductCategoryTitleEn = n.ProductCategory.TitleEn,
+                    ProductCategorySlugVi = n.ProductCategory.SlugVi,
+                    ProductCategorySlugEn = n.ProductCategory.SlugEn,
+                    IsOutstanding = n.IsOutstanding,
+                    ImageUrl = n.ImageUrl
                 })
                 .ToListAsync();
 
             return new PagingResult<ProductDto>
             {
                 TotalItems = totalItems,
-                Items = pagedItems
+                Items = items
             };
         }
 
-        /// <summary>
-        /// Lấy danh sách sản phẩm theo SlugVi danh mục, bao gồm cả category chính và sub-categories
-        /// </summary>
-        public async Task<PagingResult<ProductDto>> FindAllByCategorySlug(
-            PagingRequestBaseDto input,
-            string slugVi)
+        public async Task<PagingResult<ProductDto>> FindAllByCategorySlug(PagingRequestBaseDto input, string slug)
         {
+            // 1. Tìm category theo slug
             var category = await _dbContext.ProductCategories
                 .AsNoTracking()
-                .FirstOrDefaultAsync(c => c.SlugVi == slugVi && !c.Deleted);
+                .FirstOrDefaultAsync(c => c.SlugVi == slug && !c.Deleted);
             if (category == null)
                 throw new UserFriendlyException(ErrorCode.ProductCategoryNotFound);
+
+            // 2. Delegate về hàm cũ để xử lý paging
             return await FindAllByCategoryId(input, category.Id);
         }
+
         public async Task<DetailProductDto> FindById(int id)
         {
             _logger.LogInformation($"{nameof(FindById)}: id = {id}");
 
             var product = await _dbContext.Products
-                .Where(p => p.Id == id && !p.Deleted)
-                .Select(p => new DetailProductDto
+                .Where(n => n.Id == id && !n.Deleted)
+                .Select(n => new DetailProductDto
                 {
-                    Id = p.Id,
-                    NameVi = p.NameVi,
-                    NameEn = p.NameEn,
-                    SlugVi = p.SlugVi,
-                    SlugEn = p.SlugEn,
-                    DescriptionVi = p.DescriptionVi,
-                    DescriptionEn = p.DescriptionEn,
-                    ContentVi = p.ContentVi,
-                    ContentEn = p.ContentEn,
-                    TimePosted = p.TimePosted,
-                    Status = p.Status,
-                    ProductCategoryId = p.ProductCategoryId,
-                    ProductCategoryName = p.ProductCategory.NameVi,
-                    ProductCategorySlug = p.ProductCategory.SlugVi,
-                    ImageUrl = p.ImageUrl
+                    Id = n.Id,
+                    SlugVi = n.SlugVi,
+                    TitleVi = n.TitleVi,
+                    DescriptionVi = n.DescriptionVi,
+                    ContentVi = n.ContentVi,
+                    SlugEn = n.SlugEn,
+                    TitleEn = n.TitleEn,
+                    DescriptionEn = n.DescriptionEn,
+                    ContentEn = n.ContentEn,
+                    TimePosted = n.TimePosted,
+                    Status = n.Status,
+                    ProductCategoryId = n.ProductCategoryId,
+                    ProductCategoryTitleVi = n.ProductCategory.TitleVi,
+                    ProductCategoryTitleEn = n.ProductCategory.TitleEn,
+                    ProductCategorySlugVi = n.ProductCategory.SlugVi,
+                    ProductCategorySlugEn = n.ProductCategory.SlugEn,
+                    IsOutstanding = n.IsOutstanding,
+                    ImageUrl = n.ImageUrl
                 })
                 .FirstOrDefaultAsync();
 
             if (product == null)
+            {
                 throw new UserFriendlyException(ErrorCode.ProductNotFound);
+            }
+
+            // Load attachments
+            var attachments = await _dbContext.Attachments
+                .Where(a => a.ObjectType == ObjectType.Product && a.ObjectId == id && !a.Deleted)
+                .Select(a => new AttachmentDto
+                {
+                    Id = a.Id,
+                    FilePath = a.FilePath,
+                    Url = a.Url,
+                    OriginalFileName = a.OriginalFileName,
+                    FileSize = a.FileSize,
+                    ContentType = a.ContentType,
+                    ObjectType = a.ObjectType,
+                    ObjectId = a.ObjectId,
+                    RelationType = a.RelationType,
+                    IsPrimary = a.IsPrimary,
+                    IsContentImage = a.IsContentImage,
+                    IsTemporary = a.IsTemporary,
+                    CreatedDate = a.CreatedDate
+                })
+                .ToListAsync();
+
+            // Group attachments by type
+            product.Attachments = new AttachmentsGroupDto
+            {
+                Images = attachments.Where(a => a.ContentType.StartsWith("image/") && !a.IsPrimary && !a.IsContentImage).ToList(),
+                Documents = attachments.Where(a => !a.ContentType.StartsWith("image/")).ToList()
+            };
 
             return product;
         }
@@ -278,29 +509,60 @@ namespace AttechServer.Applications.UserModules.Implements
         {
             _logger.LogInformation($"{nameof(FindBySlug)}: slug = {slug}");
             var product = await _dbContext.Products
-                .Where(p => (p.SlugVi == slug || p.SlugEn == slug) && !p.Deleted)
-                .Select(p => new DetailProductDto
+                .Where(n => (n.SlugVi == slug || n.SlugEn == slug) && !n.Deleted)
+                .Select(n => new DetailProductDto
                 {
-                    Id = p.Id,
-                    NameVi = p.NameVi,
-                    NameEn = p.NameEn,
-                    SlugVi = p.SlugVi,
-                    SlugEn = p.SlugEn,
-                    DescriptionVi = p.DescriptionVi,
-                    DescriptionEn = p.DescriptionEn,
-                    ContentVi = p.ContentVi,
-                    ContentEn = p.ContentEn,
-                    TimePosted = p.TimePosted,
-                    Status = p.Status,
-                    ProductCategoryId = p.ProductCategoryId,
-                    ProductCategoryName = p.ProductCategory.NameVi,
-                    ProductCategorySlug = p.ProductCategory.SlugVi,
-                    ImageUrl = p.ImageUrl
+                    Id = n.Id,
+                    TitleVi = n.TitleVi,
+                    TitleEn = n.TitleEn,
+                    SlugVi = n.SlugVi,
+                    SlugEn = n.SlugEn,
+                    DescriptionVi = n.DescriptionVi,
+                    DescriptionEn = n.DescriptionEn,
+                    ContentVi = n.ContentVi,
+                    ContentEn = n.ContentEn,
+                    TimePosted = n.TimePosted,
+                    Status = n.Status,
+                    ProductCategoryId = n.ProductCategoryId,
+                    ProductCategoryTitleVi = n.ProductCategory.TitleVi,
+                    ProductCategoryTitleEn = n.ProductCategory.TitleEn,
+                    ProductCategorySlugVi = n.ProductCategory.SlugVi,
+                    ProductCategorySlugEn = n.ProductCategory.SlugEn,
+                    IsOutstanding = n.IsOutstanding,
+                    ImageUrl = n.ImageUrl
                 })
                 .FirstOrDefaultAsync();
 
             if (product == null)
                 throw new UserFriendlyException(ErrorCode.ProductNotFound);
+
+            // Load attachments
+            var attachments = await _dbContext.Attachments
+                .Where(a => a.ObjectType == ObjectType.Product && a.ObjectId == product.Id && !a.Deleted)
+                .Select(a => new AttachmentDto
+                {
+                    Id = a.Id,
+                    FilePath = a.FilePath,
+                    Url = a.Url,
+                    OriginalFileName = a.OriginalFileName,
+                    FileSize = a.FileSize,
+                    ContentType = a.ContentType,
+                    ObjectType = a.ObjectType,
+                    ObjectId = a.ObjectId,
+                    RelationType = a.RelationType,
+                    IsPrimary = a.IsPrimary,
+                    IsContentImage = a.IsContentImage,
+                    IsTemporary = a.IsTemporary,
+                    CreatedDate = a.CreatedDate
+                })
+                .ToListAsync();
+
+            // Group attachments by type
+            product.Attachments = new AttachmentsGroupDto
+            {
+                Images = attachments.Where(a => a.ContentType.StartsWith("image/") && !a.IsPrimary && !a.IsContentImage).ToList(),
+                Documents = attachments.Where(a => !a.ContentType.StartsWith("image/")).ToList()
+            };
 
             return product;
         }
@@ -308,74 +570,155 @@ namespace AttechServer.Applications.UserModules.Implements
         public async Task<ProductDto> Update(UpdateProductDto input)
         {
             _logger.LogInformation($"{nameof(Update)}: input = {JsonSerializer.Serialize(input)}");
-            var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == input.Id && !p.Deleted)
-                ?? throw new UserFriendlyException(ErrorCode.ProductNotFound);
             using (var transaction = await _dbContext.Database.BeginTransactionAsync())
             {
                 try
                 {
                     // Validate input
-                    if (string.IsNullOrWhiteSpace(input.NameVi) || string.IsNullOrWhiteSpace(input.SlugVi) || string.IsNullOrWhiteSpace(input.ContentVi))
+                    if (string.IsNullOrWhiteSpace(input.TitleVi) || string.IsNullOrWhiteSpace(input.ContentVi))
                     {
-                        throw new ArgumentException("Tên, Slug (VI) và nội dung là bắt buộc.");
+                        throw new ArgumentException("Tiêu đề và nội dung là bắt buộc.");
                     }
-                    if (string.IsNullOrWhiteSpace(input.NameEn) || string.IsNullOrWhiteSpace(input.SlugEn) || string.IsNullOrWhiteSpace(input.ContentEn))
-                    {
-                        throw new ArgumentException("Tên, Slug (EN) và nội dung là bắt buộc.");
-                    }
-                    if (input.DescriptionVi.Length > 160)
-                    {
-                        input.DescriptionVi = input.DescriptionVi.Substring(0, 157) + "...";
-                    }
-                    if (input.DescriptionEn.Length > 160)
-                    {
-                        input.DescriptionEn = input.DescriptionEn.Substring(0, 157) + "...";
-                    }
-
-                    if (input.TimePosted > DateTime.UtcNow)
+                    if (input.TimePosted > DateTime.Now)
                     {
                         throw new ArgumentException("Thời gian đăng bài không phù hợp.");
                     }
 
-                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value, out var id) ? id : 0;
-                    var sanitizer = new HtmlSanitizer();
-                    var safeContentVi = sanitizer.Sanitize(input.ContentVi);
-                    var safeContentEn = sanitizer.Sanitize(input.ContentEn);
+                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("user_id")?.Value, out var id) ? id : 0;
 
-                    // Kiểm tra trùng slug (trừ chính nó)
-                    var slugViExists = await _dbContext.Products.AnyAsync(p => p.SlugVi == input.SlugVi && !p.Deleted && p.Id != input.Id);
-                    if (slugViExists)
+                    // Kiểm tra product tồn tại
+                    var product = await _dbContext.Products
+                        .FirstOrDefaultAsync(n => n.Id == input.Id && !n.Deleted)
+                        ?? throw new UserFriendlyException(ErrorCode.ProductNotFound);
+
+                    // Check for duplicate titles (excluding current record)
+                    var titleViExists = await _dbContext.Products.AnyAsync(n => n.TitleVi == input.TitleVi && n.Id != input.Id && !n.Deleted);
+                    if (titleViExists)
                     {
-                        throw new ArgumentException("Slug VI đã tồn tại.");
-                    }
-                    var slugEnExists = await _dbContext.Products.AnyAsync(p => p.SlugEn == input.SlugEn && !p.Deleted && p.Id != input.Id);
-                    if (slugEnExists)
-                    {
-                        throw new ArgumentException("Slug EN đã tồn tại.");
+                        throw new ArgumentException("Tiêu đề tiếng Việt đã tồn tại.");
                     }
 
-                    product.NameVi = input.NameVi;
-                    product.NameEn = input.NameEn;
+                    if (!string.IsNullOrEmpty(input.TitleEn))
+                    {
+                        var titleEnExists = await _dbContext.Products.AnyAsync(n => n.TitleEn == input.TitleEn && n.Id != input.Id && !n.Deleted);
+                        if (titleEnExists)
+                        {
+                            throw new ArgumentException("Tiêu đề tiếng Anh đã tồn tại.");
+                        }
+                    }
+
+                    // Kiểm tra danh mục
+                    var category = await _dbContext.ProductCategories
+                        .Where(c => c.Id == input.ProductCategoryId && !c.Deleted)
+                        .Select(c => new { c.Id, c.TitleVi, c.TitleEn, c.SlugVi, c.SlugEn })
+                        .FirstOrDefaultAsync();
+                    if (category == null)
+                    {
+                        throw new UserFriendlyException(ErrorCode.ProductCategoryNotFound);
+                    }
+
+                    // Xóa các file cũ trong content nếu content thay đổi
+                    if (product.ContentVi != input.ContentVi)
+                    {
+                        await _wysiwygFileProcessor.DeleteFilesAsync(ObjectType.Product, product.Id);
+                    }
+
+                    product.TitleVi = input.TitleVi;
+                    product.TitleEn = input.TitleEn;
                     product.SlugVi = input.SlugVi;
                     product.SlugEn = input.SlugEn;
                     product.DescriptionVi = input.DescriptionVi;
                     product.DescriptionEn = input.DescriptionEn;
-                    product.ContentVi = safeContentVi;
-                    product.ContentEn = safeContentEn;
-                    product.TimePosted = input.TimePosted;
+                    product.ContentVi = input.ContentVi;
+                    product.ContentEn = input.ContentEn;
                     product.ProductCategoryId = input.ProductCategoryId;
-                    product.ImageUrl = input.ImageUrl ?? string.Empty;
-                    product.ModifiedDate = DateTime.UtcNow;
+                    product.TimePosted = input.TimePosted;
+                    product.Status = input.Status;
+                    product.IsOutstanding = input.IsOutstanding;
                     product.ModifiedBy = userId;
 
+                    // Simple attachment update logic - compare current vs desired state
+                    var currentGalleryAttachmentIds = await _attachmentService.GetCurrentGalleryAttachmentIdsAsync(ObjectType.Product, product.Id);
+                    var currentFeaturedImageId = await _attachmentService.GetCurrentFeaturedImageIdAsync(ObjectType.Product, product.Id);
+                    
+                    var desiredGalleryAttachmentIds = (input.AttachmentIds ?? new List<int>()).OrderBy(x => x).ToList();
+                    var desiredFeaturedImageId = input.FeaturedImageId;
+                    
+                    // Check if gallery attachments changed
+                    bool galleryChanged = !currentGalleryAttachmentIds.SequenceEqual(desiredGalleryAttachmentIds);
+                    bool featuredImageChanged = currentFeaturedImageId != desiredFeaturedImageId;
+                    
+                    // Check if content has new temp files
+                    bool hasNewContentFiles = _wysiwygFileProcessor.HasTempFilesInContent(product.ContentVi) || 
+                                             _wysiwygFileProcessor.HasTempFilesInContent(product.ContentEn ?? string.Empty);
+                    
+                    if (galleryChanged || featuredImageChanged || hasNewContentFiles)
+                    {
+                        // Something changed → Soft delete ALL old attachments and recreate
+                        await _attachmentService.SoftDeleteEntityAttachmentsAsync(ObjectType.Product, product.Id);
+                        
+                        // Process content attachments first - extract unique IDs
+                        var contentAttachmentIds = await _wysiwygFileProcessor.ExtractUniqueAttachmentIdsAsync(product.ContentVi, product.ContentEn);
+                        if (contentAttachmentIds.Any())
+                        {
+                            await _attachmentService.AssociateAttachmentsAsync(contentAttachmentIds, ObjectType.Product, product.Id, isFeaturedImage: false, isContentImage: true);
+                        }
+                        
+                        // Process both content - now attachments are permanent
+                        var (processedContentVi, fileEntriesVi) = await _wysiwygFileProcessor.ProcessContentAsync(product.ContentVi, ObjectType.Product, product.Id);
+                        var (processedContentEn, fileEntriesEn) = await _wysiwygFileProcessor.ProcessContentAsync(product.ContentEn, ObjectType.Product, product.Id);
+                        
+                        // Update content with processed paths
+                        product.ContentVi = processedContentVi;
+                        product.ContentEn = processedContentEn;
+                        
+                        // Handle gallery attachments - exclude content attachments
+                        if (desiredGalleryAttachmentIds.Any())
+                        {
+                            // Gallery attachments = desiredGalleryAttachmentIds - contentAttachmentIds (to avoid duplicates)
+                            var pureGalleryAttachmentIds = desiredGalleryAttachmentIds.Except(contentAttachmentIds).ToList();
+                            if (pureGalleryAttachmentIds.Any())
+                            {
+                                await _attachmentService.AssociateAttachmentsAsync(pureGalleryAttachmentIds, ObjectType.Product, product.Id, isFeaturedImage: false, isContentImage: false);
+                                _logger.LogInformation($"Updated {pureGalleryAttachmentIds.Count} gallery attachments for product ID: {product.Id}");
+                            }
+                        }
+                        
+                        // Handle featured image
+                        if (desiredFeaturedImageId.HasValue)
+                        {
+                            try
+                            {
+                                await _attachmentService.AssociateAttachmentsAsync(new List<int> { desiredFeaturedImageId.Value }, ObjectType.Product, product.Id, isFeaturedImage: true, isContentImage: false);
+                                _logger.LogInformation($"Updated featured image {desiredFeaturedImageId.Value} for product ID: {product.Id}");
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.LogError(ex, $"Error finalizing featured image for product ID: {product.Id}");
+                                throw new UserFriendlyException(ErrorCode.InvalidClientRequest);
+                            }
+                        }
+                        else
+                        {
+                            // Clear featured image if not provided
+                            product.FeaturedImageId = null;
+                            product.ImageUrl = string.Empty;
+                        }
+                    }
+                    // If nothing changed → keep everything as is
+
                     await _dbContext.SaveChangesAsync();
+
+                    // Log activity
+                    await _activityLogService.LogAsync("PRODUCT_UPDATE", "Cập nhật sản phẩm", product.TitleVi, "Info");
+
                     await transaction.CommitAsync();
 
                     return new ProductDto
                     {
                         Id = product.Id,
-                        NameVi = product.NameVi,
-                        NameEn = product.NameEn,
+                        TitleVi = product.TitleVi,
+                        TitleEn = product.TitleEn,
                         SlugVi = product.SlugVi,
                         SlugEn = product.SlugEn,
                         DescriptionVi = product.DescriptionVi,
@@ -383,27 +726,40 @@ namespace AttechServer.Applications.UserModules.Implements
                         TimePosted = product.TimePosted,
                         Status = product.Status,
                         ProductCategoryId = product.ProductCategoryId,
-                        ProductCategoryName = product.ProductCategory.NameVi,
-                        ProductCategorySlug = product.ProductCategory.SlugVi,
+                        ProductCategoryTitleVi = category.TitleVi,
+                        ProductCategoryTitleEn = category.TitleEn,
+                        ProductCategorySlugVi = category.SlugVi,
+                        ProductCategorySlugEn = category.SlugEn,
+                        IsOutstanding = product.IsOutstanding,
                         ImageUrl = product.ImageUrl
                     };
                 }
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    _logger.LogError(ex, "Error updating Product");
+                    _logger.LogError(ex, $"Error updating product with id = {input.Id}");
                     throw;
+                }
+                finally
+                {
+                    // Temp files will be cleaned by background service
                 }
             }
         }
 
-        public async Task UpdateStatusProduct(int id, int status)
+        private string SanitizeContent(string content)
         {
-            _logger.LogInformation($"{nameof(UpdateStatusProduct)}: Id = {id}, status = {status}");
-            var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == id && !p.Deleted)
-                ?? throw new UserFriendlyException(ErrorCode.ProductNotFound);
-            product.Status = status;
-            await _dbContext.SaveChangesAsync();
+            if (string.IsNullOrEmpty(content)) return string.Empty;
+
+            var sanitizer = new HtmlSanitizer();
+            sanitizer.AllowedTags.Add("img");
+            sanitizer.AllowedAttributes.Add("src");
+            sanitizer.AllowedAttributes.Add("alt");
+            sanitizer.AllowedAttributes.Add("class");
+
+            return sanitizer.Sanitize(content);
         }
+
+
     }
 }

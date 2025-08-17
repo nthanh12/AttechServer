@@ -1,4 +1,4 @@
-﻿using AttechServer.Shared.Consts;
+using AttechServer.Shared.Consts;
 
 namespace AttechServer.Applications.UserModules.Dtos.Role
 {
@@ -6,15 +6,16 @@ namespace AttechServer.Applications.UserModules.Dtos.Role
     {
         public int Id { get; set; }
         public string Name { get; set; } = null!;
-        /// <summary>
-        /// Trạng thái role
-        /// <see cref="CommonStatus"/>
-        /// </summary>
-        public int Status { get; set; }
-        /// <summary>
-        /// Số người sử dụng
-        /// </summary>
-        //public int CountUserUsing {  get; set; }
+        public string? Description { get; set; }
 
+        public int Status { get; set; }
+
+        public int UserCount { get; set; }
+
+        public int PermissionCount { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+
+        public DateTime? UpdatedAt { get; set; }
     }
 }

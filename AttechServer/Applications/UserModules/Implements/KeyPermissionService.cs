@@ -1,4 +1,4 @@
-﻿using AttechServer.Applications.UserModules.Abstracts;
+using AttechServer.Applications.UserModules.Abstracts;
 using AttechServer.Applications.UserModules.Dtos.ConfigPermission;
 using AttechServer.Applications.UserModules.Dtos.Permission.KeyPermission;
 using AttechServer.Domains.Entities;
@@ -375,9 +375,9 @@ namespace AttechServer.Applications.UserModules.Implements
             }
         }
 
-        public async Task<PagingResult<PermissionApiDto>> GetAllPermissionApi(PermissionApiRequestDto input)
+        public async Task<PagingResult<PermissionApiDto>> GetAllApiPermissions(PermissionApiRequestDto input)
         {
-            _logger.LogInformation($"{nameof(GetAllPermissionApi)}: input = {JsonSerializer.Serialize(input)}");
+            _logger.LogInformation($"{nameof(GetAllApiPermissions)}: input = {JsonSerializer.Serialize(input)}");
 
             var query = _dbContext.ApiEndpoints
                 .AsNoTracking()
@@ -417,9 +417,9 @@ namespace AttechServer.Applications.UserModules.Implements
             };
         }
 
-        public async Task<PermissionApiDetailDto> GetPermissionApiById(int id)
+        public async Task<PermissionApiDetailDto> GetApiPermissionById(int id)
         {
-            _logger.LogInformation($"{nameof(GetPermissionApiById)}: id = {id}");
+            _logger.LogInformation($"{nameof(GetApiPermissionById)}: id = {id}");
 
             var result = await _dbContext.ApiEndpoints
                 .Include(a => a.PermissionForApiEndpoints)

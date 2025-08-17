@@ -1,9 +1,9 @@
-﻿using AttechServer.Shared.Consts.Exceptions;
+using AttechServer.Shared.Consts.Exceptions;
 using AttechServer.Shared.Consts;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 using AttechServer.Applications.UserModules.Abstracts;
-using AttechServer.Shared.AppicationBase.Common;
+using AttechServer.Shared.ApplicationBase.Common;
 
 namespace AttechServer.Shared.Filters
 {
@@ -30,8 +30,8 @@ namespace AttechServer.Shared.Filters
         public void OnAuthorization(AuthorizationFilterContext context)
         {
             GetServices(context);
-            var userType = _httpContext!.GetCurrentUserType();
-            if (userType == UserTypes.ADMIN)
+            var userType = _httpContext!.GetCurrentUserLevel();
+            if (userType == UserLevels.SYSTEM || userType == UserLevels.MANAGER)
             {
                 return;
             }

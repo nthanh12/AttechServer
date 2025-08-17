@@ -1,4 +1,4 @@
-﻿namespace AttechServer.Domains.EntityBase
+namespace AttechServer.Domains.EntityBase
 {
     public class Entity<TKey> : IEntity<TKey>
     {

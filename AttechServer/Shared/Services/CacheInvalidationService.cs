@@ -8,7 +8,6 @@ namespace AttechServer.Shared.Services
         Task InvalidateServiceCacheAsync(); 
         Task InvalidateNewsCacheAsync();
         Task InvalidateNotificationCacheAsync();
-        Task InvalidateMenuCacheAsync();
         Task InvalidateCategoryCacheAsync(string type);
     }
 
@@ -54,7 +53,7 @@ namespace AttechServer.Shared.Services
             try
             {
                 await _cacheService.RemoveByPatternAsync("news:.*");
-                await _cacheService.RemoveByPatternAsync("posts:.*:News:.*");
+
                 _logger.LogInformation("News cache invalidated");
             }
             catch (Exception ex)
@@ -68,7 +67,7 @@ namespace AttechServer.Shared.Services
             try
             {
                 await _cacheService.RemoveByPatternAsync("notifications:.*");
-                await _cacheService.RemoveByPatternAsync("posts:.*:Notification:.*");
+
                 _logger.LogInformation("Notification cache invalidated");
             }
             catch (Exception ex)
@@ -77,18 +76,6 @@ namespace AttechServer.Shared.Services
             }
         }
 
-        public async Task InvalidateMenuCacheAsync()
-        {
-            try
-            {
-                await _cacheService.RemoveByPatternAsync("menu:.*");
-                _logger.LogInformation("Menu cache invalidated");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error invalidating menu cache");
-            }
-        }
 
         public async Task InvalidateCategoryCacheAsync(string type)
         {

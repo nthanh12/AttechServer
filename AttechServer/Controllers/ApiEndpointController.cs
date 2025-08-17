@@ -23,7 +23,7 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Lấy danh sách tất cả API Endpoint
+        /// Get api endpoint list
         /// </summary>
         [HttpGet("find-all")]
         [PermissionFilter(PermissionKeys.ViewApiEndpoints)]
@@ -40,7 +40,7 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Lấy thông tin API Endpoint theo ID
+        /// Get API Endpoint by ID
         /// </summary>
         [HttpGet("find-by-id/{id}")]
         [PermissionFilter(PermissionKeys.ViewApiEndpoints)]
@@ -57,10 +57,10 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Tạo mới API Endpoint
+        /// Create new API Endpoint
         /// </summary>
         [HttpPost("create")]
-        [PermissionFilter("Create API Endpoint")]
+        [PermissionFilter(PermissionKeys.CreateApiEndpoint)]
         public async Task<ApiResponse> Create([FromBody] CreateApiEndpointDto input)
         {
             try
@@ -75,10 +75,10 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Cập nhật API Endpoint
+        /// Update API Endpoint
         /// </summary>
         [HttpPut("update")]
-        [PermissionFilter("Edit API Endpoint")]
+        [PermissionFilter(PermissionKeys.EditApiEndpoint)]
         public async Task<ApiResponse> Update([FromBody] UpdateApiEndpointDto input)
         {
             try
@@ -93,10 +93,10 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Xóa API Endpoint
+        /// Delete API Endpoint
         /// </summary>
         [HttpDelete("delete/{id}")]
-        [PermissionFilter("Delete API Endpoint")]
+        [PermissionFilter(PermissionKeys.DeleteApiEndpoint)]
         public async Task<ApiResponse> Delete(int id)
         {
             try

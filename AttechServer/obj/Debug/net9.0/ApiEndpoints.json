@@ -124,6 +124,156 @@
     ]
   },
   {
+    "ContainingType": "AttechServer.Controllers.AttachmentController",
+    "Method": "UploadTemp",
+    "RelativePath": "api/attachments",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "File",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      },
+      {
+        "Name": "RelationType",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.AttachmentController",
+    "Method": "GetFile",
+    "RelativePath": "api/attachments/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.AttachmentController",
+    "Method": "Delete",
+    "RelativePath": "api/attachments/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.AttachmentController",
+    "Method": "AssociateAttachments",
+    "RelativePath": "api/attachments/associate",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "input",
+        "Type": "AttechServer.Applications.UserModules.Dtos.Attachment.AttachAssociationDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.AttachmentController",
+    "Method": "CleanupTempFiles",
+    "RelativePath": "api/attachments/cleanup",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.AttachmentController",
+    "Method": "GetByEntity",
+    "RelativePath": "api/attachments/entity/{objectType}/{objectId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "objectType",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "objectId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "AttechServer.Controllers.AuthController",
     "Method": "Login",
     "RelativePath": "api/auth/login",
@@ -137,6 +287,46 @@
         "IsRequired": true
       }
     ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.AuthController",
+    "Method": "Logout",
+    "RelativePath": "api/auth/logout",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.AuthController",
+    "Method": "GetCurrentUser",
+    "RelativePath": "api/auth/me",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
     "ReturnTypes": [
       {
         "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
@@ -202,165 +392,139 @@
     ]
   },
   {
-    "ContainingType": "AttechServer.Controllers.MediaController",
-    "Method": "DeleteByEntity",
-    "RelativePath": "api/media/delete-by-entity/{entityType}/{entityId}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "entityType",
-        "Type": "System.String",
-        "IsRequired": true
-      },
-      {
-        "Name": "entityId",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "AttechServer.Controllers.MediaController",
-    "Method": "Delete",
-    "RelativePath": "api/media/delete/{id}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "AttechServer.Controllers.MediaController",
-    "Method": "FindAll",
-    "RelativePath": "api/media/find-all",
+    "ContainingType": "AttechServer.Controllers.DashboardController",
+    "Method": "GetRecentActivities",
+    "RelativePath": "api/Dashboard/activities",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "pageSize",
+        "Name": "limit",
         "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "pageNumber",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "keyword",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Sort",
-        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
+    "ReturnTypes": []
   },
   {
-    "ContainingType": "AttechServer.Controllers.MediaController",
-    "Method": "FindByEntity",
-    "RelativePath": "api/media/find-by-entity/{entityType}/{entityId}",
+    "ContainingType": "AttechServer.Controllers.DashboardController",
+    "Method": "GetAllDashboardData",
+    "RelativePath": "api/Dashboard/all",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.DashboardController",
+    "Method": "GetChartData",
+    "RelativePath": "api/Dashboard/charts/{chartType}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "entityType",
+        "Name": "chartType",
         "Type": "System.String",
         "IsRequired": true
-      },
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.DashboardController",
+    "Method": "GetContentStatistics",
+    "RelativePath": "api/Dashboard/content",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.DashboardController",
+    "Method": "GetSystemHealth",
+    "RelativePath": "api/Dashboard/health",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.DashboardController",
+    "Method": "GetSystemMonitoring",
+    "RelativePath": "api/Dashboard/monitoring",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
       {
-        "Name": "entityId",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "pageSize",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "pageNumber",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "keyword",
+        "Name": "category",
         "Type": "System.String",
         "IsRequired": false
       },
       {
-        "Name": "Sort",
-        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "Name": "hours",
+        "Type": "System.Int32",
         "IsRequired": false
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
+    "ReturnTypes": []
   },
   {
-    "ContainingType": "AttechServer.Controllers.MenuController",
+    "ContainingType": "AttechServer.Controllers.DashboardController",
+    "Method": "GetDashboardOverview",
+    "RelativePath": "api/Dashboard/overview",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.DashboardController",
+    "Method": "GetRealtimeData",
+    "RelativePath": "api/Dashboard/realtime",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.DashboardController",
+    "Method": "GetSystemStatistics",
+    "RelativePath": "api/Dashboard/system",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.DashboardController",
+    "Method": "GetUserStatistics",
+    "RelativePath": "api/Dashboard/users",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.NewsCategoryController",
     "Method": "Create",
-    "RelativePath": "api/menu/create",
+    "RelativePath": "api/news-category/create",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "input",
-        "Type": "AttechServer.Applications.UserModules.Dtos.Menu.CreateMenuDto",
+        "Type": "AttechServer.Applications.UserModules.Dtos.NewsCategory.CreateNewsCategoryDto",
         "IsRequired": true
       }
     ],
@@ -377,153 +541,9 @@
     ]
   },
   {
-    "ContainingType": "AttechServer.Controllers.MenuController",
+    "ContainingType": "AttechServer.Controllers.NewsCategoryController",
     "Method": "Delete",
-    "RelativePath": "api/menu/delete/{id}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "AttechServer.Controllers.MenuController",
-    "Method": "FindAll",
-    "RelativePath": "api/menu/find-all",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "AttechServer.Controllers.MenuController",
-    "Method": "FindById",
-    "RelativePath": "api/menu/find-by-id/{id}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "AttechServer.Controllers.MenuController",
-    "Method": "GetTree",
-    "RelativePath": "api/menu/tree",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "AttechServer.Controllers.MenuController",
-    "Method": "Update",
-    "RelativePath": "api/menu/update",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "input",
-        "Type": "AttechServer.Applications.UserModules.Dtos.Menu.UpdateMenuDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IPostCategoryService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.PostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.DetailPostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.CreatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-    "Method": "Create",
-    "RelativePath": "api/news-categories/create",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "input",
-        "Type": "AttechServer.Applications.UserModules.Dtos.PostCategory.CreatePostCategoryDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IPostCategoryService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.PostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.DetailPostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.CreatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-    "Method": "Delete",
-    "RelativePath": "api/news-categories/delete/{id}",
+    "RelativePath": "api/news-category/delete/{id}",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
@@ -548,8 +568,152 @@
   },
   {
     "ContainingType": "AttechServer.Controllers.NewsCategoryController",
-    "Method": "FindBySlug",
-    "RelativePath": "api/news-categories/detail/{slug}",
+    "Method": "FindAll",
+    "RelativePath": "api/news-category/find-all",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "keyword",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Sort",
+        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.NewsCategoryController",
+    "Method": "FindById",
+    "RelativePath": "api/news-category/find-by-id/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.NewsCategoryController",
+    "Method": "Update",
+    "RelativePath": "api/news-category/update",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "input",
+        "Type": "AttechServer.Applications.UserModules.Dtos.NewsCategory.UpdateNewsCategoryDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.NewsController",
+    "Method": "GetAlbums",
+    "RelativePath": "api/news/albums",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "keyword",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Sort",
+        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.NewsController",
+    "Method": "GetAlbumBySlug",
+    "RelativePath": "api/news/albums/slug/{slug}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -557,125 +721,6 @@
       {
         "Name": "slug",
         "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "AttechServer.Controllers.NewsCategoryController",
-    "Method": "FindAll",
-    "RelativePath": "api/news-categories/find-all",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "pageSize",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "pageNumber",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "keyword",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Sort",
-        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "AttechServer.Controllers.NewsCategoryController",
-    "Method": "FindById",
-    "RelativePath": "api/news-categories/find-by-id/{id}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IPostCategoryService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.PostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.DetailPostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.CreatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-    "Method": "Update",
-    "RelativePath": "api/news-categories/update",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "input",
-        "Type": "AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IPostCategoryService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.PostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.DetailPostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.CreatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-    "Method": "UpdateStatus",
-    "RelativePath": "api/news-categories/update-status",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "input",
-        "Type": "AttechServer.Applications.UserModules.Dtos.UpdateStatusDto",
         "IsRequired": true
       }
     ],
@@ -706,6 +751,11 @@
       },
       {
         "Name": "pageNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Page",
         "Type": "System.Int32",
         "IsRequired": false
       },
@@ -747,8 +797,49 @@
     "Parameters": [
       {
         "Name": "input",
-        "Type": "AttechServer.Applications.UserModules.Dtos.Post.CreatePostDto",
+        "Type": "AttechServer.Applications.UserModules.Dtos.News.CreateNewsDto",
         "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.NewsController",
+    "Method": "CreateAlbum",
+    "RelativePath": "api/news/create-album",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "TitleVi",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "TitleEn",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "NewsCategoryId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "AttachmentIds",
+        "Type": "System.Collections.Generic.List\u00601[[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -834,6 +925,11 @@
         "IsRequired": false
       },
       {
+        "Name": "Page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
         "Name": "keyword",
         "Type": "System.String",
         "IsRequired": false
@@ -884,6 +980,32 @@
   },
   {
     "ContainingType": "AttechServer.Controllers.NewsController",
+    "Method": "GetGalleryBySlug",
+    "RelativePath": "api/news/gallery/{slug}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "slug",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.NewsController",
     "Method": "Update",
     "RelativePath": "api/news/update",
     "HttpMethod": "PUT",
@@ -892,7 +1014,7 @@
     "Parameters": [
       {
         "Name": "input",
-        "Type": "AttechServer.Applications.UserModules.Dtos.Post.UpdatePostDto",
+        "Type": "AttechServer.Applications.UserModules.Dtos.News.UpdateNewsDto",
         "IsRequired": true
       }
     ],
@@ -909,42 +1031,16 @@
     ]
   },
   {
-    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IPostService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Post.PostDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Post.DetailPostDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Post.CreatePostDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Post.UpdatePostDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-    "Method": "UpdateStatus",
-    "RelativePath": "api/news/update-status",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "input",
-        "Type": "AttechServer.Applications.UserModules.Dtos.UpdateStatusDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IPostCategoryService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.PostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.DetailPostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.CreatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+    "ContainingType": "AttechServer.Controllers.NotificationCategoryController",
     "Method": "Create",
-    "RelativePath": "api/notification-categories/create",
+    "RelativePath": "api/notification-category/create",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "input",
-        "Type": "AttechServer.Applications.UserModules.Dtos.PostCategory.CreatePostCategoryDto",
+        "Type": "AttechServer.Applications.UserModules.Dtos.NotificationCategory.CreateNotificationCategoryDto",
         "IsRequired": true
       }
     ],
@@ -961,9 +1057,9 @@
     ]
   },
   {
-    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IPostCategoryService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.PostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.DetailPostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.CreatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+    "ContainingType": "AttechServer.Controllers.NotificationCategoryController",
     "Method": "Delete",
-    "RelativePath": "api/notification-categories/delete/{id}",
+    "RelativePath": "api/notification-category/delete/{id}",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
@@ -988,34 +1084,8 @@
   },
   {
     "ContainingType": "AttechServer.Controllers.NotificationCategoryController",
-    "Method": "FindBySlug",
-    "RelativePath": "api/notification-categories/detail/{slug}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "slug",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "AttechServer.Controllers.NotificationCategoryController",
     "Method": "FindAll",
-    "RelativePath": "api/notification-categories/find-all",
+    "RelativePath": "api/notification-category/find-all",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1027,6 +1097,11 @@
       },
       {
         "Name": "pageNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Page",
         "Type": "System.Int32",
         "IsRequired": false
       },
@@ -1056,7 +1131,7 @@
   {
     "ContainingType": "AttechServer.Controllers.NotificationCategoryController",
     "Method": "FindById",
-    "RelativePath": "api/notification-categories/find-by-id/{id}",
+    "RelativePath": "api/notification-category/find-by-id/{id}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1080,42 +1155,16 @@
     ]
   },
   {
-    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IPostCategoryService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.PostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.DetailPostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.CreatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+    "ContainingType": "AttechServer.Controllers.NotificationCategoryController",
     "Method": "Update",
-    "RelativePath": "api/notification-categories/update",
+    "RelativePath": "api/notification-category/update",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "input",
-        "Type": "AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IPostCategoryService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.PostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.DetailPostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.CreatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.PostCategory.UpdatePostCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-    "Method": "UpdateStatus",
-    "RelativePath": "api/notification-categories/update-status",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "input",
-        "Type": "AttechServer.Applications.UserModules.Dtos.UpdateStatusDto",
+        "Type": "AttechServer.Applications.UserModules.Dtos.NotificationCategory.UpdateNotificationCategoryDto",
         "IsRequired": true
       }
     ],
@@ -1146,6 +1195,11 @@
       },
       {
         "Name": "pageNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Page",
         "Type": "System.Int32",
         "IsRequired": false
       },
@@ -1187,7 +1241,7 @@
     "Parameters": [
       {
         "Name": "input",
-        "Type": "AttechServer.Applications.UserModules.Dtos.Post.CreatePostDto",
+        "Type": "AttechServer.Applications.UserModules.Dtos.Notification.CreateNotificationDto",
         "IsRequired": true
       }
     ],
@@ -1274,6 +1328,11 @@
         "IsRequired": false
       },
       {
+        "Name": "Page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
         "Name": "keyword",
         "Type": "System.String",
         "IsRequired": false
@@ -1332,33 +1391,7 @@
     "Parameters": [
       {
         "Name": "input",
-        "Type": "AttechServer.Applications.UserModules.Dtos.Post.UpdatePostDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IPostService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Post.PostDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Post.DetailPostDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Post.CreatePostDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Post.UpdatePostDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-    "Method": "UpdateStatus",
-    "RelativePath": "api/notification/update-status",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "input",
-        "Type": "AttechServer.Applications.UserModules.Dtos.UpdateStatusDto",
+        "Type": "AttechServer.Applications.UserModules.Dtos.Notification.UpdateNotificationDto",
         "IsRequired": true
       }
     ],
@@ -1549,6 +1582,11 @@
         "IsRequired": false
       },
       {
+        "Name": "Page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
         "Name": "keyword",
         "Type": "System.String",
         "IsRequired": false
@@ -1684,9 +1722,9 @@
     ]
   },
   {
-    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IProductCategoryService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.ProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.DetailProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.CreateProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.UpdateProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+    "ContainingType": "AttechServer.Controllers.ProductCategoryController",
     "Method": "Create",
-    "RelativePath": "api/product-categories/create",
+    "RelativePath": "api/product-category/create",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -1710,9 +1748,9 @@
     ]
   },
   {
-    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IProductCategoryService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.ProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.DetailProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.CreateProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.UpdateProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+    "ContainingType": "AttechServer.Controllers.ProductCategoryController",
     "Method": "Delete",
-    "RelativePath": "api/product-categories/delete/{id}",
+    "RelativePath": "api/product-category/delete/{id}",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
@@ -1737,34 +1775,8 @@
   },
   {
     "ContainingType": "AttechServer.Controllers.ProductCategoryController",
-    "Method": "FindBySlug",
-    "RelativePath": "api/product-categories/detail/{slug}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "slug",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "AttechServer.Controllers.ProductCategoryController",
     "Method": "FindAll",
-    "RelativePath": "api/product-categories/find-all",
+    "RelativePath": "api/product-category/find-all",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1776,6 +1788,11 @@
       },
       {
         "Name": "pageNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Page",
         "Type": "System.Int32",
         "IsRequired": false
       },
@@ -1805,7 +1822,7 @@
   {
     "ContainingType": "AttechServer.Controllers.ProductCategoryController",
     "Method": "FindById",
-    "RelativePath": "api/product-categories/find-by-id/{id}",
+    "RelativePath": "api/product-category/find-by-id/{id}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1829,9 +1846,9 @@
     ]
   },
   {
-    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IProductCategoryService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.ProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.DetailProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.CreateProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.UpdateProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+    "ContainingType": "AttechServer.Controllers.ProductCategoryController",
     "Method": "Update",
-    "RelativePath": "api/product-categories/update",
+    "RelativePath": "api/product-category/update",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
@@ -1839,32 +1856,6 @@
       {
         "Name": "input",
         "Type": "AttechServer.Applications.UserModules.Dtos.ProductCategory.UpdateProductCategoryDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IProductCategoryService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.ProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.DetailProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.CreateProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.ProductCategory.UpdateProductCategoryDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-    "Method": "UpdateStatus",
-    "RelativePath": "api/product-categories/update-status",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "input",
-        "Type": "AttechServer.Applications.UserModules.Dtos.UpdateStatusDto",
         "IsRequired": true
       }
     ],
@@ -1895,6 +1886,11 @@
       },
       {
         "Name": "pageNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Page",
         "Type": "System.Int32",
         "IsRequired": false
       },
@@ -2023,6 +2019,11 @@
         "IsRequired": false
       },
       {
+        "Name": "Page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
         "Name": "keyword",
         "Type": "System.String",
         "IsRequired": false
@@ -2082,32 +2083,6 @@
       {
         "Name": "input",
         "Type": "AttechServer.Applications.UserModules.Dtos.Product.UpdateProductDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IProductService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Product.ProductDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Product.DetailProductDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Product.CreateProductDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Product.UpdateProductDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-    "Method": "UpdateStatus",
-    "RelativePath": "api/product/update-status",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "input",
-        "Type": "AttechServer.Applications.UserModules.Dtos.UpdateStatusDto",
         "IsRequired": true
       }
     ],
@@ -2194,6 +2169,11 @@
         "IsRequired": false
       },
       {
+        "Name": "Page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
         "Name": "keyword",
         "Type": "System.String",
         "IsRequired": false
@@ -2244,15 +2224,15 @@
   },
   {
     "ContainingType": "AttechServer.Controllers.RoleController",
-    "Method": "Update",
-    "RelativePath": "api/role/update",
-    "HttpMethod": "PUT",
+    "Method": "GetRolePermissions",
+    "RelativePath": "api/role/permissions/{id}",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "input",
-        "Type": "AttechServer.Applications.UserModules.Dtos.Role.UpdateRoleDto",
+        "Name": "id",
+        "Type": "System.Int32",
         "IsRequired": true
       }
     ],
@@ -2270,21 +2250,16 @@
   },
   {
     "ContainingType": "AttechServer.Controllers.RoleController",
-    "Method": "UpdateStatus",
-    "RelativePath": "api/role/update-status",
+    "Method": "Update",
+    "RelativePath": "api/role/update",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "status",
-        "Type": "System.Int32",
-        "IsRequired": false
+        "Name": "input",
+        "Type": "AttechServer.Applications.UserModules.Dtos.Role.UpdateRoleDto",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": [
@@ -2396,6 +2371,11 @@
         "IsRequired": false
       },
       {
+        "Name": "Page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
         "Name": "keyword",
         "Type": "System.String",
         "IsRequired": false
@@ -2471,257 +2451,20 @@
     ]
   },
   {
-    "ContainingType": "AttechServer.Shared.WebAPIBase.BaseCrudController\u00605[[AttechServer.Applications.UserModules.Abstracts.IServiceService, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Service.ServiceDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Service.DetailServiceDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Service.CreateServiceDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[AttechServer.Applications.UserModules.Dtos.Service.UpdateServiceDto, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-    "Method": "UpdateStatus",
-    "RelativePath": "api/service/update-status",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "input",
-        "Type": "AttechServer.Applications.UserModules.Dtos.UpdateStatusDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "AttechServer.Controllers.UploadController",
-    "Method": "UploadDocument",
-    "RelativePath": "api/upload/document",
+    "ContainingType": "AttechServer.Controllers.TranslateController",
+    "Method": "Translate",
+    "RelativePath": "api/Translate",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "file",
-        "Type": "Microsoft.AspNetCore.Http.IFormFile",
-        "IsRequired": false
-      },
-      {
-        "Name": "entityType",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "entityId",
-        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "AttechServer.Controllers.UploadController",
-    "Method": "GetFile",
-    "RelativePath": "api/upload/file/{subFolder}/{fileName}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "subFolder",
-        "Type": "System.String",
-        "IsRequired": true
-      },
-      {
-        "Name": "fileName",
-        "Type": "System.String",
+        "Name": "request",
+        "Type": "AttechServer.Applications.UserModules.Dtos.TranslateRequest",
         "IsRequired": true
       }
     ],
     "ReturnTypes": []
-  },
-  {
-    "ContainingType": "AttechServer.Controllers.UploadController",
-    "Method": "GetFile",
-    "RelativePath": "api/upload/file/{subFolder}/{year}/{month}/{day}/{fileName}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "subFolder",
-        "Type": "System.String",
-        "IsRequired": true
-      },
-      {
-        "Name": "year",
-        "Type": "System.String",
-        "IsRequired": true
-      },
-      {
-        "Name": "month",
-        "Type": "System.String",
-        "IsRequired": true
-      },
-      {
-        "Name": "day",
-        "Type": "System.String",
-        "IsRequired": true
-      },
-      {
-        "Name": "fileName",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "AttechServer.Controllers.UploadController",
-    "Method": "UploadImage",
-    "RelativePath": "api/upload/image",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "file",
-        "Type": "Microsoft.AspNetCore.Http.IFormFile",
-        "IsRequired": false
-      },
-      {
-        "Name": "entityType",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "entityId",
-        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "AttechServer.Controllers.UploadController",
-    "Method": "MultiUpload",
-    "RelativePath": "api/upload/multi-upload",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "files",
-        "Type": "Microsoft.AspNetCore.Http.IFormFile[]",
-        "IsRequired": false
-      },
-      {
-        "Name": "entityType",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "entityId",
-        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "AttechServer.Controllers.UploadController",
-    "Method": "UploadVideo",
-    "RelativePath": "api/upload/video",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "file",
-        "Type": "Microsoft.AspNetCore.Http.IFormFile",
-        "IsRequired": false
-      },
-      {
-        "Name": "entityType",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "entityId",
-        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "AttechServer.Controllers.UserController",
-    "Method": "Create",
-    "RelativePath": "api/user",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "input",
-        "Type": "AttechServer.Applications.UserModules.Dtos.CreateUserDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "AttechServer.Shared.WebAPIBase.ApiResponse",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
   },
   {
     "ContainingType": "AttechServer.Controllers.UserController",
@@ -2738,6 +2481,11 @@
       },
       {
         "Name": "pageNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Page",
         "Type": "System.Int32",
         "IsRequired": false
       },
@@ -2905,24 +2653,23 @@
     ]
   },
   {
-    "ContainingType": "AttechServer.Controllers.WeatherForecastController",
+    "ContainingType": "AttechServer.Controllers.HealthController",
     "Method": "Get",
-    "RelativePath": "WeatherForecast",
+    "RelativePath": "health",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[AttechServer.WeatherForecast, AttechServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ],
-    "EndpointName": "GetWeatherForecast"
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AttechServer.Controllers.HealthController",
+    "Method": "GetDetailed",
+    "RelativePath": "health/detailed",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
   }
 ]

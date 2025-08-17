@@ -1,4 +1,4 @@
-﻿namespace AttechServer.Shared.AppicationBase
+namespace AttechServer.Shared.ApplicationBase
 {
     public class ServiceBase
     {

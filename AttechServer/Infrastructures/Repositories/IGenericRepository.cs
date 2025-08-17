@@ -1,4 +1,4 @@
-﻿using AttechServer.Shared.ApplicationBase.Common;
+using AttechServer.Shared.ApplicationBase.Common;
 
 namespace AttechServer.Infrastructures.Repositories
 {

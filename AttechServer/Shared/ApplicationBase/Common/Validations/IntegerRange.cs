@@ -1,10 +1,10 @@
-Ôªøusing AttechServer.Shared.Consts.Exceptions;
+using AttechServer.Shared.Consts.Exceptions;
 using System.ComponentModel.DataAnnotations;
 
 namespace AttechServer.Shared.ApplicationBase.Common.Validations
 {
     /// <summary>
-    /// Cho ph√©p m·ªôt trong c√°c gi√° tr·ªã, n·∫øu l√† null th√¨ b·ªè qua
+    /// Cho phÈp m?t trong c·c gi· tr?, n?u l‡ null thÏ b? qua
     /// </summary>
     public class IntegerRangeAttribute : ValidationAttribute
     {
@@ -16,7 +16,7 @@ namespace AttechServer.Shared.ApplicationBase.Common.Validations
             {
                 return ValidationResult.Success;
             }
-            var msg = $"Vui l√≤ng ch·ªçn 1 trong c√°c gi√° tr·ªã sau: {string.Join(", ", AllowableValues?.Select(i => i.ToString()).ToArray() ?? new string[] { "Kh√¥ng c√≥ gi√° tr·ªã n√†o ƒë∆∞·ª£c ph√©p" })}.";
+            var msg = $"Vui lÚng ch?n 1 trong c·c gi· tr? sau: {string.Join(", ", AllowableValues?.Select(i => i.ToString()).ToArray() ?? new string[] { "KhÙng cÛ gi· tr? n‡o du?c phÈp" })}.";
             if (!string.IsNullOrEmpty(ErrorMessage))
             {
                 msg = ErrorMessage;

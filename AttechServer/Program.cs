@@ -15,14 +15,17 @@ using Microsoft.OpenApi.Models;
 using System;
 using System.Reflection;
 using System.Text;
+using Microsoft.Extensions.FileProviders;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddMemoryCache();
 
-// Configure file upload options
-builder.Services.Configure<FileUploadOptions>(
-    builder.Configuration.GetSection(FileUploadOptions.SectionName));
+
+// Configure TinyMCE options
+builder.Services.Configure<TinyMceOptions>(
+    builder.Configuration.GetSection(TinyMceOptions.SectionName));
 //Config connect to sql server
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
@@ -50,7 +53,12 @@ builder.Services.AddAuthentication(options =>
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    });
 
 // setting cors
 builder.Services.AddCors(options =>
@@ -58,9 +66,20 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAllOrigins",
         policy =>
         {
-            policy.AllowAnyOrigin()
-                  .AllowAnyMethod()
-                  .AllowAnyHeader();
+            policy.WithOrigins(
+                    "http://localhost:3000",
+                    "https://localhost:3000",
+                    "http://192.168.22.159:3000",
+                    "https://192.168.22.159:3000",
+                    "http://192.168.22.159:7276",
+                    "https://192.168.22.159:7276",
+                    "http://192.168.22.159:5232",
+                    "https://attech.space",
+                    "https://www.attech.space"
+                )
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
         });
 });
 
@@ -113,18 +132,29 @@ builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IKeyPermissionService, KeyPermissionService>();
 builder.Services.AddScoped<IApiEndpointService, ApiEndpointService>();
-builder.Services.AddScoped<IMenuService, MenuService>();
 
 builder.Services.AddScoped<IWysiwygFileProcessor, WysiwygFileProcessor>();
-builder.Services.AddScoped<IPostCategoryService, PostCategoryService>();
-builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
-builder.Services.AddScoped<IPostService, PostService>();
+builder.Services.AddScoped<INewsService, NewsService>();
+builder.Services.AddScoped<INewsCategoryService, NewsCategoryService>();
+
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<INotificationCategoryService, NotificationCategoryService>();
+
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
+
 builder.Services.AddScoped<IServiceService, ServiceService>();
-builder.Services.AddScoped<IMediaService, MediaService>();
-builder.Services.AddScoped<IFileUploadService, FileUploadService>();
+builder.Services.AddScoped<IAttachmentService, AttachmentService>();
 builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped<ICacheInvalidationService, CacheInvalidationService>();
+builder.Services.AddScoped<IActivityLogService, ActivityLogService>();
+builder.Services.AddScoped<ISystemMonitoringService, SystemMonitoringService>();
+builder.Services.AddHttpClient<ITranslationService, FreeTranslationService>();
+builder.Services.AddScoped<IUrlService, UrlService>();
+
+// Add background services
+builder.Services.AddHostedService<AttechServer.Services.TempFileCleanupBackgroundService>();
+builder.Services.AddHostedService<AttechServer.Services.SystemMonitoringBackgroundService>();
 
 // Configure response caching
 builder.Services.AddResponseCaching();
@@ -161,6 +191,32 @@ app.UseGlobalExceptionHandling();
 
 app.UseCors("AllowAllOrigins");
 
+// Configure uploads directory (same as attachment service)
+var uploadsPath = Path.Combine(app.Environment.ContentRootPath, "Uploads");
+if (!Directory.Exists(uploadsPath))
+{
+    Directory.CreateDirectory(uploadsPath);
+    logger.LogInformation($"Created uploads directory: {uploadsPath}");
+}
+
+// Configure static files for wwwroot (commented out - not needed)
+// app.UseStaticFiles();
+
+// Configure static files for uploads (GUID filenames make it secure)
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "Uploads")),
+    RequestPath = "/uploads",
+    ServeUnknownFileTypes = true,
+    DefaultContentType = "application/octet-stream",
+    OnPrepareResponse = ctx =>
+    {
+        // Add CORS headers
+        ctx.Context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+        ctx.Context.Response.Headers.Add("Cache-Control", "public, max-age=3600");
+    }
+});
+
 // Add response caching middleware
 app.UseResponseCaching();
 
@@ -171,7 +227,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// Only use HTTPS redirection in production
+if (app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthentication();
 app.UseAuthorization();

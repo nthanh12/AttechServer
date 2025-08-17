@@ -1,4 +1,4 @@
-﻿namespace AttechServer.Shared.WebAPIBase
+namespace AttechServer.Shared.WebAPIBase
 {
     public class ApiResponse
     {

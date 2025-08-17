@@ -1,4 +1,4 @@
-﻿using AttechServer.Domains.EntityBase;
+using AttechServer.Domains.EntityBase;
 using AttechServer.Domains.Schemas;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
@@ -14,8 +14,9 @@ namespace AttechServer.Domains.Entities
         public int Id { get; set; }
         [Required]
         public string Name { get; set; } = null!;
+        public string? Description { get; set; }
         /// <summary>
-        /// Trạng thái role
+        /// Tr?ng th�i role
         /// <see cref="CommonStatus"/>
         /// </summary>
         public int Status { get; set; }

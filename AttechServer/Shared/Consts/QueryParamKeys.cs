@@ -1,4 +1,4 @@
-﻿namespace AttechServer.Shared.Consts
+namespace AttechServer.Shared.Consts
 {
     public class QueryParamKeys
     {

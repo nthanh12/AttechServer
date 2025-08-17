@@ -1,8 +1,21 @@
-﻿using System.ComponentModel.DataAnnotations;
+using AttechServer.Domains.EntityBase;
+using AttechServer.Shared.Consts;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AttechServer.Domains.Entities.Main
 {
-    public class Service
+    [Table(nameof(Service))]
+    [Index(
+        nameof(Id),
+        nameof(Deleted),
+        Name = $"IX_{nameof(Service)}",
+        IsUnique = false
+    )]
+    [Index(nameof(SlugVi), IsUnique = true)]
+    [Index(nameof(SlugEn), IsUnique = true)]
+    public class Service : IFullAudited
     {
         [Key]
         public int Id { get; set; }
@@ -11,13 +24,15 @@ namespace AttechServer.Domains.Entities.Main
         public string SlugVi { get; set; } = string.Empty;
         [Required, StringLength(200)]
         public string SlugEn { get; set; } = string.Empty;
+
         [Required, StringLength(200)]
-        public string NameVi { get; set; } = null!;
+        public string TitleVi { get; set; } = null!;
         [Required, StringLength(200)]
-        public string NameEn { get; set; } = null!;
+        public string TitleEn { get; set; } = null!;
 
         [Required, StringLength(160)]
         public string DescriptionVi { get; set; } = null!;
+
         [Required, StringLength(160)]
         public string DescriptionEn { get; set; } = null!;
 
@@ -27,13 +42,15 @@ namespace AttechServer.Domains.Entities.Main
         public string ContentEn { get; set; } = string.Empty;
 
         public DateTime TimePosted { get; set; }
-        public string ImageUrl { get; set; } = string.Empty;
 
         /// <summary>
         /// Trạng thái
-        /// <see cref="ServiceStatuses"/>
+        /// <see cref="CommonStatus"/>
         /// </summary>
         public int Status { get; set; }
+        public bool IsOutstanding { get; set; } = false;
+        public string ImageUrl { get; set; } = string.Empty;
+        public int? FeaturedImageId { get; set; }
 
         #region audit
         public DateTime? CreatedDate { get; set; }

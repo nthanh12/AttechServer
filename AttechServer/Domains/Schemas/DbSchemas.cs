@@ -1,4 +1,4 @@
-﻿namespace AttechServer.Domains.Schemas
+namespace AttechServer.Domains.Schemas
 {
     public static class DbSchemas
     {

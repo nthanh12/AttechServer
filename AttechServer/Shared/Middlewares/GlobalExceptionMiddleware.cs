@@ -125,14 +125,15 @@ namespace AttechServer.Shared.Middlewares
             if (context.Items.ContainsKey("RequestStartTime"))
             {
                 var startTime = (DateTime)context.Items["RequestStartTime"];
-                var duration = DateTime.UtcNow - startTime;
+                var duration = DateTime.Now - startTime;
                 context.Response.Headers.Add("X-Response-Time-Ms", duration.TotalMilliseconds.ToString("0"));
             }
 
             var jsonResponse = JsonSerializer.Serialize(response, new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                WriteIndented = _environment.IsDevelopment()
+                WriteIndented = _environment.IsDevelopment(),
+                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             });
 
             await context.Response.WriteAsync(jsonResponse);

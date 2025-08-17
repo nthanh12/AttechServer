@@ -1,4 +1,4 @@
-﻿using AttechServer.Domains.EntityBase;
+using AttechServer.Domains.EntityBase;
 using AttechServer.Domains.Schemas;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
@@ -17,12 +17,23 @@ namespace AttechServer.Domains.Entities
         [MaxLength(512)]
         public string Password { get; set; } = null!;
 
+        [MaxLength(100)]
+        public string? FullName { get; set; }
+        
+        [MaxLength(100)]
+        public string? Email { get; set; }
+        
+        [MaxLength(20)]
+        public string? Phone { get; set; }
+        
+        public DateTime? LastLogin { get; set; }
+
         /// <summary>
-        /// Trạng thái
+        /// Tr?ng th�i
         /// <see cref="Status"/>
         /// </summary>
         public int Status { get; set; }
-        public int UserType { get; set; }
+        public int UserLevel { get; set; }
         public List<UserRole> UserRoles { get; set; } = new();
 
         [MaxLength(512)]

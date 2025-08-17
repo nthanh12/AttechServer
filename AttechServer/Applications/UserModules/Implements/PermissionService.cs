@@ -1,8 +1,8 @@
-﻿using AttechServer.Applications.UserModules.Abstracts;
+using AttechServer.Applications.UserModules.Abstracts;
 using AttechServer.Applications.UserModules.Dtos.Permission;
 using AttechServer.Domains.Entities;
 using AttechServer.Infrastructures.Persistances;
-using AttechServer.Shared.AppicationBase.Common;
+using AttechServer.Shared.ApplicationBase.Common;
 using AttechServer.Shared.Consts.Permissions;
 using AttechServer.Shared.Consts;
 using Microsoft.EntityFrameworkCore;
@@ -34,10 +34,11 @@ namespace AttechServer.Applications.UserModules.Implements
         public bool CheckPermission(string[] permissionKeys)
         {
             var currentUserId = _httpContext.GetCurrentUserId();
-            var currentUserType = _httpContext.GetCurrentUserType();
-            _logger.LogInformation($"{nameof(CheckPermission)}: permissionKeys = {permissionKeys}, userId: {currentUserId}, userType: {currentUserType}");
+            var currentUserLevel = _httpContext.GetCurrentUserLevel();
+            _logger.LogInformation($"{nameof(CheckPermission)}: permissionKeys = {permissionKeys}, userId: {currentUserId}, userType: {currentUserLevel}");
 
-            if (currentUserType == UserTypes.ADMIN)
+            // SuperAdmin v� Admin c� to�n quy?n
+            if (currentUserLevel == UserLevels.SYSTEM || currentUserLevel == UserLevels.MANAGER)
                 return true;
 
             var userPermissions = GetUserPermissions(currentUserId);
@@ -65,10 +66,10 @@ namespace AttechServer.Applications.UserModules.Implements
         public List<string> GetPermissionsByCurrentUserId()
         {
             var currentUserId = _httpContext.GetCurrentUserId();
-            var currentUserType = _httpContext.GetCurrentUserType();
-            _logger.LogInformation($"{nameof(GetPermissionsByCurrentUserId)}: userId: {currentUserId}, userType: {currentUserType}");
+            var currentUserLevel = _httpContext.GetCurrentUserLevel();
+            _logger.LogInformation($"{nameof(GetPermissionsByCurrentUserId)}: userId: {currentUserId}, userType: {currentUserLevel}");
 
-            if (currentUserType == UserTypes.ADMIN)
+            if (currentUserLevel == UserLevels.SYSTEM || currentUserLevel == UserLevels.MANAGER)
             {
                 return _dbContext.Permissions
                     .Where(p => !p.Deleted)

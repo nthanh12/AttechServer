@@ -1,4 +1,4 @@
-﻿using AttechServer.Domains.EntityBase;
+using AttechServer.Domains.EntityBase;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -20,9 +20,9 @@ namespace AttechServer.Domains.Entities.Main
         public int Id { get; set; }
 
         [Required, StringLength(100)]
-        public string NameVi { get; set; } = string.Empty;
+        public string TitleVi { get; set; } = string.Empty;
         [Required, StringLength(100)]
-        public string NameEn { get; set; } = string.Empty;
+        public string TitleEn { get; set; } = string.Empty;
 
         [Required, StringLength(100)]
         public string SlugVi { get; set; } = string.Empty;

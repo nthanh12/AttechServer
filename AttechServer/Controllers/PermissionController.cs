@@ -1,4 +1,4 @@
-﻿using AttechServer.Applications.UserModules.Abstracts;
+using AttechServer.Applications.UserModules.Abstracts;
 using AttechServer.Applications.UserModules.Dtos.ConfigPermission;
 using AttechServer.Applications.UserModules.Dtos.Permission.KeyPermission;
 using AttechServer.Shared.WebAPIBase;
@@ -25,7 +25,7 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Danh sách quyền 
+        /// Role list
         /// </summary>
         /// <returns></returns>
         [HttpGet("list")]
@@ -43,7 +43,7 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Lấy tất cả quyền của user hiện tại
+        /// Get permissions by current user ID
         /// </summary>
         /// <returns></returns>
         [HttpGet("current-user")]
@@ -61,7 +61,7 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Check quyền
+        /// Check permission
         /// </summary>
         /// <returns></returns>
         [HttpPost("check")]
@@ -78,7 +78,7 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Lấy cây phân quyền
+        /// Get all key permissions in tree structure
         /// </summary>
         /// <returns></returns>
         [HttpGet("tree")]
@@ -95,7 +95,7 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Chi tiết quyền
+        /// Get detail permission by ID
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -114,7 +114,7 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Thêm mới quyền
+        /// Create key permission
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -134,7 +134,7 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Cập nhật
+        /// Update key permission
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -154,7 +154,7 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Xóa quyền
+        /// Delete key permission
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -174,7 +174,7 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Thêm các quyền đi kèm với api endpoints
+        /// Add permission with endpoint
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -194,7 +194,7 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Cập nhật api endpoint kèm permission key
+        /// Update api endpoint with permission key
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -214,7 +214,7 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Danh sách api endpoint
+        /// Api endpoint list
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -224,7 +224,7 @@ namespace AttechServer.Controllers
         {
             try
             {
-                return new(await _keyPermissionService.GetAllPermissionApi(input));
+                return new(await _keyPermissionService.GetAllApiPermissions(input));
             }
             catch (Exception ex)
             {
@@ -233,7 +233,7 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Chi tiết api endpoint
+        /// Get api endpoint detail
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -243,7 +243,7 @@ namespace AttechServer.Controllers
         {
             try
             {
-                return new(await _keyPermissionService.GetPermissionApiById(id));
+                return new(await _keyPermissionService.GetApiPermissionById(id));
             }
             catch (Exception ex)
             {

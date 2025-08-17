@@ -1,5 +1,5 @@
-﻿using AttechServer.Applications.UserModules.Abstracts;
-using AttechServer.Applications.UserModules.Dtos.PostCategory;
+using AttechServer.Applications.UserModules.Abstracts;
+using AttechServer.Applications.UserModules.Dtos.NewsCategory;
 using AttechServer.Shared.ApplicationBase.Common;
 using AttechServer.Shared.Attributes;
 using AttechServer.Shared.WebAPIBase;
@@ -7,79 +7,119 @@ using Microsoft.AspNetCore.Mvc;
 using AttechServer.Shared.Filters;
 using AttechServer.Shared.Consts.Permissions;
 using Microsoft.AspNetCore.Authorization;
-using AttechServer.Domains.Entities.Main;
 
 namespace AttechServer.Controllers
 {
-    [Route("api/news-categories")]
+    [Route("api/news-category")]
+    [ApiController]
     [Authorize]
-    public class NewsCategoryController : BaseCrudController<IPostCategoryService, PostCategoryDto, DetailPostCategoryDto, CreatePostCategoryDto, UpdatePostCategoryDto>
+    public class NewsCategoryController : ApiControllerBase
     {
-        public NewsCategoryController(IPostCategoryService pcService, ILogger<NewsCategoryController> logger)
-            : base(pcService, logger)
+        private readonly INewsCategoryService _newsCategoryService;
+
+        public NewsCategoryController(INewsCategoryService ncService, ILogger<NewsCategoryController> logger)
+            : base(logger)
         {
+            _newsCategoryService = ncService;
         }
 
         /// <summary>
-        /// Get all news categories - Public endpoint
+        /// Get all news categories with caching
         /// </summary>
         [HttpGet("find-all")]
         [AllowAnonymous]
-        public override async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
+        [CacheResponse(CacheProfiles.ShortCache, "news-categories", varyByQueryString: true)]
+        public async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
         {
-            return await base.FindAll(input);
+            try
+            {
+                var result = await _newsCategoryService.FindAll(input);
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "Ok");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting all");
+                return OkException(ex);
+            }
         }
 
         /// <summary>
-        /// Get news category by ID - Public endpoint
+        /// Get news category by ID with caching
         /// </summary>
         [HttpGet("find-by-id/{id}")]
         [AllowAnonymous]
-        public override async Task<ApiResponse> FindById(int id)
+        [CacheResponse(CacheProfiles.MediumCache, "news-category-detail")]
+        public async Task<ApiResponse> FindById(int id)
         {
-            return await base.FindById(id);
+            try
+            {
+                var result = await _newsCategoryService.FindById(id);
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "Ok");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting by id");
+                return OkException(ex);
+            }
         }
 
         /// <summary>
-        /// Get news category by slug - Public endpoint
+        /// Create new news category
         /// </summary>
-        [HttpGet("detail/{slug}")]
-        [AllowAnonymous]
-        public override async Task<ApiResponse> FindBySlug(string slug)
+        [HttpPost("create")]
+        [PermissionFilter(PermissionKeys.CreateNewsCategory)]
+        public async Task<ApiResponse> Create([FromBody] CreateNewsCategoryDto input)
         {
-            return await base.FindBySlug(slug);
+            try
+            {
+                var result = await _newsCategoryService.Create(input);
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "Tạo thành công");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating");
+                return OkException(ex);
+            }
         }
 
-        // Giữ lại các method protected override và UpdateStatus nhận DTO
-        protected override async Task<DetailPostCategoryDto> GetFindByIdAsync(int id)
+        /// <summary>
+        /// Update news category
+        /// </summary>
+        [HttpPut("update")]
+        [PermissionFilter(PermissionKeys.EditNewsCategory)]
+        public async Task<ApiResponse> Update([FromBody] UpdateNewsCategoryDto input)
         {
-            return await _service.FindById(id, PostType.News);
+            try
+            {
+                var result = await _newsCategoryService.Update(input);
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "Cập nhật thành công");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating");
+                return OkException(ex);
+            }
         }
 
-        protected override async Task<object?> GetUpdateAsync(UpdatePostCategoryDto input)
+        /// <summary>
+        /// Delete news category
+        /// </summary>
+        [HttpDelete("delete/{id}")]
+        [PermissionFilter(PermissionKeys.DeleteNewsCategory)]
+        public async Task<ApiResponse> Delete(int id)
         {
-            return await _service.Update(input, PostType.News);
+            try
+            {
+                await _newsCategoryService.Delete(id);
+                return new ApiResponse(ApiStatusCode.Success, null, 200, "Xóa thành công");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting");
+                return OkException(ex);
+            }
         }
 
-        protected override async Task GetDeleteAsync(int id)
-        {
-            await _service.Delete(id, PostType.News);
-        }
-
-        protected override async Task<object> GetFindAllAsync(PagingRequestBaseDto input)
-        {
-            return await _service.FindAll(input, PostType.News);
-        }
-
-        protected override async Task<object> GetCreateAsync(CreatePostCategoryDto input)
-        {
-            return await _service.Create(input, PostType.News);
-        }
-
-        // Chỉ giữ lại override cho protected GetUpdateStatusAsync
-        protected override async Task GetUpdateStatusAsync(AttechServer.Applications.UserModules.Dtos.UpdateStatusDto input)
-        {
-            await _service.UpdateStatusPostCategory(input.Id, input.Status, PostType.News);
-        }
+        
     }
 }

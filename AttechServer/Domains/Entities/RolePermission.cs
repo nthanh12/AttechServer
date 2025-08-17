@@ -1,4 +1,4 @@
-﻿using AttechServer.Domains.EntityBase;
+using AttechServer.Domains.EntityBase;
 using AttechServer.Domains.Schemas;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;

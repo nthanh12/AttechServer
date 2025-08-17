@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
 namespace AttechServer.Shared.ApplicationBase.Common
@@ -41,6 +41,11 @@ namespace AttechServer.Shared.ApplicationBase.Common
         [FromQuery(Name = "pageNumber")]
         [Range(1, int.MaxValue, ErrorMessage = "Page number must be greater than 0")]
         public int PageNumber { get; set; } = 1;
+
+        /// <summary>
+        /// Page property for backward compatibility
+        /// </summary>
+        public int Page => PageNumber;
 
         private string? _keyword { get; set; }
 

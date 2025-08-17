@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace AttechServer.Shared.Utils
@@ -39,10 +39,10 @@ namespace AttechServer.Shared.Utils
         }
 
         /// <summary>
-        /// Kiểm tra thông tin
+        /// Ki?m tra th�ng tin
         /// </summary>
-        /// <param name="password">Mật khẩu chưa được mã hóa</param>
-        /// <param name="hashedPassword">Mật mã đã được mã hóa</param>
+        /// <param name="password">M?t kh?u chua du?c m� h�a</param>
+        /// <param name="hashedPassword">M?t m� d� du?c m� h�a</param>
         /// <returns></returns>
         public static bool VerifyPassword(string password, string hashedPassword)
         {

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace AttechServer.Applications.UserModules.Dtos.Permission
 {
@@ -9,13 +9,13 @@ namespace AttechServer.Applications.UserModules.Dtos.Permission
         public string KeyPermissionLabel { get; set; } = null!;
         public string? Description { get; set; }
         /// <summary>
-        /// Loại permisison
+        /// Lo?i permisison
         /// <see cref="PermissionType"/>
         /// </summary>
         public int PermissionType { get; set; }
         public string? ParentKey { get; set; }
         /// <summary>
-        /// Thứ tự sắp xếp
+        /// Th? t? s?p x?p
         /// </summary>
         public int OrderPriority { get; set; }
     }

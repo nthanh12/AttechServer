@@ -1,6 +1,6 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 
-namespace AttechServer.Shared.AppicationBase.Common
+namespace AttechServer.Shared.ApplicationBase.Common
 {
     public static class HttpContextExtensions
     {
@@ -22,9 +22,9 @@ namespace AttechServer.Shared.AppicationBase.Common
             return int.Parse(claim.Value);
         }
 
-        public static int GetCurrentUserType(this IHttpContextAccessor httpContextAccessor)
+        public static int GetCurrentUserLevel(this IHttpContextAccessor httpContextAccessor)
         {
-            var claim = httpContextAccessor.FindClaim("user_type");
+            var claim = httpContextAccessor.FindClaim("user_level");
             return int.Parse(claim.Value);
         }
     }

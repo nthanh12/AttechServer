@@ -1,4 +1,4 @@
-﻿namespace AttechServer.Applications.UserModules.Dtos.Permission.KeyPermission
+namespace AttechServer.Applications.UserModules.Dtos.Permission.KeyPermission
 {
     public class KeyPermissionDto
     {

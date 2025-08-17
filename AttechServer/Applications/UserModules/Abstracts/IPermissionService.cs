@@ -1,4 +1,4 @@
-﻿using AttechServer.Applications.UserModules.Dtos.Permission;
+using AttechServer.Applications.UserModules.Dtos.Permission;
 
 namespace AttechServer.Applications.UserModules.Abstracts
 {
@@ -12,20 +12,20 @@ namespace AttechServer.Applications.UserModules.Abstracts
         bool CheckPermission(params string[] permissionKeys);
 
         /// <summary>
-        /// Lấy tất cả quyền của user hiện tại
+        /// L?y t?t c? quy?n c?a user hi?n t?i
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
         List<string> GetPermissionsByCurrentUserId();
 
         /// <summary>
-        /// Danh sách quyền fixed
+        /// Danh s�ch quy?n fixed
         /// </summary>
         /// <returns></returns>
         List<PermissionDto> FindAll();
 
         /// <summary>
-        /// Lấy all permission dựa vào api path
+        /// L?y all permission d?a v�o api path
         /// </summary>
         /// <param name="api"></param>
         /// <returns></returns>

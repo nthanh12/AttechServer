@@ -1,5 +1,6 @@
-﻿using AttechServer.Applications.UserModules.Abstracts;
+using AttechServer.Applications.UserModules.Abstracts;
 using AttechServer.Applications.UserModules.Dtos.Service;
+using AttechServer.Applications.UserModules.Dtos.Attachment;
 using AttechServer.Shared.ApplicationBase.Common;
 using AttechServer.Shared.Attributes;
 using AttechServer.Shared.WebAPIBase;
@@ -11,96 +12,170 @@ using Microsoft.AspNetCore.Authorization;
 namespace AttechServer.Controllers
 {
     [Route("api/service")]
-    public class ServiceController : BaseCrudController<IServiceService, ServiceDto, DetailServiceDto, CreateServiceDto, UpdateServiceDto>
+    [ApiController]
+    [Authorize]
+    public class ServiceController : ApiControllerBase
     {
+        private readonly IServiceService _serviceService;
+
         public ServiceController(IServiceService serviceService, ILogger<ServiceController> logger)
-            : base(serviceService, logger)
+            : base(logger)
         {
+            _serviceService = serviceService;
         }
 
+        /// <summary>
+        /// Get all services with caching
+        /// </summary>
         [HttpGet("find-all")]
         [AllowAnonymous]
-        public override async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
+        [CacheResponse(CacheProfiles.ShortCache, "services", varyByQueryString: true)]
+        public async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
         {
-            return await base.FindAll(input);
+            try
+            {
+                var result = await _serviceService.FindAll(input);
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "Ok");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting all");
+                return OkException(ex);
+            }
         }
 
+        /// <summary>
+        /// Get service by ID with attachments included
+        /// </summary>
         [HttpGet("find-by-id/{id}")]
         [AllowAnonymous]
-        public override async Task<ApiResponse> FindById(int id)
+        [CacheResponse(CacheProfiles.MediumCache, "service-detail")]
+        public async Task<ApiResponse> FindById(int id)
         {
-            return await base.FindById(id);
+            try
+            {
+                var result = await _serviceService.FindById(id);
+                // TODO: Update service to return ServiceWithAttachmentsDto that includes attachments by default
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "Ok");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting service by id");
+                return OkException(ex);
+            }
         }
 
+        /// <summary>
+        /// Get service by slug with caching
+        /// </summary>
         [HttpGet("detail/{slug}")]
         [AllowAnonymous]
-        public override async Task<ApiResponse> FindBySlug(string slug)
+        [CacheResponse(CacheProfiles.MediumCache, "service-detail")]
+        public async Task<ApiResponse> FindBySlug(string slug)
         {
-            return await base.FindBySlug(slug);
+            try
+            {
+                var result = await _serviceService.FindBySlug(slug);
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "Ok");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting service by slug");
+                return OkException(ex);
+            }
         }
 
+        /// <summary>
+        /// Create new service with all data in one request
+        /// </summary>
         [HttpPost("create")]
-        [Authorize]
         [PermissionFilter(PermissionKeys.CreateService)]
-        public override async Task<ApiResponse> Create([FromBody] CreateServiceDto input)
+        public async Task<ApiResponse> Create([FromBody] CreateServiceDto input)
         {
-            return await base.Create(input);
+            try
+            {
+                _logger.LogInformation("=== DEBUG SERVICE CREATE START ===");
+                _logger.LogInformation("TitleVi: {Title}", input.TitleVi);
+                _logger.LogInformation("ContentVi length: {Length}", input.ContentVi?.Length ?? 0);
+                
+                // Log attachment IDs
+                if (input.FeaturedImageId.HasValue)
+                {
+                    _logger.LogInformation("FeaturedImageId: {FeaturedImageId}", input.FeaturedImageId.Value);
+                }
+                else
+                {
+                    _logger.LogInformation("FeaturedImageId: NULL");
+                }
+
+                if (input.AttachmentIds != null && input.AttachmentIds.Any())
+                {
+                    _logger.LogInformation("AttachmentIds: {AttachmentIds}", string.Join(",", input.AttachmentIds));
+                }
+
+                _logger.LogInformation("Calling ServiceService.Create...");
+                var result = await _serviceService.Create(input);
+                _logger.LogInformation("ServiceService.Create completed successfully");
+                _logger.LogInformation("=== DEBUG SERVICE CREATE END ===");
+                
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "Tạo dịch vụ thành công");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "=== ERROR CREATING SERVICE ===");
+                _logger.LogError("Exception Type: {Type}", ex.GetType().Name);
+                _logger.LogError("Exception Message: {Message}", ex.Message);
+                _logger.LogError("Stack Trace: {StackTrace}", ex.StackTrace);
+                
+                if (ex.InnerException != null)
+                {
+                    _logger.LogError("Inner Exception: {InnerMessage}", ex.InnerException.Message);
+                }
+                
+                return OkException(ex);
+            }
         }
 
+        /// <summary>
+        /// Update service (handles text + files)
+        /// </summary>
         [HttpPut("update")]
-        [Authorize]
         [PermissionFilter(PermissionKeys.EditService)]
-        public override async Task<ApiResponse> Update([FromBody] UpdateServiceDto input)
+        public async Task<ApiResponse> Update([FromBody] UpdateServiceDto input)
         {
-            return await base.Update(input);
+            try
+            {
+                _logger.LogInformation("Updating service with all data in one atomic operation");
+                var result = await _serviceService.Update(input);
+                return result != null 
+                    ? new ApiResponse(ApiStatusCode.Success, result, 200, "Cập nhật dịch vụ thành công")
+                    : new ApiResponse(ApiStatusCode.Success, null, 200, "Cập nhật dịch vụ thành công");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating service");
+                return OkException(ex);
+            }
         }
 
+        /// <summary>
+        /// Delete service
+        /// </summary>
         [HttpDelete("delete/{id}")]
-        [Authorize]
         [PermissionFilter(PermissionKeys.DeleteService)]
-        public override async Task<ApiResponse> Delete(int id)
+        public async Task<ApiResponse> Delete(int id)
         {
-            return await base.Delete(id);
+            try
+            {
+                await _serviceService.Delete(id);
+                return new ApiResponse(ApiStatusCode.Success, null, 200, "Xóa dịch vụ thành công");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting service");
+                return OkException(ex);
+            }
         }
 
-        protected override async Task GetUpdateStatusAsync(AttechServer.Applications.UserModules.Dtos.UpdateStatusDto input)
-        {
-            await _service.UpdateStatusService(input.Id, input.Status);
-        }
-
-        #region Protected Implementation Methods
-
-        protected override async Task<object> GetFindAllAsync(PagingRequestBaseDto input)
-        {
-            return await _service.FindAll(input);
-        }
-
-        protected override async Task<DetailServiceDto> GetFindByIdAsync(int id)
-        {
-            return await _service.FindById(id);
-        }
-
-        protected override async Task<DetailServiceDto> GetFindBySlugAsync(string slug)
-        {
-            return await _service.FindBySlug(slug);
-        }
-
-        protected override async Task<object> GetCreateAsync(CreateServiceDto input)
-        {
-            return await _service.Create(input);
-        }
-
-        protected override async Task<object?> GetUpdateAsync(UpdateServiceDto input)
-        {
-            await _service.Update(input);
-            return null;
-        }
-
-        protected override async Task GetDeleteAsync(int id)
-        {
-            await _service.Delete(id);
-        }
-
-        #endregion
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace AttechServer.Shared.Consts.Permissions
+namespace AttechServer.Shared.Consts.Permissions
 {
     public static class PermissionType
     {

@@ -1,4 +1,4 @@
-﻿using AttechServer.Applications.UserModules.Dtos.ConfigPermission;
+using AttechServer.Applications.UserModules.Dtos.ConfigPermission;
 using AttechServer.Applications.UserModules.Dtos.Permission.KeyPermission;
 using AttechServer.Shared.ApplicationBase.Common;
 
@@ -17,7 +17,7 @@ namespace AttechServer.Applications.UserModules.Abstracts
 
         Task UpdatePermissionConfig(UpdatePermissionConfigDto input);
 
-        Task<PagingResult<PermissionApiDto>> GetAllPermissionApi(PermissionApiRequestDto input);
-        Task<PermissionApiDetailDto> GetPermissionApiById(int id);
+        Task<PagingResult<PermissionApiDto>> GetAllApiPermissions(PermissionApiRequestDto input);
+        Task<PermissionApiDetailDto> GetApiPermissionById(int id);
     }
 }

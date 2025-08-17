@@ -208,15 +208,10 @@ namespace AttechServer.Applications.UserModules.Implements
         public static string ServiceBySlug(string slug) => 
             $"services:slug:{slug}";
         
-        // Menu cache keys
-        public static string MenuTree() => "menu:tree";
-        public static string MenuFlat() => "menu:flat";
-        
         // Cache invalidation patterns
         public static string PostsPattern(string type) => $"posts:.*:{type}:.*";
         public static string CategoriesPattern(string type) => $"categories:.*:{type}:.*";
         public static string ProductsPattern() => "products:.*";
         public static string ServicesPattern() => "services:.*";
-        public static string MenuPattern() => "menu:.*";
     }
 }
