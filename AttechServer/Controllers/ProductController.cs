@@ -26,7 +26,7 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Get all product with caching
+        /// Get all products with caching
         /// </summary>
         [HttpGet("find-all")]
         [AllowAnonymous]
@@ -40,13 +40,13 @@ namespace AttechServer.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting all product");
+                _logger.LogError(ex, "Error getting all products");
                 return OkException(ex);
             }
         }
 
         /// <summary>
-        /// Get product by category slug with caching
+        /// Get products by category slug with caching
         /// </summary>
         [HttpGet("category/{slug}")]
         [AllowAnonymous]
@@ -60,7 +60,7 @@ namespace AttechServer.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting product by category slug");
+                _logger.LogError(ex, "Error getting products by category slug");
                 return OkException(ex);
             }
         }
@@ -68,9 +68,9 @@ namespace AttechServer.Controllers
         /// <summary>
         /// Get product by ID with attachments included
         /// </summary>
-        [HttpGet("find-by-id/{id}")]
+        [HttpGet("detail/{id}")]
         [AllowAnonymous]
-        [CacheResponse(CacheProfiles.MediumCache, "product-detail")]
+        [CacheResponse(CacheProfiles.MediumCache, "admin-product-detail")]
         public async Task<ApiResponse> FindById(int id)
         {
             try
@@ -89,9 +89,9 @@ namespace AttechServer.Controllers
         /// <summary>
         /// Get product by slug with caching
         /// </summary>
-        [HttpGet("detail/{slug}")]
+        [HttpGet("detail/slug/{slug}")]
         [AllowAnonymous]
-        [CacheResponse(CacheProfiles.MediumCache, "product-detail")]
+        [CacheResponse(CacheProfiles.MediumCache, "product-detail-slug")]
         public async Task<ApiResponse> FindBySlug(string slug)
         {
             try
@@ -161,15 +161,16 @@ namespace AttechServer.Controllers
 
         /// <summary>
         /// Update product (handles text + files)
+        /// ID được truyền qua route parameter, FE không cần gửi ID trong body
         /// </summary>
-        [HttpPut("update")]
+        [HttpPut("update/{id}")]
         [PermissionFilter(PermissionKeys.EditProduct)]
-        public async Task<ApiResponse> Update([FromBody] UpdateProductDto input)
+        public async Task<ApiResponse> Update(int id, [FromBody] UpdateProductDto input)
         {
             try
             {
                 _logger.LogInformation("Updating product with all data in one atomic operation");
-                var result = await _productService.Update(input);
+                var result = await _productService.Update(id, input);
                 return result != null
                     ? new ApiResponse(ApiStatusCode.Success, result, 200, "Cập nhật sản phẩm thành công")
                     : new ApiResponse(ApiStatusCode.Success, null, 200, "Cập nhật sản phẩm thành công");

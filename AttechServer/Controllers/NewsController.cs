@@ -26,11 +26,11 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Get all news with caching
+        /// Get all news (all status) for admin
         /// </summary>
         [HttpGet("find-all")]
-        [AllowAnonymous]
-        [CacheResponse(CacheProfiles.ShortCache, "news", varyByQueryString: true)]
+        [PermissionFilter(PermissionKeys.ViewNews)]
+        [CacheResponse(CacheProfiles.ShortCache, "admin-news", varyByQueryString: true)]
         public async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
         {
             try
@@ -40,17 +40,17 @@ namespace AttechServer.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting all news");
+                _logger.LogError(ex, "Error getting all news for admin");
                 return OkException(ex);
             }
         }
 
         /// <summary>
-        /// Get news by category slug with caching
+        /// Get news by category slug (all status) for admin
         /// </summary>
         [HttpGet("category/{slug}")]
-        [AllowAnonymous]
-        [CacheResponse(CacheProfiles.ShortCache, "news-category", varyByQueryString: true)]
+        [PermissionFilter(PermissionKeys.ViewNews)]
+        [CacheResponse(CacheProfiles.ShortCache, "admin-news-category", varyByQueryString: true)]
         public async Task<ApiResponse> FindAllByCategorySlug([FromQuery] PagingRequestBaseDto input, string slug)
         {
             try
@@ -60,38 +60,37 @@ namespace AttechServer.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting news by category slug");
+                _logger.LogError(ex, "Error getting news by category slug for admin");
                 return OkException(ex);
             }
         }
 
         /// <summary>
-        /// Get news by ID with attachments included
+        /// Get news by ID (all status) for admin
         /// </summary>
-        [HttpGet("find-by-id/{id}")]
-        [AllowAnonymous]
-        [CacheResponse(CacheProfiles.MediumCache, "news-detail")]
+        [HttpGet("detail/{id}")]
+        [PermissionFilter(PermissionKeys.ViewNews)]
+        [CacheResponse(CacheProfiles.MediumCache, "admin-news-detail")]
         public async Task<ApiResponse> FindById(int id)
         {
             try
             {
                 var result = await _newsService.FindById(id);
-                // TODO: Update service to return NewsWithAttachmentsDto that includes attachments by default
                 return new ApiResponse(ApiStatusCode.Success, result, 200, "Ok");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting news by id");
+                _logger.LogError(ex, "Error getting news by id for admin");
                 return OkException(ex);
             }
         }
 
         /// <summary>
-        /// Get news by slug with caching
+        /// Get news by slug (all status) for admin
         /// </summary>
-        [HttpGet("detail/{slug}")]
-        [AllowAnonymous]
-        [CacheResponse(CacheProfiles.MediumCache, "news-detail")]
+        [HttpGet("detail/slug/{slug}")]
+        [PermissionFilter(PermissionKeys.ViewNews)]
+        [CacheResponse(CacheProfiles.MediumCache, "admin-news-detail-slug")]
         public async Task<ApiResponse> FindBySlug(string slug)
         {
             try
@@ -101,7 +100,7 @@ namespace AttechServer.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting news by slug");
+                _logger.LogError(ex, "Error getting news by slug for admin");
                 return OkException(ex);
             }
         }
@@ -161,15 +160,16 @@ namespace AttechServer.Controllers
 
         /// <summary>
         /// Update news (handles text + files)
+        /// ID được truyền qua route parameter, FE không cần gửi ID trong body
         /// </summary>
-        [HttpPut("update")]
+        [HttpPut("update/{id}")]
         [PermissionFilter(PermissionKeys.EditNews)]
-        public async Task<ApiResponse> Update([FromBody] UpdateNewsDto input)
+        public async Task<ApiResponse> Update(int id, [FromBody] UpdateNewsDto input)
         {
             try
             {
                 _logger.LogInformation("Updating news with all data in one atomic operation");
-                var result = await _newsService.Update(input);
+                var result = await _newsService.Update(id, input);
                 return result != null 
                     ? new ApiResponse(ApiStatusCode.Success, result, 200, "Cập nhật tin tức thành công")
                     : new ApiResponse(ApiStatusCode.Success, null, 200, "Cập nhật tin tức thành công");

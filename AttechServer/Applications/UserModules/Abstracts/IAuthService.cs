@@ -9,5 +9,6 @@ namespace AttechServer.Applications.UserModules.Abstracts
         public Task<TokenApiDto> RefreshToken(TokenApiDto input);
         public void RegisterUser(CreateUserDto user);
         public Task<UserDto?> GetUserWithPermissionsAsync(int userId);
+        public Task ChangePasswordAsync(int userId, ChangePasswordDto changePasswordDto);
     }
 }

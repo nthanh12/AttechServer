@@ -39,7 +39,7 @@ namespace AttechServer.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting all");
+                _logger.LogError(ex, "Error getting all services");
                 return OkException(ex);
             }
         }
@@ -47,9 +47,9 @@ namespace AttechServer.Controllers
         /// <summary>
         /// Get service by ID with attachments included
         /// </summary>
-        [HttpGet("find-by-id/{id}")]
+        [HttpGet("detail/{id}")]
         [AllowAnonymous]
-        [CacheResponse(CacheProfiles.MediumCache, "service-detail")]
+        [CacheResponse(CacheProfiles.MediumCache, "admin-service-detail")]
         public async Task<ApiResponse> FindById(int id)
         {
             try
@@ -68,9 +68,9 @@ namespace AttechServer.Controllers
         /// <summary>
         /// Get service by slug with caching
         /// </summary>
-        [HttpGet("detail/{slug}")]
+        [HttpGet("detail/slug/{slug}")]
         [AllowAnonymous]
-        [CacheResponse(CacheProfiles.MediumCache, "service-detail")]
+        [CacheResponse(CacheProfiles.MediumCache, "service-detail-slug")]
         public async Task<ApiResponse> FindBySlug(string slug)
         {
             try
@@ -138,15 +138,16 @@ namespace AttechServer.Controllers
 
         /// <summary>
         /// Update service (handles text + files)
+        /// ID được truyền qua route parameter, FE không cần gửi ID trong body
         /// </summary>
-        [HttpPut("update")]
+        [HttpPut("update/{id}")]
         [PermissionFilter(PermissionKeys.EditService)]
-        public async Task<ApiResponse> Update([FromBody] UpdateServiceDto input)
+        public async Task<ApiResponse> Update(int id, [FromBody] UpdateServiceDto input)
         {
             try
             {
                 _logger.LogInformation("Updating service with all data in one atomic operation");
-                var result = await _serviceService.Update(input);
+                var result = await _serviceService.Update(id, input);
                 return result != null 
                     ? new ApiResponse(ApiStatusCode.Success, result, 200, "Cập nhật dịch vụ thành công")
                     : new ApiResponse(ApiStatusCode.Success, null, 200, "Cập nhật dịch vụ thành công");

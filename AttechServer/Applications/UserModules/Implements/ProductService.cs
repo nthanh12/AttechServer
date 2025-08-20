@@ -69,7 +69,7 @@ namespace AttechServer.Applications.UserModules.Implements
                         throw new ArgumentException("Thời gian đăng bài không phù hợp.");
                     }
 
-                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("user_id")?.Value, out var id) ? id : 0;
+                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("user_id")?.Value, out var parseId) ? parseId : 0;
 
                     // Step 2: Validate category exists
                     var category = await _dbContext.ProductCategories
@@ -465,7 +465,8 @@ namespace AttechServer.Applications.UserModules.Implements
                     ProductCategorySlugVi = n.ProductCategory.SlugVi,
                     ProductCategorySlugEn = n.ProductCategory.SlugEn,
                     IsOutstanding = n.IsOutstanding,
-                    ImageUrl = n.ImageUrl
+                    ImageUrl = n.ImageUrl,
+                    FeaturedImageId = n.FeaturedImageId
                 })
                 .FirstOrDefaultAsync();
 
@@ -529,7 +530,8 @@ namespace AttechServer.Applications.UserModules.Implements
                     ProductCategorySlugVi = n.ProductCategory.SlugVi,
                     ProductCategorySlugEn = n.ProductCategory.SlugEn,
                     IsOutstanding = n.IsOutstanding,
-                    ImageUrl = n.ImageUrl
+                    ImageUrl = n.ImageUrl,
+                    FeaturedImageId = n.FeaturedImageId
                 })
                 .FirstOrDefaultAsync();
 
@@ -567,9 +569,9 @@ namespace AttechServer.Applications.UserModules.Implements
             return product;
         }
 
-        public async Task<ProductDto> Update(UpdateProductDto input)
+        public async Task<ProductDto> Update(int id, UpdateProductDto input)
         {
-            _logger.LogInformation($"{nameof(Update)}: input = {JsonSerializer.Serialize(input)}");
+            _logger.LogInformation($"{nameof(Update)}: ID = {id}, input = {JsonSerializer.Serialize(input)}");
             using (var transaction = await _dbContext.Database.BeginTransactionAsync())
             {
                 try
@@ -584,15 +586,15 @@ namespace AttechServer.Applications.UserModules.Implements
                         throw new ArgumentException("Thời gian đăng bài không phù hợp.");
                     }
 
-                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("user_id")?.Value, out var id) ? id : 0;
+                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("user_id")?.Value, out var parseId) ? parseId : 0;
 
                     // Kiểm tra product tồn tại
                     var product = await _dbContext.Products
-                        .FirstOrDefaultAsync(n => n.Id == input.Id && !n.Deleted)
+                        .FirstOrDefaultAsync(n => n.Id == id && !n.Deleted)
                         ?? throw new UserFriendlyException(ErrorCode.ProductNotFound);
 
                     // Check for duplicate titles (excluding current record)
-                    var titleViExists = await _dbContext.Products.AnyAsync(n => n.TitleVi == input.TitleVi && n.Id != input.Id && !n.Deleted);
+                    var titleViExists = await _dbContext.Products.AnyAsync(n => n.TitleVi == input.TitleVi && n.Id != id && !n.Deleted);
                     if (titleViExists)
                     {
                         throw new ArgumentException("Tiêu đề tiếng Việt đã tồn tại.");
@@ -600,7 +602,7 @@ namespace AttechServer.Applications.UserModules.Implements
 
                     if (!string.IsNullOrEmpty(input.TitleEn))
                     {
-                        var titleEnExists = await _dbContext.Products.AnyAsync(n => n.TitleEn == input.TitleEn && n.Id != input.Id && !n.Deleted);
+                        var titleEnExists = await _dbContext.Products.AnyAsync(n => n.TitleEn == input.TitleEn && n.Id != id && !n.Deleted);
                         if (titleEnExists)
                         {
                             throw new ArgumentException("Tiêu đề tiếng Anh đã tồn tại.");
@@ -649,8 +651,8 @@ namespace AttechServer.Applications.UserModules.Implements
                     bool featuredImageChanged = currentFeaturedImageId != desiredFeaturedImageId;
                     
                     // Check if content has new temp files
-                    bool hasNewContentFiles = _wysiwygFileProcessor.HasTempFilesInContent(product.ContentVi) || 
-                                             _wysiwygFileProcessor.HasTempFilesInContent(product.ContentEn ?? string.Empty);
+                    bool hasNewContentFiles = _wysiwygFileProcessor.HasTempFilesInContent(input.ContentVi) || 
+                                             _wysiwygFileProcessor.HasTempFilesInContent(input.ContentEn ?? string.Empty);
                     
                     if (galleryChanged || featuredImageChanged || hasNewContentFiles)
                     {
@@ -737,7 +739,7 @@ namespace AttechServer.Applications.UserModules.Implements
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    _logger.LogError(ex, $"Error updating product with id = {input.Id}");
+                    _logger.LogError(ex, $"Error updating product with id = {id}");
                     throw;
                 }
                 finally
@@ -760,6 +762,233 @@ namespace AttechServer.Applications.UserModules.Implements
             return sanitizer.Sanitize(content);
         }
 
+        public async Task<PagingResult<ProductDto>> FindAllForClient(PagingRequestBaseDto input)
+        {
+            _logger.LogInformation($"{nameof(FindAllForClient)}: Getting published products for client");
+            
+            var query = _dbContext.Products
+                .Include(p => p.ProductCategory)
+                .Where(p => !p.Deleted && p.Status == CommonStatus.ACTIVE);
 
+            // Search by keyword if provided
+            if (!string.IsNullOrWhiteSpace(input.Keyword))
+            {
+                query = query.Where(p => p.TitleVi.Contains(input.Keyword) || 
+                                       p.TitleEn.Contains(input.Keyword) ||
+                                       p.DescriptionVi.Contains(input.Keyword) ||
+                                       p.DescriptionEn.Contains(input.Keyword));
+            }
+
+            var totalCount = await query.CountAsync();
+
+            var products = await query
+                .OrderByDescending(p => p.IsOutstanding)
+                .ThenByDescending(p => p.TimePosted)
+                .Skip(input.GetSkip())
+                .Take(input.PageSize == -1 ? totalCount : input.PageSize)
+                .Select(p => new ProductDto
+                {
+                    Id = p.Id,
+                    SlugVi = p.SlugVi,
+                    SlugEn = p.SlugEn,
+                    TitleVi = p.TitleVi,
+                    TitleEn = p.TitleEn,
+                    DescriptionVi = p.DescriptionVi,
+                    DescriptionEn = p.DescriptionEn,
+                    TimePosted = p.TimePosted,
+                    Status = p.Status,
+                    ProductCategoryId = p.ProductCategoryId,
+                    ProductCategoryTitleVi = p.ProductCategory.TitleVi,
+                    ProductCategoryTitleEn = p.ProductCategory.TitleEn,
+                    ProductCategorySlugVi = p.ProductCategory.SlugVi,
+                    ProductCategorySlugEn = p.ProductCategory.SlugEn,
+                    IsOutstanding = p.IsOutstanding,
+                    ImageUrl = p.ImageUrl,
+                    FeaturedImageId = p.FeaturedImageId
+                })
+                .ToListAsync();
+
+            return new PagingResult<ProductDto>
+            {
+                Items = products,
+                TotalItems = totalCount,
+                PageSize = input.PageSize == -1 ? totalCount : input.PageSize,
+                Page = input.PageNumber
+            };
+        }
+
+        public async Task<DetailProductDto> FindBySlugForClient(string slug)
+        {
+            _logger.LogInformation($"{nameof(FindBySlugForClient)}: slug = {slug}");
+            var product = await _dbContext.Products
+                .Where(p => (p.SlugVi == slug || p.SlugEn == slug) && !p.Deleted && p.Status == CommonStatus.ACTIVE)
+                .Select(p => new DetailProductDto
+                {
+                    Id = p.Id,
+                    TitleVi = p.TitleVi,
+                    TitleEn = p.TitleEn,
+                    SlugVi = p.SlugVi,
+                    SlugEn = p.SlugEn,
+                    DescriptionVi = p.DescriptionVi,
+                    DescriptionEn = p.DescriptionEn,
+                    ContentVi = p.ContentVi,
+                    ContentEn = p.ContentEn,
+                    TimePosted = p.TimePosted,
+                    Status = p.Status,
+                    ProductCategoryId = p.ProductCategoryId,
+                    ProductCategoryTitleVi = p.ProductCategory.TitleVi,
+                    ProductCategoryTitleEn = p.ProductCategory.TitleEn,
+                    ProductCategorySlugVi = p.ProductCategory.SlugVi,
+                    ProductCategorySlugEn = p.ProductCategory.SlugEn,
+                    IsOutstanding = p.IsOutstanding,
+                    ImageUrl = p.ImageUrl
+                })
+                .FirstOrDefaultAsync();
+
+            if (product == null)
+                throw new UserFriendlyException(ErrorCode.ProductNotFound);
+
+            // Load attachments
+            var attachments = await _dbContext.Attachments
+                .Where(a => a.ObjectType == ObjectType.Product && a.ObjectId == product.Id && !a.Deleted)
+                .Select(a => new AttachmentDto
+                {
+                    Id = a.Id,
+                    FilePath = a.FilePath,
+                    Url = a.Url,
+                    OriginalFileName = a.OriginalFileName,
+                    FileSize = a.FileSize,
+                    ContentType = a.ContentType,
+                    ObjectType = a.ObjectType,
+                    ObjectId = a.ObjectId,
+                    RelationType = a.RelationType,
+                    IsPrimary = a.IsPrimary,
+                    IsContentImage = a.IsContentImage,
+                    IsTemporary = a.IsTemporary,
+                    CreatedDate = a.CreatedDate
+                })
+                .ToListAsync();
+
+            product.Attachments = new AttachmentsGroupDto
+            {
+                Images = attachments.Where(a => a.ContentType.StartsWith("image/") && !a.IsPrimary && !a.IsContentImage).ToList(),
+                Documents = attachments.Where(a => !a.ContentType.StartsWith("image/")).ToList()
+            };
+
+            return product;
+        }
+
+        public async Task<PagingResult<ProductDto>> FindAllByCategorySlugForClient(PagingRequestBaseDto input, string slug)
+        {
+            _logger.LogInformation($"{nameof(FindAllByCategorySlugForClient)}: slug = {slug}");
+            
+            var query = _dbContext.Products
+                .Include(p => p.ProductCategory)
+                .Where(p => !p.Deleted && p.Status == CommonStatus.ACTIVE &&
+                           (p.ProductCategory.SlugVi == slug || p.ProductCategory.SlugEn == slug));
+
+            // Search by keyword if provided
+            if (!string.IsNullOrWhiteSpace(input.Keyword))
+            {
+                query = query.Where(p => p.TitleVi.Contains(input.Keyword) || 
+                                       p.TitleEn.Contains(input.Keyword) ||
+                                       p.DescriptionVi.Contains(input.Keyword) ||
+                                       p.DescriptionEn.Contains(input.Keyword));
+            }
+
+            var totalCount = await query.CountAsync();
+
+            var products = await query
+                .OrderByDescending(p => p.IsOutstanding)
+                .ThenByDescending(p => p.TimePosted)
+                .Skip(input.GetSkip())
+                .Take(input.PageSize == -1 ? totalCount : input.PageSize)
+                .Select(p => new ProductDto
+                {
+                    Id = p.Id,
+                    SlugVi = p.SlugVi,
+                    SlugEn = p.SlugEn,
+                    TitleVi = p.TitleVi,
+                    TitleEn = p.TitleEn,
+                    DescriptionVi = p.DescriptionVi,
+                    DescriptionEn = p.DescriptionEn,
+                    TimePosted = p.TimePosted,
+                    Status = p.Status,
+                    ProductCategoryId = p.ProductCategoryId,
+                    ProductCategoryTitleVi = p.ProductCategory.TitleVi,
+                    ProductCategoryTitleEn = p.ProductCategory.TitleEn,
+                    ProductCategorySlugVi = p.ProductCategory.SlugVi,
+                    ProductCategorySlugEn = p.ProductCategory.SlugEn,
+                    IsOutstanding = p.IsOutstanding,
+                    ImageUrl = p.ImageUrl,
+                    FeaturedImageId = p.FeaturedImageId
+                })
+                .ToListAsync();
+
+            return new PagingResult<ProductDto>
+            {
+                Items = products,
+                TotalItems = totalCount,
+                PageSize = input.PageSize == -1 ? totalCount : input.PageSize,
+                Page = input.PageNumber
+            };
+        }
+
+        public async Task<PagingResult<ProductDto>> SearchForClient(PagingRequestBaseDto input)
+        {
+            _logger.LogInformation($"{nameof(SearchForClient)}: keyword = {input.Keyword}");
+            
+            var query = _dbContext.Products
+                .Include(p => p.ProductCategory)
+                .Where(p => !p.Deleted && p.Status == CommonStatus.ACTIVE);
+
+            // Apply search filter
+            if (!string.IsNullOrWhiteSpace(input.Keyword))
+            {
+                query = query.Where(p => p.TitleVi.Contains(input.Keyword) || 
+                                       p.TitleEn.Contains(input.Keyword) ||
+                                       p.DescriptionVi.Contains(input.Keyword) ||
+                                       p.DescriptionEn.Contains(input.Keyword) ||
+                                       p.ContentVi.Contains(input.Keyword) ||
+                                       p.ContentEn.Contains(input.Keyword));
+            }
+
+            var totalCount = await query.CountAsync();
+
+            var products = await query
+                .OrderByDescending(p => p.IsOutstanding)
+                .ThenByDescending(p => p.TimePosted)
+                .Skip(input.GetSkip())
+                .Take(input.PageSize == -1 ? totalCount : input.PageSize)
+                .Select(p => new ProductDto
+                {
+                    Id = p.Id,
+                    SlugVi = p.SlugVi,
+                    SlugEn = p.SlugEn,
+                    TitleVi = p.TitleVi,
+                    TitleEn = p.TitleEn,
+                    DescriptionVi = p.DescriptionVi,
+                    DescriptionEn = p.DescriptionEn,
+                    TimePosted = p.TimePosted,
+                    Status = p.Status,
+                    ProductCategoryId = p.ProductCategoryId,
+                    ProductCategoryTitleVi = p.ProductCategory.TitleVi,
+                    ProductCategoryTitleEn = p.ProductCategory.TitleEn,
+                    ProductCategorySlugVi = p.ProductCategory.SlugVi,
+                    ProductCategorySlugEn = p.ProductCategory.SlugEn,
+                    IsOutstanding = p.IsOutstanding,
+                    ImageUrl = p.ImageUrl,
+                    FeaturedImageId = p.FeaturedImageId
+                })
+                .ToListAsync();
+
+            return new PagingResult<ProductDto>
+            {
+                Items = products,
+                TotalItems = totalCount,
+                PageSize = input.PageSize == -1 ? totalCount : input.PageSize,
+                Page = input.PageNumber
+            };
+        }
     }
 }

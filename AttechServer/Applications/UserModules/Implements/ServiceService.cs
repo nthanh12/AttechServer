@@ -69,7 +69,7 @@ namespace AttechServer.Applications.UserModules.Implements
                         throw new ArgumentException("Thời gian đăng bài không phù hợp.");
                     }
 
-                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("user_id")?.Value, out var id) ? id : 0;
+                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("user_id")?.Value, out var parseId) ? parseId : 0;
 
 
                     // Step 3: Check for duplicate titles
@@ -370,7 +370,8 @@ namespace AttechServer.Applications.UserModules.Implements
                     TimePosted = n.TimePosted,
                     Status = n.Status,
                     IsOutstanding = n.IsOutstanding,
-                    ImageUrl = n.ImageUrl
+                    ImageUrl = n.ImageUrl,
+                    FeaturedImageId = n.FeaturedImageId
                 })
                 .FirstOrDefaultAsync();
 
@@ -429,7 +430,8 @@ namespace AttechServer.Applications.UserModules.Implements
                     TimePosted = n.TimePosted,
                     Status = n.Status,
                     IsOutstanding = n.IsOutstanding,
-                    ImageUrl = n.ImageUrl
+                    ImageUrl = n.ImageUrl,
+                    FeaturedImageId = n.FeaturedImageId
                 })
                 .FirstOrDefaultAsync();
 
@@ -467,9 +469,9 @@ namespace AttechServer.Applications.UserModules.Implements
             return service;
         }
 
-        public async Task<ServiceDto> Update(UpdateServiceDto input)
+        public async Task<ServiceDto> Update(int id, UpdateServiceDto input)
         {
-            _logger.LogInformation($"{nameof(Update)}: input = {JsonSerializer.Serialize(input)}");
+            _logger.LogInformation($"{nameof(Update)}: ID = {id}, input = {JsonSerializer.Serialize(input)}");
             using (var transaction = await _dbContext.Database.BeginTransactionAsync())
             {
                 try
@@ -484,15 +486,15 @@ namespace AttechServer.Applications.UserModules.Implements
                         throw new ArgumentException("Thời gian đăng bài không phù hợp.");
                     }
 
-                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("user_id")?.Value, out var id) ? id : 0;
+                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("user_id")?.Value, out var parseId) ? parseId : 0;
 
                     // Kiểm tra service tồn tại
                     var service = await _dbContext.Services
-                        .FirstOrDefaultAsync(n => n.Id == input.Id && !n.Deleted)
+                        .FirstOrDefaultAsync(n => n.Id == id && !n.Deleted)
                         ?? throw new UserFriendlyException(ErrorCode.ServiceNotFound);
 
                     // Check for duplicate titles (excluding current record)
-                    var titleViExists = await _dbContext.Services.AnyAsync(n => n.TitleVi == input.TitleVi && n.Id != input.Id && !n.Deleted);
+                    var titleViExists = await _dbContext.Services.AnyAsync(n => n.TitleVi == input.TitleVi && n.Id != id && !n.Deleted);
                     if (titleViExists)
                     {
                         throw new ArgumentException("Tiêu đề tiếng Việt đã tồn tại.");
@@ -500,7 +502,7 @@ namespace AttechServer.Applications.UserModules.Implements
 
                     if (!string.IsNullOrEmpty(input.TitleEn))
                     {
-                        var titleEnExists = await _dbContext.Services.AnyAsync(n => n.TitleEn == input.TitleEn && n.Id != input.Id && !n.Deleted);
+                        var titleEnExists = await _dbContext.Services.AnyAsync(n => n.TitleEn == input.TitleEn && n.Id != id && !n.Deleted);
                         if (titleEnExists)
                         {
                             throw new ArgumentException("Tiêu đề tiếng Anh đã tồn tại.");
@@ -539,8 +541,8 @@ namespace AttechServer.Applications.UserModules.Implements
                     bool featuredImageChanged = currentFeaturedImageId != desiredFeaturedImageId;
                     
                     // Check if content has new temp files
-                    bool hasNewContentFiles = _wysiwygFileProcessor.HasTempFilesInContent(service.ContentVi) || 
-                                             _wysiwygFileProcessor.HasTempFilesInContent(service.ContentEn ?? string.Empty);
+                    bool hasNewContentFiles = _wysiwygFileProcessor.HasTempFilesInContent(input.ContentVi) || 
+                                             _wysiwygFileProcessor.HasTempFilesInContent(input.ContentEn ?? string.Empty);
                     
                     if (galleryChanged || featuredImageChanged || hasNewContentFiles)
                     {
@@ -622,7 +624,7 @@ namespace AttechServer.Applications.UserModules.Implements
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    _logger.LogError(ex, $"Error updating service with id = {input.Id}");
+                    _logger.LogError(ex, $"Error updating service with id = {id}");
                     throw;
                 }
                 finally
@@ -645,6 +647,160 @@ namespace AttechServer.Applications.UserModules.Implements
             return sanitizer.Sanitize(content);
         }
 
+        public async Task<PagingResult<ServiceDto>> FindAllForClient(PagingRequestBaseDto input)
+        {
+            _logger.LogInformation($"{nameof(FindAllForClient)}: Getting published services for client");
+            
+            var query = _dbContext.Services
+                .Where(s => !s.Deleted && s.Status == CommonStatus.ACTIVE);
 
+            // Search by keyword if provided
+            if (!string.IsNullOrWhiteSpace(input.Keyword))
+            {
+                query = query.Where(s => s.TitleVi.Contains(input.Keyword) || 
+                                       s.TitleEn.Contains(input.Keyword) ||
+                                       s.DescriptionVi.Contains(input.Keyword) ||
+                                       s.DescriptionEn.Contains(input.Keyword));
+            }
+
+            var totalCount = await query.CountAsync();
+
+            var services = await query
+                .OrderByDescending(s => s.IsOutstanding)
+                .ThenByDescending(s => s.TimePosted)
+                .Skip(input.GetSkip())
+                .Take(input.PageSize == -1 ? totalCount : input.PageSize)
+                .Select(s => new ServiceDto
+                {
+                    Id = s.Id,
+                    SlugVi = s.SlugVi,
+                    SlugEn = s.SlugEn,
+                    TitleVi = s.TitleVi,
+                    TitleEn = s.TitleEn,
+                    DescriptionVi = s.DescriptionVi,
+                    DescriptionEn = s.DescriptionEn,
+                    TimePosted = s.TimePosted,
+                    Status = s.Status,
+                    IsOutstanding = s.IsOutstanding,
+                    ImageUrl = s.ImageUrl,
+                    FeaturedImageId = s.FeaturedImageId
+                })
+                .ToListAsync();
+
+            return new PagingResult<ServiceDto>
+            {
+                Items = services,
+                TotalItems = totalCount,
+                PageSize = input.PageSize == -1 ? totalCount : input.PageSize,
+                Page = input.PageNumber
+            };
+        }
+
+        public async Task<DetailServiceDto> FindBySlugForClient(string slug)
+        {
+            _logger.LogInformation($"{nameof(FindBySlugForClient)}: slug = {slug}");
+            var service = await _dbContext.Services
+                .Where(s => (s.SlugVi == slug || s.SlugEn == slug) && !s.Deleted && s.Status == CommonStatus.ACTIVE)
+                .Select(s => new DetailServiceDto
+                {
+                    Id = s.Id,
+                    TitleVi = s.TitleVi,
+                    TitleEn = s.TitleEn,
+                    SlugVi = s.SlugVi,
+                    SlugEn = s.SlugEn,
+                    DescriptionVi = s.DescriptionVi,
+                    DescriptionEn = s.DescriptionEn,
+                    ContentVi = s.ContentVi,
+                    ContentEn = s.ContentEn,
+                    TimePosted = s.TimePosted,
+                    Status = s.Status,
+                    IsOutstanding = s.IsOutstanding,
+                    ImageUrl = s.ImageUrl
+                })
+                .FirstOrDefaultAsync();
+
+            if (service == null)
+                throw new UserFriendlyException(ErrorCode.ServiceNotFound);
+
+            // Load attachments
+            var attachments = await _dbContext.Attachments
+                .Where(a => a.ObjectType == ObjectType.Service && a.ObjectId == service.Id && !a.Deleted)
+                .Select(a => new AttachmentDto
+                {
+                    Id = a.Id,
+                    FilePath = a.FilePath,
+                    Url = a.Url,
+                    OriginalFileName = a.OriginalFileName,
+                    FileSize = a.FileSize,
+                    ContentType = a.ContentType,
+                    ObjectType = a.ObjectType,
+                    ObjectId = a.ObjectId,
+                    RelationType = a.RelationType,
+                    IsPrimary = a.IsPrimary,
+                    IsContentImage = a.IsContentImage,
+                    IsTemporary = a.IsTemporary,
+                    CreatedDate = a.CreatedDate
+                })
+                .ToListAsync();
+
+            service.Attachments = new AttachmentsGroupDto
+            {
+                Images = attachments.Where(a => a.ContentType.StartsWith("image/") && !a.IsPrimary && !a.IsContentImage).ToList(),
+                Documents = attachments.Where(a => !a.ContentType.StartsWith("image/")).ToList()
+            };
+
+            return service;
+        }
+
+        public async Task<PagingResult<ServiceDto>> SearchForClient(PagingRequestBaseDto input)
+        {
+            _logger.LogInformation($"{nameof(SearchForClient)}: keyword = {input.Keyword}");
+            
+            var query = _dbContext.Services
+                .Where(s => !s.Deleted && s.Status == CommonStatus.ACTIVE);
+
+            // Apply search filter
+            if (!string.IsNullOrWhiteSpace(input.Keyword))
+            {
+                query = query.Where(s => s.TitleVi.Contains(input.Keyword) || 
+                                       s.TitleEn.Contains(input.Keyword) ||
+                                       s.DescriptionVi.Contains(input.Keyword) ||
+                                       s.DescriptionEn.Contains(input.Keyword) ||
+                                       s.ContentVi.Contains(input.Keyword) ||
+                                       s.ContentEn.Contains(input.Keyword));
+            }
+
+            var totalCount = await query.CountAsync();
+
+            var services = await query
+                .OrderByDescending(s => s.IsOutstanding)
+                .ThenByDescending(s => s.TimePosted)
+                .Skip(input.GetSkip())
+                .Take(input.PageSize == -1 ? totalCount : input.PageSize)
+                .Select(s => new ServiceDto
+                {
+                    Id = s.Id,
+                    SlugVi = s.SlugVi,
+                    SlugEn = s.SlugEn,
+                    TitleVi = s.TitleVi,
+                    TitleEn = s.TitleEn,
+                    DescriptionVi = s.DescriptionVi,
+                    DescriptionEn = s.DescriptionEn,
+                    TimePosted = s.TimePosted,
+                    Status = s.Status,
+                    IsOutstanding = s.IsOutstanding,
+                    ImageUrl = s.ImageUrl,
+                    FeaturedImageId = s.FeaturedImageId
+                })
+                .ToListAsync();
+
+            return new PagingResult<ServiceDto>
+            {
+                Items = services,
+                TotalItems = totalCount,
+                PageSize = input.PageSize == -1 ? totalCount : input.PageSize,
+                Page = input.PageNumber
+            };
+        }
     }
 }

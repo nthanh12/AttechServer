@@ -167,5 +167,44 @@ namespace AttechServer.Controllers
                 return OkException(ex);
             }
         }
+
+        /// <summary>
+        /// Change password
+        /// </summary>
+        /// <param name="changePasswordDto"></param>
+        /// <returns></returns>
+        [HttpPost("change-password")]
+        [Authorize]
+        public async Task<ApiResponse> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
+        {
+            try
+            {
+                var userIdClaim = User.FindFirst("user_id")?.Value;
+                if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+                {
+                    return new ApiResponse(ApiStatusCode.Error, null, 401, "Invalid token");
+                }
+
+                await _authService.ChangePasswordAsync(userId, changePasswordDto);
+
+                await _activityLogService.LogUserActionAsync(
+                    "password_changed",
+                    $"User {userId} changed password successfully",
+                    details: $"IP: {HttpContext.Connection.RemoteIpAddress}"
+                );
+
+                return new ApiResponse(ApiStatusCode.Success, null, 200, "Đổi mật khẩu thành công");
+            }
+            catch (Exception ex)
+            {
+                await _activityLogService.LogSecurityEventAsync(
+                    "password_change_failed",
+                    "Failed password change attempt",
+                    ex.Message
+                );
+
+                return OkException(ex);
+            }
+        }
     }
 }

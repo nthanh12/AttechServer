@@ -170,6 +170,12 @@ namespace AttechServer.Applications.UserModules.Implements
                 .Where(a => attachmentIds.Contains(a.Id) && a.IsTemporary && !a.Deleted)
                 .ToListAsync();
 
+            // If setting featured image, delete old featured images first (before processing any attachment)
+            if (isFeaturedImage)
+            {
+                await SoftDeleteOldFeaturedImageAsync(objectType, objectId, attachmentIds);
+            }
+
             foreach (var attachment in attachments)
             {
                 // Move file from temp to permanent location
@@ -185,9 +191,6 @@ namespace AttechServer.Applications.UserModules.Implements
                 // Update entity ImageUrl and FeaturedImageId if this is the featured image
                 if (isFeaturedImage)
                 {
-                    // First, soft delete old featured image
-                    await SoftDeleteOldFeaturedImageAsync(objectType, objectId);
-                    
                     var imageUrl = $"/uploads/{attachment.FilePath}";
                     
                     switch (objectType)
@@ -331,17 +334,24 @@ namespace AttechServer.Applications.UserModules.Implements
         }
 
         /// <summary>
-        /// Soft delete old featured image (IsPrimary = true) for an entity
+        /// Soft delete old featured image (IsPrimary = true) for an entity, excluding specific attachment IDs
         /// </summary>
-        private async Task SoftDeleteOldFeaturedImageAsync(ObjectType objectType, int objectId)
+        private async Task SoftDeleteOldFeaturedImageAsync(ObjectType objectType, int objectId, List<int>? excludeAttachmentIds = null)
         {
-            var oldFeaturedImage = await _context.Attachments
-                .FirstOrDefaultAsync(a => a.ObjectType == objectType && 
-                                         a.ObjectId == objectId && 
-                                         a.IsPrimary == true && 
-                                         !a.Deleted);
+            var query = _context.Attachments
+                .Where(a => a.ObjectType == objectType && 
+                           a.ObjectId == objectId && 
+                           a.IsPrimary == true && 
+                           !a.Deleted);
 
-            if (oldFeaturedImage != null)
+            if (excludeAttachmentIds != null && excludeAttachmentIds.Any())
+            {
+                query = query.Where(a => !excludeAttachmentIds.Contains(a.Id));
+            }
+
+            var oldFeaturedImages = await query.ToListAsync();
+
+            foreach (var oldFeaturedImage in oldFeaturedImages)
             {
                 oldFeaturedImage.Deleted = true;
                 oldFeaturedImage.ModifiedDate = DateTime.Now;

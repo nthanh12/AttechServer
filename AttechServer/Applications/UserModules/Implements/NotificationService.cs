@@ -69,7 +69,7 @@ namespace AttechServer.Applications.UserModules.Implements
                         throw new ArgumentException("Thời gian đăng bài không phù hợp.");
                     }
 
-                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("user_id")?.Value, out var id) ? id : 0;
+                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("user_id")?.Value, out var parseId) ? parseId : 0;
 
                     // Step 2: Validate category exists
                     var category = await _dbContext.NotificationCategories
@@ -464,7 +464,8 @@ namespace AttechServer.Applications.UserModules.Implements
                     NotificationCategorySlugVi = n.NotificationCategory.SlugVi,
                     NotificationCategorySlugEn = n.NotificationCategory.SlugEn,
                     IsOutstanding = n.IsOutstanding,
-                    ImageUrl = n.ImageUrl
+                    ImageUrl = n.ImageUrl,
+                    FeaturedImageId = n.FeaturedImageId
                 })
                 .FirstOrDefaultAsync();
 
@@ -528,7 +529,8 @@ namespace AttechServer.Applications.UserModules.Implements
                     NotificationCategorySlugVi = n.NotificationCategory.SlugVi,
                     NotificationCategorySlugEn = n.NotificationCategory.SlugEn,
                     IsOutstanding = n.IsOutstanding,
-                    ImageUrl = n.ImageUrl
+                    ImageUrl = n.ImageUrl,
+                    FeaturedImageId = n.FeaturedImageId
                 })
                 .FirstOrDefaultAsync();
 
@@ -566,9 +568,9 @@ namespace AttechServer.Applications.UserModules.Implements
             return notification;
         }
 
-        public async Task<NotificationDto> Update(UpdateNotificationDto input)
+        public async Task<NotificationDto> Update(int id, UpdateNotificationDto input)
         {
-            _logger.LogInformation($"{nameof(Update)}: input = {JsonSerializer.Serialize(input)}");
+            _logger.LogInformation($"{nameof(Update)}: ID = {id}, input = {JsonSerializer.Serialize(input)}");
             using (var transaction = await _dbContext.Database.BeginTransactionAsync())
             {
                 try
@@ -583,15 +585,15 @@ namespace AttechServer.Applications.UserModules.Implements
                         throw new ArgumentException("Thời gian đăng bài không phù hợp.");
                     }
 
-                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("user_id")?.Value, out var id) ? id : 0;
+                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("user_id")?.Value, out var parseId) ? parseId : 0;
 
                     // Kiểm tra notification tồn tại
                     var notification = await _dbContext.Notifications
-                        .FirstOrDefaultAsync(n => n.Id == input.Id && !n.Deleted)
+                        .FirstOrDefaultAsync(n => n.Id == id && !n.Deleted)
                         ?? throw new UserFriendlyException(ErrorCode.NotificationNotFound);
 
                     // Check for duplicate titles (excluding current record)
-                    var titleViExists = await _dbContext.Notifications.AnyAsync(n => n.TitleVi == input.TitleVi && n.Id != input.Id && !n.Deleted);
+                    var titleViExists = await _dbContext.Notifications.AnyAsync(n => n.TitleVi == input.TitleVi && n.Id != id && !n.Deleted);
                     if (titleViExists)
                     {
                         throw new ArgumentException("Tiêu đề tiếng Việt đã tồn tại.");
@@ -599,7 +601,7 @@ namespace AttechServer.Applications.UserModules.Implements
 
                     if (!string.IsNullOrEmpty(input.TitleEn))
                     {
-                        var titleEnExists = await _dbContext.Notifications.AnyAsync(n => n.TitleEn == input.TitleEn && n.Id != input.Id && !n.Deleted);
+                        var titleEnExists = await _dbContext.Notifications.AnyAsync(n => n.TitleEn == input.TitleEn && n.Id != id && !n.Deleted);
                         if (titleEnExists)
                         {
                             throw new ArgumentException("Tiêu đề tiếng Anh đã tồn tại.");
@@ -643,8 +645,8 @@ namespace AttechServer.Applications.UserModules.Implements
                     bool featuredImageChanged = currentFeaturedImageId != desiredFeaturedImageId;
                     
                     // Check if content has new temp files
-                    bool hasNewContentFiles = _wysiwygFileProcessor.HasTempFilesInContent(notification.ContentVi) || 
-                                             _wysiwygFileProcessor.HasTempFilesInContent(notification.ContentEn ?? string.Empty);
+                    bool hasNewContentFiles = _wysiwygFileProcessor.HasTempFilesInContent(input.ContentVi) || 
+                                             _wysiwygFileProcessor.HasTempFilesInContent(input.ContentEn ?? string.Empty);
                     
                     if (galleryChanged || featuredImageChanged || hasNewContentFiles)
                     {
@@ -732,7 +734,7 @@ namespace AttechServer.Applications.UserModules.Implements
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    _logger.LogError(ex, $"Error updating notification with id = {input.Id}");
+                    _logger.LogError(ex, $"Error updating notification with id = {id}");
                     throw;
                 }
                 finally
@@ -755,6 +757,234 @@ namespace AttechServer.Applications.UserModules.Implements
             return sanitizer.Sanitize(content);
         }
 
+        public async Task<PagingResult<NotificationDto>> FindAllForClient(PagingRequestBaseDto input)
+        {
+            _logger.LogInformation($"{nameof(FindAllForClient)}: Getting published notifications for client");
+            
+            var query = _dbContext.Notifications
+                .Include(n => n.NotificationCategory)
+                .Where(n => !n.Deleted && n.Status == CommonStatus.ACTIVE);
 
+            // Search by keyword if provided
+            if (!string.IsNullOrWhiteSpace(input.Keyword))
+            {
+                query = query.Where(n => n.TitleVi.Contains(input.Keyword) || 
+                                       n.TitleEn.Contains(input.Keyword) ||
+                                       n.DescriptionVi.Contains(input.Keyword) ||
+                                       n.DescriptionEn.Contains(input.Keyword));
+            }
+
+            var totalCount = await query.CountAsync();
+
+            var notifications = await query
+                .OrderByDescending(n => n.IsOutstanding)
+                .ThenByDescending(n => n.TimePosted)
+                .Skip(input.GetSkip())
+                .Take(input.PageSize == -1 ? totalCount : input.PageSize)
+                .Select(n => new NotificationDto
+                {
+                    Id = n.Id,
+                    SlugVi = n.SlugVi,
+                    SlugEn = n.SlugEn,
+                    TitleVi = n.TitleVi,
+                    TitleEn = n.TitleEn,
+                    DescriptionVi = n.DescriptionVi,
+                    DescriptionEn = n.DescriptionEn,
+                    TimePosted = n.TimePosted,
+                    Status = n.Status,
+                    NotificationCategoryId = n.NotificationCategoryId,
+                    NotificationCategoryTitleVi = n.NotificationCategory.TitleVi,
+                    NotificationCategoryTitleEn = n.NotificationCategory.TitleEn,
+                    NotificationCategorySlugVi = n.NotificationCategory.SlugVi,
+                    NotificationCategorySlugEn = n.NotificationCategory.SlugEn,
+                    IsOutstanding = n.IsOutstanding,
+                    ImageUrl = n.ImageUrl,
+                    FeaturedImageId = n.FeaturedImageId
+                })
+                .ToListAsync();
+
+            return new PagingResult<NotificationDto>
+            {
+                Items = notifications,
+                TotalItems = totalCount,
+                PageSize = input.PageSize == -1 ? totalCount : input.PageSize,
+                Page = input.PageNumber
+            };
+        }
+
+        public async Task<DetailNotificationDto> FindBySlugForClient(string slug)
+        {
+            _logger.LogInformation($"{nameof(FindBySlugForClient)}: slug = {slug}");
+            var notification = await _dbContext.Notifications
+                .Where(n => (n.SlugVi == slug || n.SlugEn == slug) && !n.Deleted && n.Status == CommonStatus.ACTIVE)
+                .Select(n => new DetailNotificationDto
+                {
+                    Id = n.Id,
+                    TitleVi = n.TitleVi,
+                    TitleEn = n.TitleEn,
+                    SlugVi = n.SlugVi,
+                    SlugEn = n.SlugEn,
+                    DescriptionVi = n.DescriptionVi,
+                    DescriptionEn = n.DescriptionEn,
+                    ContentVi = n.ContentVi,
+                    ContentEn = n.ContentEn,
+                    TimePosted = n.TimePosted,
+                    Status = n.Status,
+                    NotificationCategoryId = n.NotificationCategoryId,
+                    NotificationCategoryTitleVi = n.NotificationCategory.TitleVi,
+                    NotificationCategoryTitleEn = n.NotificationCategory.TitleEn,
+                    NotificationCategorySlugVi = n.NotificationCategory.SlugVi,
+                    NotificationCategorySlugEn = n.NotificationCategory.SlugEn,
+                    IsOutstanding = n.IsOutstanding,
+                    ImageUrl = n.ImageUrl,
+                    FeaturedImageId = n.FeaturedImageId
+                })
+                .FirstOrDefaultAsync();
+
+            if (notification == null)
+                throw new UserFriendlyException(ErrorCode.NotificationNotFound);
+
+            // Load attachments
+            var attachments = await _dbContext.Attachments
+                .Where(a => a.ObjectType == ObjectType.Notification && a.ObjectId == notification.Id && !a.Deleted)
+                .Select(a => new AttachmentDto
+                {
+                    Id = a.Id,
+                    FilePath = a.FilePath,
+                    Url = a.Url,
+                    OriginalFileName = a.OriginalFileName,
+                    FileSize = a.FileSize,
+                    ContentType = a.ContentType,
+                    ObjectType = a.ObjectType,
+                    ObjectId = a.ObjectId,
+                    RelationType = a.RelationType,
+                    IsPrimary = a.IsPrimary,
+                    IsContentImage = a.IsContentImage,
+                    IsTemporary = a.IsTemporary,
+                    CreatedDate = a.CreatedDate
+                })
+                .ToListAsync();
+
+            notification.Attachments = new AttachmentsGroupDto
+            {
+                Images = attachments.Where(a => a.ContentType.StartsWith("image/") && !a.IsPrimary && !a.IsContentImage).ToList(),
+                Documents = attachments.Where(a => !a.ContentType.StartsWith("image/")).ToList()
+            };
+
+            return notification;
+        }
+
+        public async Task<PagingResult<NotificationDto>> FindAllByCategorySlugForClient(PagingRequestBaseDto input, string slug)
+        {
+            _logger.LogInformation($"{nameof(FindAllByCategorySlugForClient)}: slug = {slug}");
+            
+            var query = _dbContext.Notifications
+                .Include(n => n.NotificationCategory)
+                .Where(n => !n.Deleted && n.Status == CommonStatus.ACTIVE &&
+                           (n.NotificationCategory.SlugVi == slug || n.NotificationCategory.SlugEn == slug));
+
+            // Search by keyword if provided
+            if (!string.IsNullOrWhiteSpace(input.Keyword))
+            {
+                query = query.Where(n => n.TitleVi.Contains(input.Keyword) || 
+                                       n.TitleEn.Contains(input.Keyword) ||
+                                       n.DescriptionVi.Contains(input.Keyword) ||
+                                       n.DescriptionEn.Contains(input.Keyword));
+            }
+
+            var totalCount = await query.CountAsync();
+
+            var notifications = await query
+                .OrderByDescending(n => n.IsOutstanding)
+                .ThenByDescending(n => n.TimePosted)
+                .Skip(input.GetSkip())
+                .Take(input.PageSize == -1 ? totalCount : input.PageSize)
+                .Select(n => new NotificationDto
+                {
+                    Id = n.Id,
+                    SlugVi = n.SlugVi,
+                    SlugEn = n.SlugEn,
+                    TitleVi = n.TitleVi,
+                    TitleEn = n.TitleEn,
+                    DescriptionVi = n.DescriptionVi,
+                    DescriptionEn = n.DescriptionEn,
+                    TimePosted = n.TimePosted,
+                    Status = n.Status,
+                    NotificationCategoryId = n.NotificationCategoryId,
+                    NotificationCategoryTitleVi = n.NotificationCategory.TitleVi,
+                    NotificationCategoryTitleEn = n.NotificationCategory.TitleEn,
+                    NotificationCategorySlugVi = n.NotificationCategory.SlugVi,
+                    NotificationCategorySlugEn = n.NotificationCategory.SlugEn,
+                    IsOutstanding = n.IsOutstanding,
+                    ImageUrl = n.ImageUrl,
+                    FeaturedImageId = n.FeaturedImageId
+                })
+                .ToListAsync();
+
+            return new PagingResult<NotificationDto>
+            {
+                Items = notifications,
+                TotalItems = totalCount,
+                PageSize = input.PageSize == -1 ? totalCount : input.PageSize,
+                Page = input.PageNumber
+            };
+        }
+
+        public async Task<PagingResult<NotificationDto>> SearchForClient(PagingRequestBaseDto input)
+        {
+            _logger.LogInformation($"{nameof(SearchForClient)}: keyword = {input.Keyword}");
+            
+            var query = _dbContext.Notifications
+                .Include(n => n.NotificationCategory)
+                .Where(n => !n.Deleted && n.Status == CommonStatus.ACTIVE);
+
+            // Apply search filter
+            if (!string.IsNullOrWhiteSpace(input.Keyword))
+            {
+                query = query.Where(n => n.TitleVi.Contains(input.Keyword) || 
+                                       n.TitleEn.Contains(input.Keyword) ||
+                                       n.DescriptionVi.Contains(input.Keyword) ||
+                                       n.DescriptionEn.Contains(input.Keyword) ||
+                                       n.ContentVi.Contains(input.Keyword) ||
+                                       n.ContentEn.Contains(input.Keyword));
+            }
+
+            var totalCount = await query.CountAsync();
+
+            var notifications = await query
+                .OrderByDescending(n => n.IsOutstanding)
+                .ThenByDescending(n => n.TimePosted)
+                .Skip(input.GetSkip())
+                .Take(input.PageSize == -1 ? totalCount : input.PageSize)
+                .Select(n => new NotificationDto
+                {
+                    Id = n.Id,
+                    SlugVi = n.SlugVi,
+                    SlugEn = n.SlugEn,
+                    TitleVi = n.TitleVi,
+                    TitleEn = n.TitleEn,
+                    DescriptionVi = n.DescriptionVi,
+                    DescriptionEn = n.DescriptionEn,
+                    TimePosted = n.TimePosted,
+                    Status = n.Status,
+                    NotificationCategoryId = n.NotificationCategoryId,
+                    NotificationCategoryTitleVi = n.NotificationCategory.TitleVi,
+                    NotificationCategoryTitleEn = n.NotificationCategory.TitleEn,
+                    NotificationCategorySlugVi = n.NotificationCategory.SlugVi,
+                    NotificationCategorySlugEn = n.NotificationCategory.SlugEn,
+                    IsOutstanding = n.IsOutstanding,
+                    ImageUrl = n.ImageUrl,
+                    FeaturedImageId = n.FeaturedImageId
+                })
+                .ToListAsync();
+
+            return new PagingResult<NotificationDto>
+            {
+                Items = notifications,
+                TotalItems = totalCount,
+                PageSize = input.PageSize == -1 ? totalCount : input.PageSize,
+                Page = input.PageNumber
+            };
+        }
     }
 }

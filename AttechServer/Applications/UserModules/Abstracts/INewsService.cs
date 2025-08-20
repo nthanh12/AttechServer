@@ -34,8 +34,9 @@ namespace AttechServer.Applications.UserModules.Abstracts
 
         /// <summary>
         /// Cập nhật tin tức
+        /// ID được truyền riêng, không cần trong DTO
         /// </summary>
-        Task<NewsDto> Update(UpdateNewsDto input);
+        Task<NewsDto> Update(int id, UpdateNewsDto input);
 
 
         /// <summary>
@@ -62,5 +63,25 @@ namespace AttechServer.Applications.UserModules.Abstracts
         /// Lấy thông tin gallery của tin tức theo slug
         /// </summary>
         Task<NewsGalleryDto> GetGalleryBySlug(string slug);
+
+        /// <summary>
+        /// Lấy danh sách tin tức đã xuất bản (status = 1) cho client
+        /// </summary>
+        Task<PagingResult<NewsDto>> FindAllForClient(PagingRequestBaseDto input);
+
+        /// <summary>
+        /// Lấy thông tin chi tiết tin tức theo slug (chỉ status = 1) cho client
+        /// </summary>
+        Task<DetailNewsDto> FindBySlugForClient(string slug);
+
+        /// <summary>
+        /// Lấy danh sách tin tức theo slug danh mục (chỉ status = 1) cho client
+        /// </summary>
+        Task<PagingResult<NewsDto>> FindAllByCategorySlugForClient(PagingRequestBaseDto input, string slug);
+
+        /// <summary>
+        /// Tìm kiếm tin tức đã xuất bản (chỉ status = 1) cho client
+        /// </summary>
+        Task<PagingResult<NewsDto>> SearchForClient(PagingRequestBaseDto input);
     }
 }

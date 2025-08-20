@@ -20,5 +20,6 @@ namespace AttechServer.Applications.UserModules.Dtos.News
         public string NewsCategorySlugEn { get; set; } = string.Empty;
         public bool IsOutstanding { get; set; }
         public string ImageUrl { get; set; } = string.Empty;
+        public int? FeaturedImageId { get; set; }
     }
 } 

@@ -15,5 +15,6 @@ namespace AttechServer.Applications.UserModules.Dtos.Service
         public int Status { get; set; }
         public bool IsOutstanding { get; set; }
         public string ImageUrl { get; set; } = string.Empty;
+        public int? FeaturedImageId { get; set; }
     }
 } 

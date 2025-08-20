@@ -1,0 +1,1590 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AttechServer</name>
+    </assembly>
+    <members>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INewsCategoryService.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Lấy danh sách tất cả danh mục tin tức với phân trang
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INewsCategoryService.FindById(System.Int32)">
+            <summary>
+            Lấy thông tin chi tiết danh mục tin tức theo Id
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INewsCategoryService.FindBySlug(System.String)">
+            <summary>
+            Lấy thông tin chi tiết danh mục tin tức theo slug
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INewsCategoryService.Create(AttechServer.Applications.UserModules.Dtos.NewsCategory.CreateNewsCategoryDto)">
+            <summary>
+            Thêm mới danh mục tin tức
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INewsCategoryService.Update(AttechServer.Applications.UserModules.Dtos.NewsCategory.UpdateNewsCategoryDto)">
+            <summary>
+            Cập nhật danh mục tin tức
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INewsCategoryService.Delete(System.Int32)">
+            <summary>
+            Xóa danh mục tin tức
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INewsCategoryService.UpdateStatus(System.Int32,System.Int32)">
+            <summary>
+            Cập nhật trạng thái danh mục tin tức
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INewsService.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Lấy danh sách tất cả tin tức với phân trang
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INewsService.FindAllByCategorySlug(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.String)">
+            <summary>
+            Lấy danh sách tin tức theo slug danh mục, bao gồm cả category chính và sub-categories
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INewsService.FindById(System.Int32)">
+            <summary>
+            Lấy thông tin chi tiết tin tức theo Id
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INewsService.FindBySlug(System.String)">
+            <summary>
+            Lấy thông tin chi tiết tin tức theo slug (song ngữ)
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INewsService.Create(AttechServer.Applications.UserModules.Dtos.News.CreateNewsDto)">
+            <summary>
+            Thêm mới tin tức với tất cả dữ liệu (text + files) trong một request
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INewsService.Update(System.Int32,AttechServer.Applications.UserModules.Dtos.News.UpdateNewsDto)">
+            <summary>
+            Cập nhật tin tức
+            ID được truyền riêng, không cần trong DTO
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INewsService.Delete(System.Int32)">
+            <summary>
+            Xóa tin tức
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INewsService.CreateAlbum(AttechServer.Applications.UserModules.Dtos.News.CreateAlbumDto)">
+            <summary>
+            Tạo album (news với IsAlbum = true)
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INewsService.GetAlbums(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Lấy danh sách albums (news với IsAlbum = true)
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INewsService.FindAlbumBySlug(System.String)">
+            <summary>
+            Lấy chi tiết album theo slug
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INewsService.GetGalleryBySlug(System.String)">
+            <summary>
+            Lấy thông tin gallery của tin tức theo slug
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INewsService.FindAllForClient(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Lấy danh sách tin tức đã xuất bản (status = 1) cho client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INewsService.FindBySlugForClient(System.String)">
+            <summary>
+            Lấy thông tin chi tiết tin tức theo slug (chỉ status = 1) cho client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INewsService.FindAllByCategorySlugForClient(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.String)">
+            <summary>
+            Lấy danh sách tin tức theo slug danh mục (chỉ status = 1) cho client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INewsService.SearchForClient(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Tìm kiếm tin tức đã xuất bản (chỉ status = 1) cho client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INotificationCategoryService.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Lấy danh sách tất cả danh mục thông báo với phân trang
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INotificationCategoryService.FindById(System.Int32)">
+            <summary>
+            Lấy thông tin chi tiết danh mục thông báo theo Id
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INotificationCategoryService.FindBySlug(System.String)">
+            <summary>
+            Lấy thông tin chi tiết danh mục thông báo theo slug
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INotificationCategoryService.Create(AttechServer.Applications.UserModules.Dtos.NotificationCategory.CreateNotificationCategoryDto)">
+            <summary>
+            Thêm mới danh mục thông báo
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INotificationCategoryService.Update(AttechServer.Applications.UserModules.Dtos.NotificationCategory.UpdateNotificationCategoryDto)">
+            <summary>
+            Cập nhật danh mục thông báo
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INotificationCategoryService.Delete(System.Int32)">
+            <summary>
+            Xóa danh mục thông báo
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INotificationCategoryService.UpdateStatus(System.Int32,System.Int32)">
+            <summary>
+            Cập nhật trạng thái danh mục thông báo
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INotificationService.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Lấy danh sách tất cả thông báo với phân trang
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INotificationService.FindAllByCategorySlug(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.String)">
+            <summary>
+            Lấy danh sách thông báo theo slug danh mục, bao gồm cả category chính và sub-categories
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INotificationService.FindById(System.Int32)">
+            <summary>
+            Lấy thông tin chi tiết thông báo theo Id
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INotificationService.FindBySlug(System.String)">
+            <summary>
+            Lấy thông tin chi tiết thông báo theo slug (song ngữ)
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INotificationService.Create(AttechServer.Applications.UserModules.Dtos.Notification.CreateNotificationDto)">
+            <summary>
+            Thêm mới thông báo với tất cả dữ liệu (text + files) trong một request
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INotificationService.Update(System.Int32,AttechServer.Applications.UserModules.Dtos.Notification.UpdateNotificationDto)">
+            <summary>
+            Cập nhật thông báo
+            ID được truyền riêng, không cần trong DTO
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INotificationService.Delete(System.Int32)">
+            <summary>
+            Xóa thông báo
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INotificationService.FindAllForClient(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Lấy danh sách thông báo đã xuất bản (status = 1) cho client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INotificationService.FindBySlugForClient(System.String)">
+            <summary>
+            Lấy thông tin chi tiết thông báo theo slug (chỉ status = 1) cho client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INotificationService.FindAllByCategorySlugForClient(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.String)">
+            <summary>
+            Lấy danh sách thông báo theo slug danh mục (chỉ status = 1) cho client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.INotificationService.SearchForClient(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Tìm kiếm thông báo đã xuất bản (chỉ status = 1) cho client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IPermissionService.CheckPermission(System.String[])">
+            <summary>
+            Check permission
+            </summary>
+            <param name="permissionKeys"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IPermissionService.GetPermissionsByCurrentUserId">
+            <summary>
+            L?y t?t c? quy?n c?a user hi?n t?i
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IPermissionService.FindAll">
+            <summary>
+            Danh sách quy?n fixed
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IPermissionService.GetAllPermissionKeyByApiEndpoint(System.String)">
+            <summary>
+            L?y all permission d?a vào api path
+            </summary>
+            <param name="api"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductCategoryService.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            L?y danh sách danh m?c bài vi?t v?i phân trang
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductCategoryService.FindById(System.Int32)">
+            <summary>
+            L?y thông tin chi ti?t danh m?c bài vi?t
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductCategoryService.Create(AttechServer.Applications.UserModules.Dtos.ProductCategory.CreateProductCategoryDto)">
+            <summary>
+            Thêm m?i danh m?c bài vi?t
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductCategoryService.Update(AttechServer.Applications.UserModules.Dtos.ProductCategory.UpdateProductCategoryDto)">
+            <summary>
+            C?p nh?t danh m?c bài vi?t
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductCategoryService.Delete(System.Int32)">
+            <summary>
+            Xóa nhóm bài vi?t
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductCategoryService.UpdateStatusProductCategory(System.Int32,System.Int32)">
+            <summary>
+            Khóa/M? khóa nhóm bài vi?t
+            </summary>
+            <param name="id"></param>
+            <param name="status">Tr?ng thái m?i</param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductService.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Lấy danh sách tất cả sản phẩm với phân trang
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductService.FindAllByCategorySlug(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.String)">
+            <summary>
+            Lấy danh sách sản phẩm theo slug danh mục, bao gồm cả category chính và sub-categories
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductService.FindById(System.Int32)">
+            <summary>
+            Lấy thông tin chi tiết sản phẩm theo Id
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductService.FindBySlug(System.String)">
+            <summary>
+            Lấy thông tin chi tiết sản phẩm theo slug (song ngữ)
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductService.Create(AttechServer.Applications.UserModules.Dtos.Product.CreateProductDto)">
+            <summary>
+            Thêm mới sản phẩm với tất cả dữ liệu (text + files) trong một request
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductService.Update(System.Int32,AttechServer.Applications.UserModules.Dtos.Product.UpdateProductDto)">
+            <summary>
+            Cập nhật sản phẩm
+            ID được truyền riêng, không cần trong DTO
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductService.Delete(System.Int32)">
+            <summary>
+            Xóa sản phẩm
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductService.FindAllForClient(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Lấy danh sách sản phẩm đã xuất bản (status = 1) cho client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductService.FindBySlugForClient(System.String)">
+            <summary>
+            Lấy thông tin chi tiết sản phẩm theo slug (chỉ status = 1) cho client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductService.FindAllByCategorySlugForClient(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.String)">
+            <summary>
+            Lấy danh sách sản phẩm theo slug danh mục (chỉ status = 1) cho client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IProductService.SearchForClient(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Tìm kiếm sản phẩm đã xuất bản (chỉ status = 1) cho client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IRoleService.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Danh sách nhóm quyền
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IRoleService.FindById(System.Int32)">
+            <summary>
+            Thông tin chi tiết nhóm quyền
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IRoleService.Create(AttechServer.Applications.UserModules.Dtos.Role.CreateRoleDto)">
+            <summary>
+            Thêm mới nhóm quyền
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IRoleService.Update(AttechServer.Applications.UserModules.Dtos.Role.UpdateRoleDto)">
+            <summary>
+            Cập nhật nhóm quyền
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IRoleService.Delete(System.Int32)">
+            <summary>
+            Xóa nhóm quyền
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IRoleService.GetRolePermissions(System.Int32)">
+            <summary>
+            Lấy danh sách permissions của role
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IServiceService.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Lấy danh sách tất cả dịch vụ với phân trang
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IServiceService.FindById(System.Int32)">
+            <summary>
+            Lấy thông tin chi tiết dịch vụ theo Id
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IServiceService.FindBySlug(System.String)">
+            <summary>
+            Lấy thông tin chi tiết dịch vụ theo slug (song ngữ)
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IServiceService.Create(AttechServer.Applications.UserModules.Dtos.Service.CreateServiceDto)">
+            <summary>
+            Thêm mới dịch vụ với tất cả dữ liệu (text + files) trong một request
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IServiceService.Update(System.Int32,AttechServer.Applications.UserModules.Dtos.Service.UpdateServiceDto)">
+            <summary>
+            Cập nhật dịch vụ
+            ID được truyền riêng, không cần trong DTO
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IServiceService.Delete(System.Int32)">
+            <summary>
+            Xóa dịch vụ
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IServiceService.FindAllForClient(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Lấy danh sách dịch vụ đã xuất bản (status = 1) cho client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IServiceService.FindBySlugForClient(System.String)">
+            <summary>
+            Lấy thông tin chi tiết dịch vụ theo slug (chỉ status = 1) cho client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IServiceService.SearchForClient(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Tìm kiếm dịch vụ đã xuất bản (chỉ status = 1) cho client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IUserService.AddRoleToUser(System.Int32,System.Int32)">
+            <summary>
+            Gán nhóm quy?n cho tài kho?n
+            </summary>
+            <param name="roleId"></param>
+            <param name="userId"></param>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IUserService.RemoveRoleFromUser(System.Int32,System.Int32)">
+            <summary>
+            Xóa quy?n t? tài kho?n
+            </summary>
+            <param name="roleId"></param>
+            <param name="userId"></param>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IUserService.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            L?y danh sách ngu?i dùng
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IUserService.FindById(System.Int32)">
+            <summary>
+            L?y thông tin ngu?i dùng theo ID
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IUserService.Update(AttechServer.Applications.UserModules.Dtos.User.UpdateUserDto)">
+            <summary>
+            C?p nh?t thông tin ngu?i dùng
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Abstracts.IUserService.Delete(System.Int32)">
+            <summary>
+            Xóa ngu?i dùng
+            </summary>
+        </member>
+        <member name="P:AttechServer.Applications.UserModules.Dtos.Permission.PermissionKeyDto.PermissionType">
+            <summary>
+            Lo?i permisison
+            <see cref="P:AttechServer.Applications.UserModules.Dtos.Permission.PermissionKeyDto.PermissionType"/>
+            </summary>
+        </member>
+        <member name="P:AttechServer.Applications.UserModules.Dtos.Permission.PermissionKeyDto.OrderPriority">
+            <summary>
+            Th? t? s?p x?p
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Implements.AttachmentService.DetectRelationType(System.String)">
+            <summary>
+            Auto-detect relation type based on file content type
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Implements.AttachmentService.DetermineFileCategory(System.String,System.String)">
+            <summary>
+            Xác định loại thư mục dựa trên content type và relation type
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Implements.AttachmentService.MoveFromTempToPermanentAsync(AttechServer.Domains.Entities.Main.Attachment)">
+            <summary>
+            Move file from temp folder to permanent folder with yyyy/MM structure
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Implements.AttachmentService.SoftDeleteEntityAttachmentsAsync(AttechServer.Shared.ApplicationBase.Common.ObjectType,System.Int32)">
+            <summary>
+            Soft delete all attachments associated with an entity
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Implements.AttachmentService.SoftDeleteOldFeaturedImageAsync(AttechServer.Shared.ApplicationBase.Common.ObjectType,System.Int32,System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Soft delete old featured image (IsPrimary = true) for an entity, excluding specific attachment IDs
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Implements.AttachmentService.SoftDeleteAttachmentsByIdsAsync(System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Soft delete specific attachments by IDs
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Implements.AttachmentService.GetCurrentGalleryAttachmentIdsAsync(AttechServer.Shared.ApplicationBase.Common.ObjectType,System.Int32)">
+            <summary>
+            Get current attachment IDs for an entity (excluding featured image)
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Implements.AttachmentService.GetCurrentFeaturedImageIdAsync(AttechServer.Shared.ApplicationBase.Common.ObjectType,System.Int32)">
+            <summary>
+            Get current featured image ID for an entity
+            </summary>
+        </member>
+        <member name="T:AttechServer.Applications.UserModules.Implements.CacheKeys">
+            <summary>
+            Cache key generators for different entity types
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Implements.NewsService.DeleteAssociatedFilesAsync(System.Int32)">
+            <summary>
+            Delete all files associated with a news article
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Implements.NotificationService.DeleteAssociatedFilesAsync(System.Int32)">
+            <summary>
+            Delete all files associated with a notification article
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Implements.ProductService.DeleteAssociatedFilesAsync(System.Int32)">
+            <summary>
+            Delete all files associated with a product article
+            </summary>
+        </member>
+        <member name="M:AttechServer.Applications.UserModules.Implements.ServiceService.DeleteAssociatedFilesAsync(System.Int32)">
+            <summary>
+            Delete all files associated with a service article
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ApiEndpointController.FindAll">
+            <summary>
+            Get api endpoint list
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ApiEndpointController.FindById(System.Int32)">
+            <summary>
+            Get API Endpoint by ID
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ApiEndpointController.Create(CreateApiEndpointDto)">
+            <summary>
+            Create new API Endpoint
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ApiEndpointController.Update(UpdateApiEndpointDto)">
+            <summary>
+            Update API Endpoint
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ApiEndpointController.Delete(System.Int32)">
+            <summary>
+            Delete API Endpoint
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.AttachmentController.CleanupTempFiles">
+            <summary>
+            Cleanup temp files older than specified hours (background task endpoint)
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "T:AttechServer.Controllers.AuthController" -->
+        <member name="M:AttechServer.Controllers.AuthController.Login(AttechServer.Applications.UserModules.Dtos.UserLoginDto)">
+            <summary>
+            Login
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.AuthController.Register(AttechServer.Applications.UserModules.Dtos.CreateUserDto)">
+            <summary>
+            Create user (only for admin)
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.AuthController.RefreshToken(AttechServer.Applications.UserModules.Dtos.TokenApiDto)">
+            <summary>
+            Refresh token
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.AuthController.GetCurrentUser">
+            <summary>
+            Get current user info 
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.AuthController.Logout">
+            <summary>
+            Log out
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.AuthController.ChangePassword(AttechServer.Applications.UserModules.Dtos.User.ChangePasswordDto)">
+            <summary>
+            Change password
+            </summary>
+            <param name="changePasswordDto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.ClientNewsController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Get all published news (status = 1) with caching for client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ClientNewsController.FindBySlug(System.String)">
+            <summary>
+            Get published news detail by slug (status = 1 only) for client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ClientNewsController.FindAllByCategorySlug(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.String)">
+            <summary>
+            Get published news by category slug (status = 1 only) for client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ClientNewsController.Search(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Search published news by keyword (status = 1 only) for client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ClientNotificationController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Get all published notification (status = 1) with caching for client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ClientNotificationController.FindBySlug(System.String)">
+            <summary>
+            Get published notification detail by slug (status = 1 only) for client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ClientNotificationController.FindAllByCategorySlug(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.String)">
+            <summary>
+            Get published notification by category slug (status = 1 only) for client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ClientNotificationController.Search(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Search published notification by keyword (status = 1 only) for client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ClientProductController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Get all published products (status = 1) with caching for client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ClientProductController.FindBySlug(System.String)">
+            <summary>
+            Get published product detail by slug (status = 1 only) for client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ClientProductController.FindAllByCategorySlug(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.String)">
+            <summary>
+            Get published products by category slug (status = 1 only) for client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ClientProductController.Search(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Search published products by keyword (status = 1 only) for client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ClientServiceController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Get all published service (status = 1) with caching for client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ClientServiceController.FindBySlug(System.String)">
+            <summary>
+            Get published service detail by slug (status = 1 only) for client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ClientServiceController.Search(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Search published service by keyword (status = 1 only) for client
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.HealthController.Get">
+            <summary>
+            Health check endpoint for monitoring
+            </summary>
+            <returns>Health status</returns>
+        </member>
+        <member name="M:AttechServer.Controllers.HealthController.GetDetailed">
+            <summary>
+            Detailed health check with database connectivity
+            </summary>
+            <returns>Detailed health status</returns>
+        </member>
+        <member name="M:AttechServer.Controllers.NewsCategoryController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Get all news categories with caching
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NewsCategoryController.FindById(System.Int32)">
+            <summary>
+            Get news category by ID with caching
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NewsCategoryController.Create(AttechServer.Applications.UserModules.Dtos.NewsCategory.CreateNewsCategoryDto)">
+            <summary>
+            Create new news category
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NewsCategoryController.Update(AttechServer.Applications.UserModules.Dtos.NewsCategory.UpdateNewsCategoryDto)">
+            <summary>
+            Update news category
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NewsCategoryController.Delete(System.Int32)">
+            <summary>
+            Delete news category
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NewsController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Get all news (all status) for admin
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NewsController.FindAllByCategorySlug(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.String)">
+            <summary>
+            Get news by category slug (all status) for admin
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NewsController.FindById(System.Int32)">
+            <summary>
+            Get news by ID (all status) for admin
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NewsController.FindBySlug(System.String)">
+            <summary>
+            Get news by slug (all status) for admin
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NewsController.Create(AttechServer.Applications.UserModules.Dtos.News.CreateNewsDto)">
+            <summary>
+            Create new news with all data in one request (FormData)
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NewsController.Update(System.Int32,AttechServer.Applications.UserModules.Dtos.News.UpdateNewsDto)">
+            <summary>
+            Update news (handles text + files)
+            ID được truyền qua route parameter, FE không cần gửi ID trong body
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NewsController.Delete(System.Int32)">
+            <summary>
+            Delete news
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NewsController.CreateAlbum(AttechServer.Applications.UserModules.Dtos.News.CreateAlbumDto)">
+            <summary>
+            Create album (news with IsAlbum = true)
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NewsController.GetAlbums(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Get all albums (news where IsAlbum = true)
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NewsController.GetAlbumBySlug(System.String)">
+            <summary>
+            Get album detail by slug (SEO friendly)
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NewsController.GetGalleryBySlug(System.String)">
+            <summary>
+            Get news gallery by slug
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NotificationCategoryController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Get all notification categories with caching
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NotificationCategoryController.FindById(System.Int32)">
+            <summary>
+            Get notification category by ID with caching
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NotificationCategoryController.Create(AttechServer.Applications.UserModules.Dtos.NotificationCategory.CreateNotificationCategoryDto)">
+            <summary>
+            Create new notification category
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NotificationCategoryController.Update(AttechServer.Applications.UserModules.Dtos.NotificationCategory.UpdateNotificationCategoryDto)">
+            <summary>
+            Update notification category
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NotificationCategoryController.Delete(System.Int32)">
+            <summary>
+            Delete notification category
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NotificationController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Get all notifications with caching
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NotificationController.FindAllByCategorySlug(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.String)">
+            <summary>
+            Get notifications by category slug with caching
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NotificationController.FindById(System.Int32)">
+            <summary>
+            Get notification by ID with attachments included
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NotificationController.FindBySlug(System.String)">
+            <summary>
+            Get notification by slug with caching
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NotificationController.Create(AttechServer.Applications.UserModules.Dtos.Notification.CreateNotificationDto)">
+            <summary>
+            Create new notification with all data in one request (FormData)
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NotificationController.Update(System.Int32,AttechServer.Applications.UserModules.Dtos.Notification.UpdateNotificationDto)">
+            <summary>
+            Update notification (handles text + files)
+            ID được truyền qua route parameter, FE không cần gửi ID trong body
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.NotificationController.Delete(System.Int32)">
+            <summary>
+            Delete notification
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.PermissionController.FindAll">
+            <summary>
+            Role list
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PermissionController.GetPermissionsByCurrentUserId">
+            <summary>
+            Get permissions by current user ID
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PermissionController.CheckPermission(System.String[])">
+            <summary>
+            Check permission
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PermissionController.GetTree">
+            <summary>
+            Get all key permissions in tree structure
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PermissionController.GetById(System.Int32)">
+            <summary>
+            Get detail permission by ID
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PermissionController.Create(AttechServer.Applications.UserModules.Dtos.Permission.KeyPermission.CreateKeyPermissionDto)">
+            <summary>
+            Create key permission
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PermissionController.Update(AttechServer.Applications.UserModules.Dtos.Permission.KeyPermission.UpdateKeyPermissionDto)">
+            <summary>
+            Update key permission
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PermissionController.Delete(System.Int32)">
+            <summary>
+            Delete key permission
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PermissionController.CreatePermissionForApi(AttechServer.Applications.UserModules.Dtos.ConfigPermission.CreatePermissionApiDto)">
+            <summary>
+            Add permission with endpoint
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PermissionController.UpdatePermissionForApi(AttechServer.Applications.UserModules.Dtos.ConfigPermission.UpdatePermissionConfigDto)">
+            <summary>
+            Update api endpoint with permission key
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PermissionController.GetAllPermissionOfApi(AttechServer.Applications.UserModules.Dtos.ConfigPermission.PermissionApiRequestDto)">
+            <summary>
+            Api endpoint list
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.PermissionController.GetPermissionOfApiById(System.Int32)">
+            <summary>
+            Get api endpoint detail
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.ProductCategoryController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Get all product categories with caching
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ProductCategoryController.FindById(System.Int32)">
+            <summary>
+            Get product category by ID with caching
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ProductCategoryController.Create(AttechServer.Applications.UserModules.Dtos.ProductCategory.CreateProductCategoryDto)">
+            <summary>
+            Create new product category
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ProductCategoryController.Update(AttechServer.Applications.UserModules.Dtos.ProductCategory.UpdateProductCategoryDto)">
+            <summary>
+            Update product category
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ProductCategoryController.Delete(System.Int32)">
+            <summary>
+            Delete product category
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ProductController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Get all products with caching
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ProductController.FindAllByCategorySlug(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto,System.String)">
+            <summary>
+            Get products by category slug with caching
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ProductController.FindById(System.Int32)">
+            <summary>
+            Get product by ID with attachments included
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ProductController.FindBySlug(System.String)">
+            <summary>
+            Get product by slug with caching
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ProductController.Create(AttechServer.Applications.UserModules.Dtos.Product.CreateProductDto)">
+            <summary>
+            Create new product with all data in one request (FormData)
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ProductController.Update(System.Int32,AttechServer.Applications.UserModules.Dtos.Product.UpdateProductDto)">
+            <summary>
+            Update product (handles text + files)
+            ID được truyền qua route parameter, FE không cần gửi ID trong body
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ProductController.Delete(System.Int32)">
+            <summary>
+            Delete product
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.RoleController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Role list
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.RoleController.FindById(System.Int32)">
+            <summary>
+            Role details
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.RoleController.GetRolePermissions(System.Int32)">
+            <summary>
+            Get permission by role id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.RoleController.Create(AttechServer.Applications.UserModules.Dtos.Role.CreateRoleDto)">
+            <summary>
+            Create role
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.RoleController.Update(AttechServer.Applications.UserModules.Dtos.Role.UpdateRoleDto)">
+            <summary>
+            Update role
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.RoleController.Delete(System.Int32)">
+            <summary>
+            Delete role
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AttechServer.Controllers.ServiceController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Get all services with caching
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ServiceController.FindById(System.Int32)">
+            <summary>
+            Get service by ID with attachments included
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ServiceController.FindBySlug(System.String)">
+            <summary>
+            Get service by slug with caching
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ServiceController.Create(AttechServer.Applications.UserModules.Dtos.Service.CreateServiceDto)">
+            <summary>
+            Create new service with all data in one request
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ServiceController.Update(System.Int32,AttechServer.Applications.UserModules.Dtos.Service.UpdateServiceDto)">
+            <summary>
+            Update service (handles text + files)
+            ID được truyền qua route parameter, FE không cần gửi ID trong body
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.ServiceController.Delete(System.Int32)">
+            <summary>
+            Delete service
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.SettingController.UploadSetting(System.String,AttechServer.Applications.UserModules.Dtos.Setting.UploadSettingDto)">
+            <summary>
+            Upload file cho bất kỳ setting nào (banner1, banner2, logo, etc.)
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.SettingController.GetSetting(System.String)">
+            <summary>
+            Lấy file của một setting cụ thể
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.SettingController.GetAllSettings">
+            <summary>
+            Lấy tất cả settings đã được định nghĩa
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.SettingController.GetMultipleSettings(System.Collections.Generic.List{System.String})">
+            <summary>
+            Lấy nhiều settings cùng lúc
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.SettingController.DeleteSetting(System.String)">
+            <summary>
+            Xóa một setting
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.SettingController.GetSettingTypes">
+            <summary>
+            Lấy danh sách tất cả setting types có thể dùng
+            </summary>
+        </member>
+        <member name="T:AttechServer.Controllers.UserController">
+            <summary>
+            User Management Controller
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.UserController.FindAll(AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto)">
+            <summary>
+            Get user list
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.UserController.FindById(System.Int32)">
+            <summary>
+            Get user details by ID
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.UserController.Update(AttechServer.Applications.UserModules.Dtos.User.UpdateUserDto)">
+            <summary>
+            Edit user details
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.UserController.Delete(System.Int32)">
+            <summary>
+            Delete user
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.UserController.AddRoleToUser(System.Int32,System.Int32)">
+            <summary>
+            Add role to user
+            </summary>
+        </member>
+        <member name="M:AttechServer.Controllers.UserController.RemoveRoleFromUser(System.Int32,System.Int32)">
+            <summary>
+            Remove role from user
+            </summary>
+        </member>
+        <member name="P:AttechServer.Domains.Entities.Main.News.Status">
+            <summary>
+            Trạng thái
+            <see cref="!:CommonStatus"/>
+            </summary>
+        </member>
+        <member name="P:AttechServer.Domains.Entities.Main.Notification.Status">
+            <summary>
+            Trạng thái
+            <see cref="T:AttechServer.Shared.Consts.CommonStatus"/>
+            </summary>
+        </member>
+        <member name="P:AttechServer.Domains.Entities.Main.Product.Status">
+            <summary>
+            Trạng thái
+            <see cref="T:AttechServer.Shared.Consts.CommonStatus"/>
+            </summary>
+        </member>
+        <member name="P:AttechServer.Domains.Entities.Main.Service.Status">
+            <summary>
+            Trạng thái
+            <see cref="T:AttechServer.Shared.Consts.CommonStatus"/>
+            </summary>
+        </member>
+        <member name="P:AttechServer.Domains.Entities.Role.Status">
+            <summary>
+            Tr?ng thái role
+            <see cref="!:CommonStatus"/>
+            </summary>
+        </member>
+        <member name="P:AttechServer.Domains.Entities.User.Status">
+            <summary>
+            Tr?ng th�i
+            <see cref="P:AttechServer.Domains.Entities.User.Status"/>
+            </summary>
+        </member>
+        <member name="M:AttechServer.Infrastructures.ContentProcessing.WysiwygFileProcessor.ExtractAttachmentIdsAsync(System.String)">
+            <summary>
+            Extract attachment IDs from HTML content
+            </summary>
+        </member>
+        <member name="M:AttechServer.Infrastructures.ContentProcessing.WysiwygFileProcessor.ExtractUniqueAttachmentIdsAsync(System.String,System.String)">
+            <summary>
+            Extract unique attachment IDs from both ContentVi and ContentEn
+            </summary>
+        </member>
+        <member name="M:AttechServer.Infrastructures.ContentProcessing.WysiwygFileProcessor.HasTempFilesInContent(System.String)">
+            <summary>
+            Check if content contains temp files
+            </summary>
+        </member>
+        <member name="T:AttechServer.Migrations.RemoveImageUrlFields">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.RemoveImageUrlFields.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.RemoveImageUrlFields.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.RemoveImageUrlFields.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.AddImageUrlColumnsBack">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.AddImageUrlColumnsBack.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.AddImageUrlColumnsBack.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.AddImageUrlColumnsBack.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.addFlagAlbum">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.addFlagAlbum.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.addFlagAlbum.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.addFlagAlbum.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.updateSeeddata">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateSeeddata.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateSeeddata.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateSeeddata.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.UpdateApiEndpointPaths">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.UpdateApiEndpointPaths.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.UpdateApiEndpointPaths.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.UpdateApiEndpointPaths.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.updateEndpoint">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateEndpoint.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateEndpoint.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateEndpoint.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.AddAttachmentFlowUpdate">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.AddAttachmentFlowUpdate.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.AddAttachmentFlowUpdate.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.AddAttachmentFlowUpdate.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.changeEntities">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.changeEntities.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.changeEntities.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.changeEntities.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.updatPermissionData">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updatPermissionData.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updatPermissionData.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updatPermissionData.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.updateSeedDataV2">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateSeedDataV2.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateSeedDataV2.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateSeedDataV2.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.updateSeedDataV3">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateSeedDataV3.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateSeedDataV3.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateSeedDataV3.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.updateSeedDataV4">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateSeedDataV4.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateSeedDataV4.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateSeedDataV4.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.updateSeedDataV5">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateSeedDataV5.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateSeedDataV5.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateSeedDataV5.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.ClearPermissions">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.ClearPermissions.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.ClearPermissions.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.ClearPermissions.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.RenameUserTypeToUserLevel">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.RenameUserTypeToUserLevel.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.RenameUserTypeToUserLevel.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.RenameUserTypeToUserLevel.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.updateFeatureImageId">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateFeatureImageId.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateFeatureImageId.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateFeatureImageId.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.AddIsContentImageToAttachment">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.AddIsContentImageToAttachment.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.AddIsContentImageToAttachment.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.AddIsContentImageToAttachment.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.updateIsContentImage">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateIsContentImage.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateIsContentImage.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateIsContentImage.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.updateDbv1">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateDbv1.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateDbv1.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateDbv1.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.updateDatav2">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateDatav2.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateDatav2.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.updateDatav2.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Migrations.AddWebsiteSettingsPermissions">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.AddWebsiteSettingsPermissions.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.AddWebsiteSettingsPermissions.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:AttechServer.Migrations.AddWebsiteSettingsPermissions.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:AttechServer.Services.TempFileCleanupBackgroundService">
+            <summary>
+            Background service để dọn dẹp file tạm thời và record Attachment quá hạn (Logic 3)
+            - Xóa file vật lý cũ hơn 24 giờ
+            - Xóa record temporary trong database
+            - Dọn dẹp orphaned files không có record
+            </summary>
+        </member>
+        <member name="M:AttechServer.Services.TempFileCleanupBackgroundService.CleanupOrphanedTempFiles">
+            <summary>
+            Dọn dẹp file trong thư mục temp không có record trong DB
+            </summary>
+        </member>
+        <member name="T:AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto">
+            <summary>
+            Base class for pagination request DTOs
+            </summary>
+        </member>
+        <member name="F:AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto.DEFAULT_PAGE_SIZE">
+            <summary>
+            Default number of items per page
+            </summary>
+        </member>
+        <member name="F:AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto.MIN_PAGE_SIZE">
+            <summary>
+            Minimum number of items per page
+            </summary>
+        </member>
+        <member name="F:AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto.MAX_PAGE_SIZE">
+            <summary>
+            Maximum number of items per page
+            </summary>
+        </member>
+        <member name="F:AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto.ALL_ITEMS">
+            <summary>
+            Special value to get all items
+            </summary>
+        </member>
+        <member name="P:AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto.PageSize">
+            <summary>
+            Number of items per page. Use -1 to get all items
+            </summary>
+        </member>
+        <member name="P:AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto.PageNumber">
+            <summary>
+            Page number (1-based)
+            </summary>
+        </member>
+        <member name="P:AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto.Page">
+            <summary>
+            Page property for backward compatibility
+            </summary>
+        </member>
+        <member name="P:AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto.Keyword">
+            <summary>
+            Search keyword
+            </summary>
+        </member>
+        <member name="M:AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto.GetSkip">
+            <summary>
+            Calculate number of items to skip based on page size and number
+            </summary>
+            <returns>Number of items to skip</returns>
+        </member>
+        <member name="P:AttechServer.Shared.ApplicationBase.Common.PagingRequestBaseDto.Sort">
+            <summary>
+            Sort parameters
+            </summary>
+        </member>
+        <member name="T:AttechServer.Shared.ApplicationBase.Common.SettingType">
+            <summary>
+            Enum định nghĩa các loại setting có thể có
+            </summary>
+        </member>
+        <member name="M:AttechServer.Shared.ApplicationBase.Common.SettingTypeExtensions.ToObjectId(System.String)">
+            <summary>
+            Chuyển setting key string thành objectId để lưu trong attachment
+            </summary>
+        </member>
+        <member name="M:AttechServer.Shared.ApplicationBase.Common.SettingTypeExtensions.GetDescription(AttechServer.Shared.ApplicationBase.Common.SettingType)">
+            <summary>
+            Lấy description của setting type
+            </summary>
+        </member>
+        <member name="T:AttechServer.Shared.ApplicationBase.Common.Validations.IntegerRangeAttribute">
+            <summary>
+            Cho phép m?t trong các giá tr?, n?u là null thì b? qua
+            </summary>
+        </member>
+        <member name="T:AttechServer.Shared.Attributes.CacheResponseAttribute">
+            <summary>
+            Custom response caching attribute with configurable cache duration and cache keys
+            </summary>
+        </member>
+        <member name="T:AttechServer.Shared.Attributes.CacheProfiles">
+            <summary>
+            Cache configuration options
+            </summary>
+        </member>
+        <member name="F:AttechServer.Shared.Attributes.CacheProfiles.ShortCache">
+            <summary>
+            Short cache for frequently changing data (1 minute)
+            </summary>
+        </member>
+        <member name="F:AttechServer.Shared.Attributes.CacheProfiles.MediumCache">
+            <summary>
+            Medium cache for moderately changing data (5 minutes)
+            </summary>
+        </member>
+        <member name="F:AttechServer.Shared.Attributes.CacheProfiles.LongCache">
+            <summary>
+            Long cache for rarely changing data (15 minutes)
+            </summary>
+        </member>
+        <member name="F:AttechServer.Shared.Attributes.CacheProfiles.ExtraLongCache">
+            <summary>
+            Extra long cache for very stable data (1 hour)
+            </summary>
+        </member>
+        <member name="P:AttechServer.Shared.Configurations.UploadOptions.UploadEndpoint">
+            <summary>
+            Upload endpoint for TinyMCE - Dedicated endpoint for editor uploads
+            </summary>
+        </member>
+        <member name="P:AttechServer.Shared.Consts.Permissions.PermissionContent.ParentKey">
+            <summary>
+            Key cha
+            </summary>
+        </member>
+        <member name="P:AttechServer.Shared.Consts.Permissions.PermissionContent.PermissionKey">
+            <summary>
+            Key permission hi?n t?i
+            </summary>
+        </member>
+        <member name="M:AttechServer.Shared.Consts.Permissions.PermissionContent.#ctor(System.String,System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="permissionKey"></param>
+            <param name="parentKey"></param>
+        </member>
+        <member name="T:AttechServer.Shared.Consts.UserLevels">
+            <summary>
+            Cấp độ người dùng trong hệ thống
+            </summary>
+        </member>
+        <member name="F:AttechServer.Shared.Consts.UserLevels.SYSTEM">
+            <summary>
+            System Administrator - Quản trị viên hệ thống
+            </summary>
+        </member>
+        <member name="F:AttechServer.Shared.Consts.UserLevels.MANAGER">
+            <summary>
+            Manager/Admin - Quản lý/Quản trị viên
+            </summary>
+        </member>
+        <member name="F:AttechServer.Shared.Consts.UserLevels.STAFF">
+            <summary>
+            Staff/Editor - Nhân viên/Biên tập viên
+            </summary>
+        </member>
+        <member name="T:AttechServer.Shared.Filters.SuperAdminProtectionFilter">
+            <summary>
+            Filter bảo vệ theo Strict Hierarchy: SuperAdmin và Admin
+            </summary>
+        </member>
+        <member name="M:AttechServer.Shared.Utils.PasswordHasher.VerifyPassword(System.String,System.String)">
+            <summary>
+            Ki?m tra thông tin
+            </summary>
+            <param name="password">M?t kh?u chua du?c mã hóa</param>
+            <param name="hashedPassword">M?t mã dã du?c mã hóa</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

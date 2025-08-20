@@ -357,6 +357,43 @@ namespace AttechServer.Applications.UserModules.Implements
             }
         }
 
+        public async Task ChangePasswordAsync(int userId, ChangePasswordDto changePasswordDto)
+        {
+            try
+            {
+                _logger.LogInformation($"{nameof(ChangePasswordAsync)}: Changing password for user {userId}");
+                
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Id == userId && !u.Deleted);
+
+                if (user == null)
+                {
+                    throw new UserFriendlyException(ErrorCode.UserNotFound);
+                }
+
+                if (!PasswordHasher.VerifyPassword(changePasswordDto.CurrentPassword, user.Password))
+                {
+                    throw new UserFriendlyException(ErrorCode.PasswordWrong);
+                }
+
+                user.Password = PasswordHasher.HashPassword(changePasswordDto.NewPassword);
+                user.ModifiedDate = DateTime.Now;
+                user.ModifiedBy = userId;
+
+                user.RefreshToken = null;
+                user.RefreshTokenExpiryTime = null;
+
+                await _context.SaveChangesAsync();
+                
+                _logger.LogInformation($"Password changed successfully for user {userId}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error changing password for user {userId}");
+                throw;
+            }
+        }
+
         private async Task<List<string>> GetUserPermissions(int userId)
         {
             try

@@ -80,6 +80,11 @@ namespace AttechServer.Shared.Consts.Permissions
 
             // File Upload
             { PermissionKeys.FileUpload, new(PermissionKeys.FileUpload, PermissionLabel.FileUpload)},
+
+            // Website Settings
+            { PermissionKeys.MenuWebsiteSettings, new(PermissionKeys.MenuWebsiteSettings, PermissionLabel.MenuWebsiteSettings, PermissionKeys.MenuConfig)},
+            { PermissionKeys.ViewWebsiteSettings, new(PermissionKeys.ViewWebsiteSettings, PermissionLabel.ViewWebsiteSettings, PermissionKeys.MenuWebsiteSettings)},
+            { PermissionKeys.EditWebsiteSettings, new(PermissionKeys.EditWebsiteSettings, PermissionLabel.EditWebsiteSettings, PermissionKeys.MenuWebsiteSettings)},
         };
     }
 }

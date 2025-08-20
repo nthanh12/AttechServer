@@ -92,6 +92,12 @@ namespace AttechServer.Shared.Consts.Permissions
         #region File Upload
         public const string FileUpload = "file_upload";
         #endregion
+
+        #region Website Settings
+        public const string MenuWebsiteSettings = "menu_website_settings";
+        public const string ViewWebsiteSettings = "view_website_settings";
+        public const string EditWebsiteSettings = "edit_website_settings";
+        #endregion
     }
 
     public static class PermissionLabel
@@ -185,6 +191,12 @@ namespace AttechServer.Shared.Consts.Permissions
 
         #region File Upload
         public const string FileUpload = "Tải lên file";
+        #endregion
+
+        #region Website Settings
+        public const string MenuWebsiteSettings = "Cài đặt website";
+        public const string ViewWebsiteSettings = "Xem cài đặt website";
+        public const string EditWebsiteSettings = "Chỉnh sửa cài đặt website";
         #endregion
     }
 }

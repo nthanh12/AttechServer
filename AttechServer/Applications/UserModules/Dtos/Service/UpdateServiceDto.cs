@@ -4,8 +4,7 @@ namespace AttechServer.Applications.UserModules.Dtos.Service
 {
     public class UpdateServiceDto
     {
-        [Required(ErrorMessage = "ID là bắt buộc")]
-        public int Id { get; set; }
+        // ID được truyền qua route parameter, không cần trong DTO
 
         [Required(ErrorMessage = "Tiêu đề là bắt buộc")]
         [StringLength(400, ErrorMessage = "Tiêu đề không được vượt quá 400 ký tự")]

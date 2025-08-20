@@ -69,7 +69,7 @@ namespace AttechServer.Applications.UserModules.Implements
                         throw new ArgumentException("Thời gian đăng bài không phù hợp.");
                     }
 
-                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("user_id")?.Value, out var id) ? id : 0;
+                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("user_id")?.Value, out var parseId) ? parseId : 0;
 
                     // Step 2: Validate category exists
                     var category = await _dbContext.NewsCategories
@@ -567,9 +567,9 @@ namespace AttechServer.Applications.UserModules.Implements
             return news;
         }
 
-        public async Task<NewsDto> Update(UpdateNewsDto input)
+        public async Task<NewsDto> Update(int id, UpdateNewsDto input)
         {
-            _logger.LogInformation($"{nameof(Update)}: input = {JsonSerializer.Serialize(input)}");
+            _logger.LogInformation($"{nameof(Update)}: ID = {id}, input = {JsonSerializer.Serialize(input)}");
             using (var transaction = await _dbContext.Database.BeginTransactionAsync())
             {
                 try
@@ -584,15 +584,15 @@ namespace AttechServer.Applications.UserModules.Implements
                         throw new ArgumentException("Thời gian đăng bài không phù hợp.");
                     }
 
-                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("user_id")?.Value, out var id) ? id : 0;
+                    var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("user_id")?.Value, out var parseId) ? parseId : 0;
 
                     // Kiểm tra news tồn tại
                     var news = await _dbContext.News
-                        .FirstOrDefaultAsync(n => n.Id == input.Id && !n.Deleted)
+                        .FirstOrDefaultAsync(n => n.Id == id && !n.Deleted)
                         ?? throw new UserFriendlyException(ErrorCode.NewsNotFound);
 
                     // Check for duplicate titles (excluding current record)
-                    var titleViExists = await _dbContext.News.AnyAsync(n => n.TitleVi == input.TitleVi && n.Id != input.Id && !n.Deleted);
+                    var titleViExists = await _dbContext.News.AnyAsync(n => n.TitleVi == input.TitleVi && n.Id != id && !n.Deleted);
                     if (titleViExists)
                     {
                         throw new ArgumentException("Tiêu đề tiếng Việt đã tồn tại.");
@@ -600,7 +600,7 @@ namespace AttechServer.Applications.UserModules.Implements
                     
                     if (!string.IsNullOrEmpty(input.TitleEn))
                     {
-                        var titleEnExists = await _dbContext.News.AnyAsync(n => n.TitleEn == input.TitleEn && n.Id != input.Id && !n.Deleted);
+                        var titleEnExists = await _dbContext.News.AnyAsync(n => n.TitleEn == input.TitleEn && n.Id != id && !n.Deleted);
                         if (titleEnExists)
                         {
                             throw new ArgumentException("Tiêu đề tiếng Anh đã tồn tại.");
@@ -723,7 +723,7 @@ namespace AttechServer.Applications.UserModules.Implements
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    _logger.LogError(ex, $"Error updating news with id = {input.Id}");
+                    _logger.LogError(ex, $"Error updating news with id = {id}");
                     throw;
                 }
                 finally
@@ -932,6 +932,235 @@ namespace AttechServer.Applications.UserModules.Implements
                     FileSize = a.FileSize,
                     ContentType = a.ContentType
                 }).ToList()
+            };
+        }
+
+        public async Task<PagingResult<NewsDto>> FindAllForClient(PagingRequestBaseDto input)
+        {
+            _logger.LogInformation($"{nameof(FindAllForClient)}: Getting published news for client");
+            
+            var query = _dbContext.News
+                .Include(n => n.NewsCategory)
+                .Where(n => !n.Deleted && n.Status == CommonStatus.ACTIVE && n.IsAlbum == false);
+
+            // Search by keyword if provided
+            if (!string.IsNullOrWhiteSpace(input.Keyword))
+            {
+                query = query.Where(n => n.TitleVi.Contains(input.Keyword) || 
+                                       n.TitleEn.Contains(input.Keyword) ||
+                                       n.DescriptionVi.Contains(input.Keyword) ||
+                                       n.DescriptionEn.Contains(input.Keyword));
+            }
+
+            var totalCount = await query.CountAsync();
+
+            var news = await query
+                .OrderByDescending(n => n.IsOutstanding)
+                .ThenByDescending(n => n.TimePosted)
+                .Skip(input.GetSkip())
+                .Take(input.PageSize == -1 ? totalCount : input.PageSize)
+                .Select(n => new NewsDto
+                {
+                    Id = n.Id,
+                    SlugVi = n.SlugVi,
+                    SlugEn = n.SlugEn,
+                    TitleVi = n.TitleVi,
+                    TitleEn = n.TitleEn,
+                    DescriptionVi = n.DescriptionVi,
+                    DescriptionEn = n.DescriptionEn,
+                    TimePosted = n.TimePosted,
+                    Status = n.Status,
+                    NewsCategoryId = n.NewsCategoryId,
+                    NewsCategoryTitleVi = n.NewsCategory.TitleVi,
+                    NewsCategoryTitleEn = n.NewsCategory.TitleEn,
+                    NewsCategorySlugVi = n.NewsCategory.SlugVi,
+                    NewsCategorySlugEn = n.NewsCategory.SlugEn,
+                    IsOutstanding = n.IsOutstanding,
+                    ImageUrl = n.ImageUrl,
+                    FeaturedImageId = n.FeaturedImageId
+                })
+                .ToListAsync();
+
+            return new PagingResult<NewsDto>
+            {
+                Items = news,
+                TotalItems = totalCount,
+                PageSize = input.PageSize == -1 ? totalCount : input.PageSize,
+                Page = input.PageNumber
+            };
+        }
+
+        public async Task<DetailNewsDto> FindBySlugForClient(string slug)
+        {
+            _logger.LogInformation($"{nameof(FindBySlugForClient)}: slug = {slug}");
+            var news = await _dbContext.News
+                .Where(n => (n.SlugVi == slug || n.SlugEn == slug) && !n.Deleted && n.Status == CommonStatus.ACTIVE && n.IsAlbum == false)
+                .Select(n => new DetailNewsDto
+                {
+                    Id = n.Id,
+                    TitleVi = n.TitleVi,
+                    TitleEn = n.TitleEn,
+                    SlugVi = n.SlugVi,
+                    SlugEn = n.SlugEn,
+                    DescriptionVi = n.DescriptionVi,
+                    DescriptionEn = n.DescriptionEn,
+                    ContentVi = n.ContentVi,
+                    ContentEn = n.ContentEn,
+                    TimePosted = n.TimePosted,
+                    Status = n.Status,
+                    NewsCategoryId = n.NewsCategoryId,
+                    NewsCategoryTitleVi = n.NewsCategory.TitleVi,
+                    NewsCategoryTitleEn = n.NewsCategory.TitleEn,
+                    NewsCategorySlugVi = n.NewsCategory.SlugVi,
+                    NewsCategorySlugEn = n.NewsCategory.SlugEn,
+                    IsOutstanding = n.IsOutstanding,
+                    ImageUrl = n.ImageUrl
+                })
+                .FirstOrDefaultAsync();
+
+            if (news == null)
+                throw new UserFriendlyException(ErrorCode.NewsNotFound);
+
+            // Load attachments
+            var attachments = await _dbContext.Attachments
+                .Where(a => a.ObjectType == ObjectType.News && a.ObjectId == news.Id && !a.Deleted)
+                .Select(a => new AttachmentDto
+                {
+                    Id = a.Id,
+                    FilePath = a.FilePath,
+                    Url = a.Url,
+                    OriginalFileName = a.OriginalFileName,
+                    FileSize = a.FileSize,
+                    ContentType = a.ContentType,
+                    ObjectType = a.ObjectType,
+                    ObjectId = a.ObjectId,
+                    RelationType = a.RelationType,
+                    IsPrimary = a.IsPrimary,
+                    IsContentImage = a.IsContentImage,
+                    IsTemporary = a.IsTemporary,
+                    CreatedDate = a.CreatedDate
+                })
+                .ToListAsync();
+
+            news.Attachments = new AttachmentsGroupDto
+            {
+                Images = attachments.Where(a => a.ContentType.StartsWith("image/") && !a.IsPrimary && !a.IsContentImage).ToList(),
+                Documents = attachments.Where(a => !a.ContentType.StartsWith("image/")).ToList()
+            };
+
+            return news;
+        }
+
+        public async Task<PagingResult<NewsDto>> FindAllByCategorySlugForClient(PagingRequestBaseDto input, string slug)
+        {
+            _logger.LogInformation($"{nameof(FindAllByCategorySlugForClient)}: slug = {slug}");
+            
+            var query = _dbContext.News
+                .Include(n => n.NewsCategory)
+                .Where(n => !n.Deleted && n.Status == CommonStatus.ACTIVE && n.IsAlbum == false &&
+                           (n.NewsCategory.SlugVi == slug || n.NewsCategory.SlugEn == slug));
+
+            // Search by keyword if provided
+            if (!string.IsNullOrWhiteSpace(input.Keyword))
+            {
+                query = query.Where(n => n.TitleVi.Contains(input.Keyword) || 
+                                       n.TitleEn.Contains(input.Keyword) ||
+                                       n.DescriptionVi.Contains(input.Keyword) ||
+                                       n.DescriptionEn.Contains(input.Keyword));
+            }
+
+            var totalCount = await query.CountAsync();
+
+            var news = await query
+                .OrderByDescending(n => n.IsOutstanding)
+                .ThenByDescending(n => n.TimePosted)
+                .Skip(input.GetSkip())
+                .Take(input.PageSize == -1 ? totalCount : input.PageSize)
+                .Select(n => new NewsDto
+                {
+                    Id = n.Id,
+                    SlugVi = n.SlugVi,
+                    SlugEn = n.SlugEn,
+                    TitleVi = n.TitleVi,
+                    TitleEn = n.TitleEn,
+                    DescriptionVi = n.DescriptionVi,
+                    DescriptionEn = n.DescriptionEn,
+                    TimePosted = n.TimePosted,
+                    Status = n.Status,
+                    NewsCategoryId = n.NewsCategoryId,
+                    NewsCategoryTitleVi = n.NewsCategory.TitleVi,
+                    NewsCategoryTitleEn = n.NewsCategory.TitleEn,
+                    NewsCategorySlugVi = n.NewsCategory.SlugVi,
+                    NewsCategorySlugEn = n.NewsCategory.SlugEn,
+                    IsOutstanding = n.IsOutstanding,
+                    ImageUrl = n.ImageUrl,
+                    FeaturedImageId = n.FeaturedImageId
+                })
+                .ToListAsync();
+
+            return new PagingResult<NewsDto>
+            {
+                Items = news,
+                TotalItems = totalCount,
+                PageSize = input.PageSize == -1 ? totalCount : input.PageSize,
+                Page = input.PageNumber
+            };
+        }
+
+        public async Task<PagingResult<NewsDto>> SearchForClient(PagingRequestBaseDto input)
+        {
+            _logger.LogInformation($"{nameof(SearchForClient)}: keyword = {input.Keyword}");
+            
+            var query = _dbContext.News
+                .Include(n => n.NewsCategory)
+                .Where(n => !n.Deleted && n.Status == CommonStatus.ACTIVE && n.IsAlbum == false);
+
+            // Apply search filter
+            if (!string.IsNullOrWhiteSpace(input.Keyword))
+            {
+                query = query.Where(n => n.TitleVi.Contains(input.Keyword) || 
+                                       n.TitleEn.Contains(input.Keyword) ||
+                                       n.DescriptionVi.Contains(input.Keyword) ||
+                                       n.DescriptionEn.Contains(input.Keyword) ||
+                                       n.ContentVi.Contains(input.Keyword) ||
+                                       n.ContentEn.Contains(input.Keyword));
+            }
+
+            var totalCount = await query.CountAsync();
+
+            var news = await query
+                .OrderByDescending(n => n.IsOutstanding)
+                .ThenByDescending(n => n.TimePosted)
+                .Skip(input.GetSkip())
+                .Take(input.PageSize == -1 ? totalCount : input.PageSize)
+                .Select(n => new NewsDto
+                {
+                    Id = n.Id,
+                    SlugVi = n.SlugVi,
+                    SlugEn = n.SlugEn,
+                    TitleVi = n.TitleVi,
+                    TitleEn = n.TitleEn,
+                    DescriptionVi = n.DescriptionVi,
+                    DescriptionEn = n.DescriptionEn,
+                    TimePosted = n.TimePosted,
+                    Status = n.Status,
+                    NewsCategoryId = n.NewsCategoryId,
+                    NewsCategoryTitleVi = n.NewsCategory.TitleVi,
+                    NewsCategoryTitleEn = n.NewsCategory.TitleEn,
+                    NewsCategorySlugVi = n.NewsCategory.SlugVi,
+                    NewsCategorySlugEn = n.NewsCategory.SlugEn,
+                    IsOutstanding = n.IsOutstanding,
+                    ImageUrl = n.ImageUrl,
+                    FeaturedImageId = n.FeaturedImageId
+                })
+                .ToListAsync();
+
+            return new PagingResult<NewsDto>
+            {
+                Items = news,
+                TotalItems = totalCount,
+                PageSize = input.PageSize == -1 ? totalCount : input.PageSize,
+                Page = input.PageNumber
             };
         }
 

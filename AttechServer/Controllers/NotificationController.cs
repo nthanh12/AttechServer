@@ -26,7 +26,7 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Get all notification with caching
+        /// Get all notifications with caching
         /// </summary>
         [HttpGet("find-all")]
         [AllowAnonymous]
@@ -40,13 +40,13 @@ namespace AttechServer.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting all notification");
+                _logger.LogError(ex, "Error getting all notifications");
                 return OkException(ex);
             }
         }
 
         /// <summary>
-        /// Get notification by category slug with caching
+        /// Get notifications by category slug with caching
         /// </summary>
         [HttpGet("category/{slug}")]
         [AllowAnonymous]
@@ -60,7 +60,7 @@ namespace AttechServer.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting notification by category slug");
+                _logger.LogError(ex, "Error getting notifications by category slug");
                 return OkException(ex);
             }
         }
@@ -68,9 +68,9 @@ namespace AttechServer.Controllers
         /// <summary>
         /// Get notification by ID with attachments included
         /// </summary>
-        [HttpGet("find-by-id/{id}")]
+        [HttpGet("detail/{id}")]
         [AllowAnonymous]
-        [CacheResponse(CacheProfiles.MediumCache, "notification-detail")]
+        [CacheResponse(CacheProfiles.MediumCache, "admin-notification-detail")]
         public async Task<ApiResponse> FindById(int id)
         {
             try
@@ -89,9 +89,9 @@ namespace AttechServer.Controllers
         /// <summary>
         /// Get notification by slug with caching
         /// </summary>
-        [HttpGet("detail/{slug}")]
+        [HttpGet("detail/slug/{slug}")]
         [AllowAnonymous]
-        [CacheResponse(CacheProfiles.MediumCache, "notification-detail")]
+        [CacheResponse(CacheProfiles.MediumCache, "notification-detail-slug")]
         public async Task<ApiResponse> FindBySlug(string slug)
         {
             try
@@ -161,15 +161,16 @@ namespace AttechServer.Controllers
 
         /// <summary>
         /// Update notification (handles text + files)
+        /// ID được truyền qua route parameter, FE không cần gửi ID trong body
         /// </summary>
-        [HttpPut("update")]
+        [HttpPut("update/{id}")]
         [PermissionFilter(PermissionKeys.EditNotification)]
-        public async Task<ApiResponse> Update([FromBody] UpdateNotificationDto input)
+        public async Task<ApiResponse> Update(int id, [FromBody] UpdateNotificationDto input)
         {
             try
             {
                 _logger.LogInformation("Updating notification with all data in one atomic operation");
-                var result = await _notificationService.Update(input);
+                var result = await _notificationService.Update(id, input);
                 return result != null
                     ? new ApiResponse(ApiStatusCode.Success, result, 200, "Cập nhật thông báo thành công")
                     : new ApiResponse(ApiStatusCode.Success, null, 200, "Cập nhật thông báo thành công");
