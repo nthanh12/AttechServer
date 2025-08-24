@@ -2,7 +2,7 @@ using AttechServer.Applications.UserModules.Abstracts;
 using AttechServer.Applications.UserModules.Dtos;
 using AttechServer.Applications.UserModules.Dtos.User;
 using AttechServer.Shared.ApplicationBase.Common;
-using AttechServer.Shared.Consts.Permissions;
+using AttechServer.Shared.Consts;
 using AttechServer.Shared.Filters;
 using AttechServer.Shared.WebAPIBase;
 using Microsoft.AspNetCore.Authorization;
@@ -40,7 +40,7 @@ namespace AttechServer.Controllers
         /// Get user list
         /// </summary>
         [HttpGet]
-        [PermissionFilter(PermissionKeys.ViewUsers)]
+        [RoleFilter(2)]
         public async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
         {
             try
@@ -57,7 +57,7 @@ namespace AttechServer.Controllers
         /// Get user details by ID
         /// </summary>
         [HttpGet("{id}")]
-        [PermissionFilter(PermissionKeys.ViewUsers)]
+        [RoleFilter(2)]
         public async Task<ApiResponse> FindById(int id)
         {
             try
@@ -74,7 +74,7 @@ namespace AttechServer.Controllers
         /// Edit user details
         /// </summary>
         [HttpPut]
-        [PermissionFilter(PermissionKeys.EditUser)]
+        [RoleFilter(2)]
         [SuperAdminProtectionFilter]
         public async Task<ApiResponse> Update([FromBody] UpdateUserDto input)
         {
@@ -93,7 +93,7 @@ namespace AttechServer.Controllers
         /// Delete user
         /// </summary>
         [HttpDelete("{id}")]
-        [PermissionFilter(PermissionKeys.DeleteUser)]
+        [RoleFilter(2)]
         [SuperAdminProtectionFilter]
         public async Task<ApiResponse> Delete(int id)
         {
@@ -108,42 +108,5 @@ namespace AttechServer.Controllers
             }
         }
 
-        /// <summary>
-        /// Add role to user
-        /// </summary>
-        [HttpPost("{userId}/roles/{roleId}")]
-        [PermissionFilter(PermissionKeys.EditUser)]
-        [SuperAdminProtectionFilter]
-        public ApiResponse AddRoleToUser(int userId, int roleId)
-        {
-            try
-            {
-                _userService.AddRoleToUser(roleId, userId);
-                return new();
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
-        }
-
-        /// <summary>
-        /// Remove role from user
-        /// </summary>
-        [HttpDelete("{userId}/roles/{roleId}")]
-        [PermissionFilter(PermissionKeys.EditUser)]
-        [SuperAdminProtectionFilter]
-        public ApiResponse RemoveRoleFromUser(int userId, int roleId)
-        {
-            try
-            {
-                _userService.RemoveRoleFromUser(roleId, userId);
-                return new();
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
-        }
     }
 }

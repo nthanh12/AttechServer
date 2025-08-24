@@ -3,7 +3,7 @@ using AttechServer.Applications.UserModules.Dtos.Attachment;
 using AttechServer.Shared.WebAPIBase;
 using AttechServer.Shared.ApplicationBase.Common;
 using AttechServer.Shared.Filters;
-using AttechServer.Shared.Consts.Permissions;
+using AttechServer.Shared.Consts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,7 +27,7 @@ namespace AttechServer.Controllers
         }
 
         [HttpPost("")]
-        [PermissionFilter(PermissionKeys.FileUpload)]
+        [RoleFilter(2)]
         public async Task<ApiResponse> UploadTemp([FromForm] UploadDto input)
         {
             try
@@ -42,7 +42,7 @@ namespace AttechServer.Controllers
         }
 
         [HttpPost("associate")]
-        [PermissionFilter(PermissionKeys.FileUpload)]
+        [RoleFilter(2)]
         public async Task<ApiResponse> AssociateAttachments([FromBody] AttachAssociationDto input)
         {
             try
@@ -107,7 +107,7 @@ namespace AttechServer.Controllers
 
 
         [HttpDelete("{id}")]
-        [PermissionFilter(PermissionKeys.FileUpload)]
+        [RoleFilter(2)]
         public async Task<ApiResponse> Delete(int id)
         {
             try
@@ -158,7 +158,7 @@ namespace AttechServer.Controllers
         /// Cleanup temp files older than specified hours (background task endpoint)
         /// </summary>
         [HttpPost("cleanup")]
-        [PermissionFilter(PermissionKeys.FileUpload)]
+        [RoleFilter(2)]
         public async Task<ApiResponse> CleanupTempFiles()
         {
             try

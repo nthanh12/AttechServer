@@ -128,9 +128,7 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
-builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IKeyPermissionService, KeyPermissionService>();
 builder.Services.AddScoped<IApiEndpointService, ApiEndpointService>();
 
 builder.Services.AddScoped<IWysiwygFileProcessor, WysiwygFileProcessor>();
@@ -144,13 +142,24 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
 
 builder.Services.AddScoped<IServiceService, ServiceService>();
+builder.Services.AddScoped<IContactService, ContactService>();
+builder.Services.AddScoped<IContactEmailService, ContactEmailService>();
+builder.Services.AddScoped<IContactNotificationService, ContactNotificationService>();
+builder.Services.AddScoped<AttechServer.Infrastructures.Mail.IEmailService, AttechServer.Infrastructures.Mail.EmailService>();
 builder.Services.AddScoped<IAttachmentService, AttachmentService>();
 builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped<ICacheInvalidationService, CacheInvalidationService>();
 builder.Services.AddScoped<IActivityLogService, ActivityLogService>();
 builder.Services.AddScoped<ISystemMonitoringService, SystemMonitoringService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddHttpClient<ITranslationService, FreeTranslationService>();
 builder.Services.AddScoped<IUrlService, UrlService>();
+
+// Add filters
+builder.Services.AddScoped<AttechServer.Shared.Filters.AntiSpamFilter>();
+
+// Add SignalR
+builder.Services.AddSignalR();
 
 // Add background services
 builder.Services.AddHostedService<AttechServer.Services.TempFileCleanupBackgroundService>();
@@ -236,9 +245,12 @@ if (app.Environment.IsProduction())
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseMiddleware<PermissionMiddleWare>();
+app.UseMiddleware<RoleMiddleWare>();
 
 app.MapControllers();
+
+// Map SignalR hubs
+app.MapHub<AttechServer.Shared.Hubs.ContactHub>("/hubs/contact");
 
 //var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
 //var host = Environment.GetEnvironmentVariable("HOST") ?? "localhost";

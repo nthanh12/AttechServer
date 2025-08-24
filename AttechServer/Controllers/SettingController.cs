@@ -3,7 +3,7 @@ using AttechServer.Applications.UserModules.Dtos.Setting;
 using AttechServer.Shared.ApplicationBase.Common;
 using AttechServer.Shared.WebAPIBase;
 using AttechServer.Shared.Filters;
-using AttechServer.Shared.Consts.Permissions;
+using AttechServer.Shared.Consts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;

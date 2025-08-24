@@ -41,6 +41,39 @@ namespace AttechServer.Applications.UserModules.Implements
             return description.Length <= maxLength ? description : description.Substring(0, maxLength - 3) + "...";
         }
 
+        private IQueryable<News> ApplySorting(IQueryable<News> query, PagingRequestBaseDto input)
+        {
+            if (!string.IsNullOrEmpty(input.SortBy))
+            {
+                switch (input.SortBy.ToLower())
+                {
+                    case "id":
+                        return input.IsAscending ? query.OrderBy(x => x.Id) : query.OrderByDescending(x => x.Id);
+                    case "titlevi":
+                        return input.IsAscending ? query.OrderBy(x => x.TitleVi) : query.OrderByDescending(x => x.TitleVi);
+                    case "titleen":
+                        return input.IsAscending ? query.OrderBy(x => x.TitleEn) : query.OrderByDescending(x => x.TitleEn);
+                    case "timeposted":
+                        return input.IsAscending ? query.OrderBy(x => x.TimePosted) : query.OrderByDescending(x => x.TimePosted);
+                    case "status":
+                        return input.IsAscending ? query.OrderBy(x => x.Status) : query.OrderByDescending(x => x.Status);
+                    case "isoutstanding":
+                        return input.IsAscending ? query.OrderBy(x => x.IsOutstanding) : query.OrderByDescending(x => x.IsOutstanding);
+                    case "category":
+                    case "categoryvi":
+                        return input.IsAscending ? query.OrderBy(x => x.NewsCategory.TitleVi) : query.OrderByDescending(x => x.NewsCategory.TitleVi);
+                    case "categoryen":
+                        return input.IsAscending ? query.OrderBy(x => x.NewsCategory.TitleEn) : query.OrderByDescending(x => x.NewsCategory.TitleEn);
+                    default:
+                        return query.OrderByDescending(x => x.TimePosted); // default sort
+                }
+            }
+            else
+            {
+                return query.OrderByDescending(x => x.TimePosted); // default sort
+            }
+        }
+
         public async Task<NewsDto> Create(CreateNewsDto input)
         {
             _logger.LogInformation($"{nameof(Create)}: Creating news with all data in one atomic operation");
@@ -55,13 +88,24 @@ namespace AttechServer.Applications.UserModules.Implements
                         throw new ArgumentException("Tiêu đề và nội dung là bắt buộc.");
                     }
 
+                    // Validate title length
+                    if (input.TitleVi.Length > 300)
+                    {
+                        throw new UserFriendlyException(ErrorCode.TitleTooLong);
+                    }
+                    if (!string.IsNullOrEmpty(input.TitleEn) && input.TitleEn.Length > 300)
+                    {
+                        throw new UserFriendlyException(ErrorCode.TitleTooLong);
+                    }
+
+                    // Validate description length
                     if (!string.IsNullOrEmpty(input.DescriptionVi) && input.DescriptionVi.Length > 700)
                     {
-                        input.DescriptionVi = input.DescriptionVi.Substring(0, 697) + "...";
+                        throw new UserFriendlyException(ErrorCode.DescriptionTooLong);
                     }
                     if (!string.IsNullOrEmpty(input.DescriptionEn) && input.DescriptionEn.Length > 700)
                     {
-                        input.DescriptionEn = input.DescriptionEn.Substring(0, 697) + "...";
+                        throw new UserFriendlyException(ErrorCode.DescriptionTooLong);
                     }
 
                     if (input.TimePosted > DateTime.Now)
@@ -85,7 +129,7 @@ namespace AttechServer.Applications.UserModules.Implements
                     var titleViExists = await _dbContext.News.AnyAsync(n => n.TitleVi == input.TitleVi && !n.Deleted);
                     if (titleViExists)
                     {
-                        throw new ArgumentException("Tiêu đề tiếng Việt đã tồn tại.");
+                        throw new UserFriendlyException(ErrorCode.NewsTitleViExists);
                     }
                     
                     if (!string.IsNullOrEmpty(input.TitleEn))
@@ -93,7 +137,7 @@ namespace AttechServer.Applications.UserModules.Implements
                         var titleEnExists = await _dbContext.News.AnyAsync(n => n.TitleEn == input.TitleEn && !n.Deleted);
                         if (titleEnExists)
                         {
-                            throw new ArgumentException("Tiêu đề tiếng Anh đã tồn tại.");
+                            throw new UserFriendlyException(ErrorCode.NewsTitleEnExists);
                         }
                     }
 
@@ -313,6 +357,34 @@ namespace AttechServer.Applications.UserModules.Implements
             var baseQuery = _dbContext.News.AsNoTracking()
                 .Where(n => !n.Deleted && n.IsAlbum == false); // CHỈ lấy News thực, không lấy Albums
 
+            // Filter by category ID
+            if (input.CategoryId.HasValue)
+            {
+                baseQuery = baseQuery.Where(n => n.NewsCategoryId == input.CategoryId.Value);
+            }
+
+            // Filter by status
+            if (input.Status.HasValue)
+            {
+                baseQuery = baseQuery.Where(n => n.Status == input.Status.Value);
+            }
+
+            // Filter by date range
+            if (input.DateFrom.HasValue)
+            {
+                baseQuery = baseQuery.Where(n => n.TimePosted >= input.DateFrom.Value);
+            }
+            if (input.DateTo.HasValue)
+            {
+                baseQuery = baseQuery.Where(n => n.TimePosted <= input.DateTo.Value);
+            }
+
+            // Filter by outstanding
+            if (input.IsOutstanding.HasValue)
+            {
+                baseQuery = baseQuery.Where(n => n.IsOutstanding == input.IsOutstanding.Value);
+            }
+
             // Tìm kiếm
             if (!string.IsNullOrEmpty(input.Keyword))
             {
@@ -327,12 +399,8 @@ namespace AttechServer.Applications.UserModules.Implements
 
             var totalItems = await baseQuery.CountAsync();
 
-            // Sắp xếp
-            var query = baseQuery.OrderByDescending(n => n.TimePosted);
-            if (input.Sort.Any())
-            {
-                // TODO: Implement dynamic sorting based on input.Sort
-            }
+            // Apply sorting
+            var query = ApplySorting(baseQuery, input);
 
             var pagedItems = await query
                 .Skip(input.GetSkip())
@@ -579,6 +647,27 @@ namespace AttechServer.Applications.UserModules.Implements
                     {
                         throw new ArgumentException("Tiêu đề và nội dung là bắt buộc.");
                     }
+
+                    // Validate title length
+                    if (input.TitleVi.Length > 300)
+                    {
+                        throw new UserFriendlyException(ErrorCode.TitleTooLong);
+                    }
+                    if (!string.IsNullOrEmpty(input.TitleEn) && input.TitleEn.Length > 300)
+                    {
+                        throw new UserFriendlyException(ErrorCode.TitleTooLong);
+                    }
+
+                    // Validate description length
+                    if (!string.IsNullOrEmpty(input.DescriptionVi) && input.DescriptionVi.Length > 700)
+                    {
+                        throw new UserFriendlyException(ErrorCode.DescriptionTooLong);
+                    }
+                    if (!string.IsNullOrEmpty(input.DescriptionEn) && input.DescriptionEn.Length > 700)
+                    {
+                        throw new UserFriendlyException(ErrorCode.DescriptionTooLong);
+                    }
+
                     if (input.TimePosted > DateTime.Now)
                     {
                         throw new ArgumentException("Thời gian đăng bài không phù hợp.");
@@ -595,7 +684,7 @@ namespace AttechServer.Applications.UserModules.Implements
                     var titleViExists = await _dbContext.News.AnyAsync(n => n.TitleVi == input.TitleVi && n.Id != id && !n.Deleted);
                     if (titleViExists)
                     {
-                        throw new ArgumentException("Tiêu đề tiếng Việt đã tồn tại.");
+                        throw new UserFriendlyException(ErrorCode.NewsTitleViExists);
                     }
                     
                     if (!string.IsNullOrEmpty(input.TitleEn))
@@ -603,7 +692,7 @@ namespace AttechServer.Applications.UserModules.Implements
                         var titleEnExists = await _dbContext.News.AnyAsync(n => n.TitleEn == input.TitleEn && n.Id != id && !n.Deleted);
                         if (titleEnExists)
                         {
-                            throw new ArgumentException("Tiêu đề tiếng Anh đã tồn tại.");
+                            throw new UserFriendlyException(ErrorCode.NewsTitleEnExists);
                         }
                     }
 
@@ -764,27 +853,39 @@ namespace AttechServer.Applications.UserModules.Implements
                     ContentVi = "", // Empty for albums
                     ContentEn = "", // Empty for albums
                     NewsCategoryId = input.NewsCategoryId,
-                    TimePosted = DateTime.UtcNow,
+                    TimePosted = DateTime.Now,
                     Status = 1, // Active
                     IsOutstanding = false,
                     IsAlbum = true, // Mark as album
-                    CreatedDate = DateTime.UtcNow,
+                    FeaturedImageId = input.FeaturedImageId, // Set featured image directly
+                    CreatedDate = DateTime.Now,
                     CreatedBy = userId
                 };
 
                 _dbContext.News.Add(newNews);
                 await _dbContext.SaveChangesAsync();
 
-                // Finalize attachments and set featured image
+                // Associate featured image
+                await _attachmentService.AssociateAttachmentsAsync(
+                    new List<int> { input.FeaturedImageId }, 
+                    ObjectType.News, 
+                    newNews.Id, 
+                    isFeaturedImage: true, 
+                    isContentImage: false
+                );
+                _logger.LogInformation($"Associated featured image {input.FeaturedImageId} for album ID: {newNews.Id}");
+
+                // Associate gallery images (if any)
                 if (input.AttachmentIds != null && input.AttachmentIds.Any())
                 {
-                    await _attachmentService.AssociateAttachmentsAsync(input.AttachmentIds, ObjectType.News, newNews.Id, isFeaturedImage: false, isContentImage: false);
-                    _logger.LogInformation($"Finalized {input.AttachmentIds.Count} gallery attachments for album ID: {newNews.Id}");
-
-                    // Auto-set first image as featured image
-                    var featuredImageId = input.AttachmentIds.First();
-                    await _attachmentService.AssociateAttachmentsAsync(new List<int> { featuredImageId }, ObjectType.News, newNews.Id, isFeaturedImage: true, isContentImage: false);
-                    _logger.LogInformation($"Auto-set featured image {featuredImageId} (first attachment) for album ID: {newNews.Id}");
+                    await _attachmentService.AssociateAttachmentsAsync(
+                        input.AttachmentIds, 
+                        ObjectType.News, 
+                        newNews.Id, 
+                        isFeaturedImage: false, 
+                        isContentImage: false
+                    );
+                    _logger.LogInformation($"Associated {input.AttachmentIds.Count} gallery images for album ID: {newNews.Id}");
                 }
 
                 await transaction.CommitAsync();
@@ -825,7 +926,7 @@ namespace AttechServer.Applications.UserModules.Implements
             var totalItems = await query.CountAsync();
             
             var albums = await query
-                .Skip((input.PageNumber - 1) * input.PageSize)
+                .Skip((input.Page - 1) * input.PageSize)
                 .Take(input.PageSize)
                 .Select(n => new NewsDto
                 {
@@ -842,9 +943,35 @@ namespace AttechServer.Applications.UserModules.Implements
                     TimePosted = n.TimePosted,
                     Status = n.Status,
                     IsOutstanding = n.IsOutstanding,
-                    ImageUrl = n.ImageUrl
+                    ImageUrl = n.ImageUrl,
+                    FeaturedImageId = n.FeaturedImageId
                 })
                 .ToListAsync();
+
+            // Load featured image URLs in batch (avoid N+1)
+            var featuredImageIds = albums.Where(a => a.FeaturedImageId.HasValue)
+                                         .Select(a => a.FeaturedImageId.Value)
+                                         .ToList();
+            
+            if (featuredImageIds.Any())
+            {
+                var featuredImages = await _dbContext.Attachments
+                    .Where(a => featuredImageIds.Contains(a.Id) && !a.Deleted)
+                    .Select(a => new { a.Id, a.Url })
+                    .ToListAsync();
+
+                foreach (var album in albums)
+                {
+                    if (album.FeaturedImageId.HasValue)
+                    {
+                        var featuredImage = featuredImages.FirstOrDefault(f => f.Id == album.FeaturedImageId.Value);
+                        if (featuredImage != null)
+                        {
+                            album.ImageUrl = featuredImage.Url;
+                        }
+                    }
+                }
+            }
 
             return new PagingResult<NewsDto>
             {
@@ -1177,6 +1304,868 @@ namespace AttechServer.Applications.UserModules.Implements
             return sanitizer.Sanitize(content);
         }
 
+        public async Task<AlbumDetailDto> GetAlbumByIdForAdmin(int id)
+        {
+            var album = await _dbContext.News
+                .Include(n => n.NewsCategory)
+                .FirstOrDefaultAsync(n => n.Id == id && n.IsAlbum && !n.Deleted);
 
+            if (album == null)
+                throw new UserFriendlyException(ErrorCode.NewsNotFound);
+
+            // Load attachments (giống News)
+            var attachments = await _dbContext.Attachments
+                .Where(a => a.ObjectType == ObjectType.News && a.ObjectId == album.Id && !a.Deleted)
+                .Select(a => new AttachmentDto
+                {
+                    Id = a.Id,
+                    FilePath = a.FilePath,
+                    Url = a.Url,
+                    OriginalFileName = a.OriginalFileName,
+                    FileSize = a.FileSize,
+                    ContentType = a.ContentType,
+                    ObjectType = a.ObjectType,
+                    ObjectId = a.ObjectId,
+                    RelationType = a.RelationType,
+                    IsPrimary = a.IsPrimary,
+                    IsContentImage = a.IsContentImage,
+                    IsTemporary = a.IsTemporary,
+                    CreatedDate = a.CreatedDate
+                })
+                .ToListAsync();
+
+            return new AlbumDetailDto
+            {
+                Id = album.Id,
+                TitleVi = album.TitleVi,
+                TitleEn = album.TitleEn,
+                DescriptionVi = album.DescriptionVi,
+                DescriptionEn = album.DescriptionEn,
+                SlugVi = album.SlugVi,
+                SlugEn = album.SlugEn,
+                NewsCategoryId = album.NewsCategoryId,
+                NewsCategoryName = album.NewsCategory?.TitleVi,
+                Status = album.Status,
+                IsOutstanding = album.IsOutstanding,
+                FeaturedImageId = album.FeaturedImageId,
+                ImageUrl = album.ImageUrl, // Legacy field
+                Attachments = new AttachmentsGroupDto
+                {
+                    Images = attachments.Where(a => a.ContentType.StartsWith("image/") && !a.IsPrimary && !a.IsContentImage).ToList(),
+                    Documents = attachments.Where(a => !a.ContentType.StartsWith("image/")).ToList()
+                },
+                CreatedDate = album.CreatedDate,
+                ModifiedDate = album.ModifiedDate,
+                CreatedBy = album.CreatedBy,
+                ModifiedBy = album.ModifiedBy
+            };
+        }
+
+        // Client Album methods
+        public async Task<PagingResult<NewsDto>> GetPublishedAlbumsForClient(PagingRequestBaseDto input)
+        {
+            var query = _dbContext.News
+                .Include(n => n.NewsCategory)
+                .Where(n => n.Status == 1 && !n.Deleted)
+                .OrderByDescending(n => n.TimePosted);
+
+            var totalCount = await query.CountAsync();
+            var news = await query
+                .Skip((input.Page - 1) * input.PageSize)
+                .Take(input.PageSize)
+                .Select(n => new NewsDto
+                {
+                    Id = n.Id,
+                    SlugVi = n.SlugVi,
+                    SlugEn = n.SlugEn,
+                    TitleVi = n.TitleVi,
+                    TitleEn = n.TitleEn,
+                    DescriptionVi = n.DescriptionVi,
+                    DescriptionEn = n.DescriptionEn,
+                    TimePosted = n.TimePosted,
+                    Status = n.Status,
+                    NewsCategoryId = n.NewsCategoryId,
+                    NewsCategoryTitleVi = n.NewsCategory.TitleVi,
+                    NewsCategoryTitleEn = n.NewsCategory.TitleEn,
+                    NewsCategorySlugVi = n.NewsCategory.SlugVi,
+                    NewsCategorySlugEn = n.NewsCategory.SlugEn,
+                    IsOutstanding = n.IsOutstanding,
+                    ImageUrl = n.ImageUrl
+                })
+                .ToListAsync();
+
+            return new PagingResult<NewsDto>
+            {
+                Items = news,
+                TotalItems = totalCount,
+                Page = input.Page,
+                PageSize = input.PageSize
+            };
+        }
+
+        public async Task<DetailNewsDto> GetPublishedAlbumBySlugForClient(string slug)
+        {
+            var news = await _dbContext.News
+                .Include(n => n.NewsCategory)
+                .Where(n => n.Status == 1 && !n.Deleted)
+                .Where(n => n.SlugVi == slug || n.SlugEn == slug)
+                .Select(n => new DetailNewsDto
+                {
+                    Id = n.Id,
+                    SlugVi = n.SlugVi,
+                    SlugEn = n.SlugEn,
+                    TitleVi = n.TitleVi,
+                    TitleEn = n.TitleEn,
+                    DescriptionVi = n.DescriptionVi,
+                    DescriptionEn = n.DescriptionEn,
+                    ContentVi = n.ContentVi,
+                    ContentEn = n.ContentEn,
+                    TimePosted = n.TimePosted,
+                    Status = n.Status,
+                    NewsCategoryId = n.NewsCategoryId,
+                    NewsCategoryTitleVi = n.NewsCategory.TitleVi,
+                    NewsCategoryTitleEn = n.NewsCategory.TitleEn,
+                    NewsCategorySlugVi = n.NewsCategory.SlugVi,
+                    NewsCategorySlugEn = n.NewsCategory.SlugEn,
+                    IsOutstanding = n.IsOutstanding,
+                    ImageUrl = n.ImageUrl,
+                    FeaturedImageId = n.FeaturedImageId
+                })
+                .FirstOrDefaultAsync();
+
+            if (news == null)
+                throw new UserFriendlyException(ErrorCode.NewsNotFound);
+
+            // Load attachments
+            var attachments = await _dbContext.Attachments
+                .Where(a => a.ObjectType == ObjectType.News && a.ObjectId == news.Id && !a.Deleted)
+                .Select(a => new AttachmentDto
+                {
+                    Id = a.Id,
+                    FilePath = a.FilePath,
+                    Url = a.Url,
+                    OriginalFileName = a.OriginalFileName,
+                    FileSize = a.FileSize,
+                    ContentType = a.ContentType,
+                    ObjectType = a.ObjectType,
+                    ObjectId = a.ObjectId,
+                    RelationType = a.RelationType,
+                    IsPrimary = a.IsPrimary,
+                    IsContentImage = a.IsContentImage,
+                    IsTemporary = a.IsTemporary,
+                    CreatedDate = a.CreatedDate
+                })
+                .ToListAsync();
+
+            news.Attachments = new AttachmentsGroupDto
+            {
+                Images = attachments.Where(a => a.ContentType.StartsWith("image/") && !a.IsPrimary && !a.IsContentImage).ToList(),
+                Documents = attachments.Where(a => !a.ContentType.StartsWith("image/")).ToList()
+            };
+
+            return news;
+        }
+
+        public async Task<NewsGalleryDto> GetAlbumGalleryForClient(string slug)
+        {
+            return await GetGalleryBySlug(slug); // Reuse existing method
+        }
+
+        public async Task<PagingResult<NewsDto>> GetPublishedAlbumsByCategoryForClient(string categorySlug, PagingRequestBaseDto input)
+        {
+            var query = _dbContext.News
+                .Include(n => n.NewsCategory)
+                .Where(n => n.IsAlbum && n.Status == 1 && !n.Deleted)
+                .Where(n => n.NewsCategory.SlugVi == categorySlug || n.NewsCategory.SlugEn == categorySlug)
+                .OrderByDescending(n => n.TimePosted);
+
+            var totalCount = await query.CountAsync();
+            var news = await query
+                .Skip((input.Page - 1) * input.PageSize)
+                .Take(input.PageSize)
+                .Select(n => new NewsDto
+                {
+                    Id = n.Id,
+                    SlugVi = n.SlugVi,
+                    SlugEn = n.SlugEn,
+                    TitleVi = n.TitleVi,
+                    TitleEn = n.TitleEn,
+                    DescriptionVi = n.DescriptionVi,
+                    DescriptionEn = n.DescriptionEn,
+                    TimePosted = n.TimePosted,
+                    Status = n.Status,
+                    NewsCategoryId = n.NewsCategoryId,
+                    NewsCategoryTitleVi = n.NewsCategory.TitleVi,
+                    NewsCategoryTitleEn = n.NewsCategory.TitleEn,
+                    NewsCategorySlugVi = n.NewsCategory.SlugVi,
+                    NewsCategorySlugEn = n.NewsCategory.SlugEn,
+                    IsOutstanding = n.IsOutstanding,
+                    ImageUrl = n.ImageUrl
+                })
+                .ToListAsync();
+
+            return new PagingResult<NewsDto>
+            {
+                Items = news,
+                TotalItems = totalCount,
+                Page = input.Page,
+                PageSize = input.PageSize
+            };
+        }
+
+        public async Task<PagingResult<NewsDto>> GetFeaturedAlbumsForClient(PagingRequestBaseDto input)
+        {
+            var query = _dbContext.News
+                .Include(n => n.NewsCategory)
+                .Where(n => n.IsAlbum && n.Status == 1 && n.IsOutstanding && !n.Deleted)
+                .OrderByDescending(n => n.TimePosted);
+
+            var totalCount = await query.CountAsync();
+            var news = await query
+                .Skip((input.Page - 1) * input.PageSize)
+                .Take(input.PageSize)
+                .Select(n => new NewsDto
+                {
+                    Id = n.Id,
+                    SlugVi = n.SlugVi,
+                    SlugEn = n.SlugEn,
+                    TitleVi = n.TitleVi,
+                    TitleEn = n.TitleEn,
+                    DescriptionVi = n.DescriptionVi,
+                    DescriptionEn = n.DescriptionEn,
+                    TimePosted = n.TimePosted,
+                    Status = n.Status,
+                    NewsCategoryId = n.NewsCategoryId,
+                    NewsCategoryTitleVi = n.NewsCategory.TitleVi,
+                    NewsCategoryTitleEn = n.NewsCategory.TitleEn,
+                    NewsCategorySlugVi = n.NewsCategory.SlugVi,
+                    NewsCategorySlugEn = n.NewsCategory.SlugEn,
+                    IsOutstanding = n.IsOutstanding,
+                    ImageUrl = n.ImageUrl
+                })
+                .ToListAsync();
+
+            return new PagingResult<NewsDto>
+            {
+                Items = news,
+                TotalItems = totalCount,
+                Page = input.Page,
+                PageSize = input.PageSize
+            };
+        }
+
+        public async Task<AlbumDetailDto> UpdateAlbum(int id, UpdateAlbumDto input)
+        {
+            _logger.LogInformation($"{nameof(UpdateAlbum)}: Updating album {id}");
+
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var album = await _dbContext.News
+                        .Include(n => n.NewsCategory)
+                        .FirstOrDefaultAsync(n => n.Id == id && n.IsAlbum && !n.Deleted);
+
+                    if (album == null)
+                        throw new UserFriendlyException(ErrorCode.NewsNotFound);
+
+                    // Update basic info
+                    album.TitleVi = input.TitleVi;
+                    album.TitleEn = input.TitleEn;
+                    album.DescriptionVi = input.DescriptionVi ?? "";
+                    album.DescriptionEn = input.DescriptionEn ?? "";
+                    album.ContentVi = input.DescriptionVi ?? ""; // Use description as content for albums
+                    album.ContentEn = input.DescriptionEn ?? "";
+                    album.NewsCategoryId = input.NewsCategoryId;
+                    album.Status = input.Status;
+                    album.IsOutstanding = input.IsOutstanding;
+                    album.SlugVi = input.SlugVi;
+                    album.SlugEn = input.SlugEn;
+                    album.ModifiedDate = DateTime.Now;
+
+                    // Update featured image
+                    album.FeaturedImageId = input.FeaturedImageId;
+
+                    // Associate featured image
+                    await _attachmentService.AssociateAttachmentsAsync(
+                        new List<int> { input.FeaturedImageId },
+                        ObjectType.News,
+                        album.Id,
+                        isFeaturedImage: true,
+                        isContentImage: false
+                    );
+
+                    // Handle gallery attachments if provided
+                    if (input.AttachmentIds != null && input.AttachmentIds.Any())
+                    {
+                        await _attachmentService.AssociateAttachmentsAsync(
+                            input.AttachmentIds,
+                            ObjectType.News,
+                            album.Id,
+                            isFeaturedImage: false,
+                            isContentImage: false
+                        );
+                    }
+
+                    await _dbContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    // Log activity
+                    await _activityLogService.LogAsync("ALBUM_UPDATE", "Cập nhật album", album.TitleVi, "Info");
+
+                    // Load and return updated album
+                    // Load attachments (giống News)
+                    var attachments = await _dbContext.Attachments
+                        .Where(a => a.ObjectType == ObjectType.News && a.ObjectId == album.Id && !a.Deleted)
+                        .Select(a => new AttachmentDto
+                        {
+                            Id = a.Id,
+                            FilePath = a.FilePath,
+                            Url = a.Url,
+                            OriginalFileName = a.OriginalFileName,
+                            FileSize = a.FileSize,
+                            ContentType = a.ContentType,
+                            ObjectType = a.ObjectType,
+                            ObjectId = a.ObjectId,
+                            RelationType = a.RelationType,
+                            IsPrimary = a.IsPrimary,
+                            IsContentImage = a.IsContentImage,
+                            IsTemporary = a.IsTemporary,
+                            CreatedDate = a.CreatedDate
+                        })
+                        .ToListAsync();
+
+                    return new AlbumDetailDto
+                    {
+                        Id = album.Id,
+                        TitleVi = album.TitleVi,
+                        TitleEn = album.TitleEn,
+                        DescriptionVi = album.DescriptionVi,
+                        DescriptionEn = album.DescriptionEn,
+                        SlugVi = album.SlugVi,
+                        SlugEn = album.SlugEn,
+                        NewsCategoryId = album.NewsCategoryId,
+                        NewsCategoryName = album.NewsCategory?.TitleVi,
+                        Status = album.Status,
+                        IsOutstanding = album.IsOutstanding,
+                        FeaturedImageId = album.FeaturedImageId,
+                        ImageUrl = album.ImageUrl,
+                        Attachments = new AttachmentsGroupDto
+                        {
+                            Images = attachments.Where(a => a.ContentType.StartsWith("image/") && !a.IsPrimary && !a.IsContentImage).ToList(),
+                            Documents = attachments.Where(a => !a.ContentType.StartsWith("image/")).ToList()
+                        },
+                        CreatedDate = album.CreatedDate,
+                        ModifiedDate = album.ModifiedDate,
+                        CreatedBy = album.CreatedBy,
+                        ModifiedBy = album.ModifiedBy
+                    };
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    _logger.LogError(ex, "Error updating album {Id}", id);
+                    throw;
+                }
+            }
+        }
+
+        #region Document Methods
+
+        public async Task<NewsDto> CreateDocument(CreateDocumentDto input)
+        {
+            _logger.LogInformation($"{nameof(CreateDocument)}: Creating document {input.TitleVi}");
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            try
+            {
+                var userIdClaim = _httpContextAccessor.HttpContext?.User.FindFirst("user_id")?.Value;
+                var userId = int.TryParse(userIdClaim, out int parsedUserId) ? parsedUserId : 0;
+                
+                // Validate category exists for document
+                var category = await _dbContext.NewsCategories
+                    .Where(c => c.Id == input.NewsCategoryId && !c.Deleted)
+                    .FirstOrDefaultAsync();
+                if (category == null)
+                {
+                    throw new UserFriendlyException(ErrorCode.NewsCategoryNotFound);
+                }
+                
+                // Create news with IsDocument = true
+                var newNews = new News
+                {
+                    SlugVi = SlugHelper.GenerateSlug(input.TitleVi),
+                    SlugEn = SlugHelper.GenerateSlug(!string.IsNullOrEmpty(input.TitleEn) ? input.TitleEn : input.TitleVi),
+                    TitleVi = input.TitleVi,
+                    TitleEn = !string.IsNullOrEmpty(input.TitleEn) ? input.TitleEn : input.TitleVi,
+                    DescriptionVi = TruncateDescription(input.TitleVi),
+                    DescriptionEn = TruncateDescription(!string.IsNullOrEmpty(input.TitleEn) ? input.TitleEn : input.TitleVi),
+                    ContentVi = input.TitleVi,
+                    ContentEn = !string.IsNullOrEmpty(input.TitleEn) ? input.TitleEn : input.TitleVi,
+                    TimePosted = DateTime.Now,
+                    Status = 0, // Draft by default
+                    NewsCategoryId = input.NewsCategoryId,
+                    IsOutstanding = false,
+                    IsAlbum = false,
+                    IsDocument = true,
+                    FeaturedImageId = input.FeaturedImageId,
+                    CreatedBy = userId,
+                    CreatedDate = DateTime.Now
+                };
+                
+                _dbContext.News.Add(newNews);
+                await _dbContext.SaveChangesAsync();
+                
+                // Handle document attachments
+                if (input.AttachmentIds?.Any() == true)
+                {
+                    var attachments = await _dbContext.Attachments
+                        .Where(a => input.AttachmentIds.Contains(a.Id) && a.IsTemporary == true)
+                        .ToListAsync();
+                    
+                    foreach (var attachment in attachments)
+                    {
+                        attachment.ObjectType = ObjectType.Document;
+                        attachment.ObjectId = newNews.Id;
+                        attachment.IsContentImage = false;
+                        attachment.IsTemporary = false;
+                    }
+                }
+                
+                await _dbContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+                
+                await _activityLogService.LogAsync("Document", $"Tạo document: {newNews.TitleVi}");
+                
+                return new NewsDto
+                {
+                    Id = newNews.Id,
+                    SlugVi = newNews.SlugVi,
+                    SlugEn = newNews.SlugEn,
+                    TitleVi = newNews.TitleVi,
+                    TitleEn = newNews.TitleEn,
+                    DescriptionVi = newNews.DescriptionVi,
+                    DescriptionEn = newNews.DescriptionEn,
+                    NewsCategoryId = newNews.NewsCategoryId,
+                    NewsCategoryTitleVi = category.TitleVi,
+                    NewsCategoryTitleEn = category.TitleEn,
+                    TimePosted = newNews.TimePosted,
+                    Status = newNews.Status,
+                    IsOutstanding = newNews.IsOutstanding,
+                    ImageUrl = newNews.ImageUrl,
+                    FeaturedImageId = newNews.FeaturedImageId
+                };
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                _logger.LogError(ex, $"Error creating document: {input.TitleVi}");
+                throw;
+            }
+        }
+
+        public async Task<PagingResult<NewsDto>> GetDocuments(PagingRequestBaseDto input)
+        {
+            _logger.LogInformation($"{nameof(GetDocuments)}: Getting documents with pagination");
+            var query = _dbContext.News
+                .Where(n => !n.Deleted && n.IsDocument == true)
+                .Include(n => n.NewsCategory)
+                .OrderByDescending(n => n.TimePosted);
+            var totalItems = await query.CountAsync();
+            
+            var documents = await query
+                .Skip((input.Page - 1) * input.PageSize)
+                .Take(input.PageSize)
+                .Select(n => new NewsDto
+                {
+                    Id = n.Id,
+                    SlugVi = n.SlugVi,
+                    SlugEn = n.SlugEn,
+                    TitleVi = n.TitleVi,
+                    TitleEn = n.TitleEn,
+                    DescriptionVi = n.DescriptionVi,
+                    DescriptionEn = n.DescriptionEn,
+                    NewsCategoryId = n.NewsCategoryId,
+                    NewsCategoryTitleVi = n.NewsCategory.TitleVi,
+                    NewsCategoryTitleEn = n.NewsCategory.TitleEn,
+                    TimePosted = n.TimePosted,
+                    Status = n.Status,
+                    IsOutstanding = n.IsOutstanding,
+                    ImageUrl = n.ImageUrl,
+                    FeaturedImageId = n.FeaturedImageId
+                })
+                .ToListAsync();
+            
+            return new PagingResult<NewsDto>
+            {
+                Items = documents,
+                TotalItems = totalItems,
+                Page = input.Page,
+                PageSize = input.PageSize
+            };
+        }
+
+        public async Task<DocumentDetailDto> GetDocumentByIdForAdmin(int id)
+        {
+            _logger.LogInformation($"{nameof(GetDocumentByIdForAdmin)}: Getting document {id}");
+            
+            var document = await _dbContext.News
+                .Include(n => n.NewsCategory)
+                .Where(n => n.Id == id && n.IsDocument && !n.Deleted)
+                .FirstOrDefaultAsync();
+            
+            if (document == null)
+            {
+                throw new UserFriendlyException(ErrorCode.NewsNotFound);
+            }
+            
+            // Get document attachments
+            var documents = await _dbContext.Attachments
+                .Where(a => a.ObjectType == ObjectType.Document && a.ObjectId == id && !a.Deleted)
+                .Select(a => new AttachmentDto
+                {
+                    Id = a.Id,
+                    OriginalFileName = a.OriginalFileName,
+                    FilePath = a.FilePath,
+                    Url = a.Url,
+                    FileSize = a.FileSize,
+                    ContentType = a.ContentType,
+                    ObjectType = a.ObjectType,
+                    ObjectId = a.ObjectId,
+                    CreatedDate = a.CreatedDate
+                })
+                .OrderBy(a => a.CreatedDate)
+                .ToListAsync();
+            
+            // Get featured image if exists
+            AttachmentDto? featuredImage = null;
+            if (document.FeaturedImageId.HasValue)
+            {
+                featuredImage = await _dbContext.Attachments
+                    .Where(a => a.Id == document.FeaturedImageId.Value && !a.Deleted)
+                    .Select(a => new AttachmentDto
+                    {
+                        Id = a.Id,
+                        OriginalFileName = a.OriginalFileName,
+                        FilePath = a.FilePath,
+                        Url = a.Url,
+                        FileSize = a.FileSize,
+                        ContentType = a.ContentType,
+                        ObjectType = a.ObjectType,
+                        ObjectId = a.ObjectId,
+                        CreatedDate = a.CreatedDate
+                    })
+                    .FirstOrDefaultAsync();
+            }
+            
+            return new DocumentDetailDto
+            {
+                Id = document.Id,
+                SlugVi = document.SlugVi,
+                SlugEn = document.SlugEn,
+                TitleVi = document.TitleVi,
+                TitleEn = document.TitleEn,
+                DescriptionVi = document.DescriptionVi,
+                DescriptionEn = document.DescriptionEn,
+                TimePosted = document.TimePosted,
+                Status = document.Status,
+                NewsCategoryId = document.NewsCategoryId,
+                NewsCategoryNameVi = document.NewsCategory.TitleVi,
+                NewsCategoryNameEn = document.NewsCategory.TitleEn,
+                ImageUrl = document.ImageUrl,
+                FeaturedImageId = document.FeaturedImageId,
+                FeaturedImage = featuredImage,
+                Documents = documents,
+                CreatedDate = document.CreatedDate,
+                ModifiedDate = document.ModifiedDate
+            };
+        }
+
+        public async Task<DocumentDetailDto> UpdateDocument(int id, UpdateDocumentDto input)
+        {
+            _logger.LogInformation($"{nameof(UpdateDocument)}: Updating document {id}");
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            try
+            {
+                var userIdClaim = _httpContextAccessor.HttpContext?.User.FindFirst("user_id")?.Value;
+                var userId = int.TryParse(userIdClaim, out int parsedUserId) ? parsedUserId : 0;
+                
+                var document = await _dbContext.News
+                    .Where(n => n.Id == id && n.IsDocument && !n.Deleted)
+                    .FirstOrDefaultAsync();
+                
+                if (document == null)
+                {
+                    throw new UserFriendlyException(ErrorCode.NewsNotFound);
+                }
+                
+                // Validate category
+                var category = await _dbContext.NewsCategories
+                    .Where(c => c.Id == input.NewsCategoryId && !c.Deleted)
+                    .FirstOrDefaultAsync();
+                if (category == null)
+                {
+                    throw new UserFriendlyException(ErrorCode.NewsCategoryNotFound);
+                }
+                
+                // Update document fields
+                document.TitleVi = input.TitleVi;
+                document.TitleEn = input.TitleEn;
+                document.SlugVi = SlugHelper.GenerateSlug(input.TitleVi);
+                document.SlugEn = SlugHelper.GenerateSlug(input.TitleEn);
+                document.DescriptionVi = TruncateDescription(input.TitleVi);
+                document.DescriptionEn = TruncateDescription(input.TitleEn);
+                document.ContentVi = input.TitleVi;
+                document.ContentEn = input.TitleEn;
+                document.NewsCategoryId = input.NewsCategoryId;
+                document.Status = input.Status;
+                document.FeaturedImageId = input.FeaturedImageId;
+                document.ModifiedBy = userId;
+                document.ModifiedDate = DateTime.Now;
+                
+                // Handle document attachments
+                if (input.AttachmentIds != null)
+                {
+                    // Remove existing document attachments
+                    var existingAttachments = await _dbContext.Attachments
+                        .Where(a => a.ObjectType == ObjectType.Document && a.ObjectId == id)
+                        .ToListAsync();
+                    
+                    foreach (var att in existingAttachments)
+                    {
+                        att.ObjectType = ObjectType.Temp;
+                        att.ObjectId = null;
+                        att.IsTemporary = true;
+                    }
+                    
+                    // Add new attachments
+                    if (input.AttachmentIds.Any())
+                    {
+                        var newAttachments = await _dbContext.Attachments
+                            .Where(a => input.AttachmentIds.Contains(a.Id) && a.IsTemporary == true)
+                            .ToListAsync();
+                        
+                        foreach (var attachment in newAttachments)
+                        {
+                            attachment.ObjectType = ObjectType.Document;
+                            attachment.ObjectId = id;
+                            attachment.IsContentImage = false;
+                            attachment.IsTemporary = false;
+                        }
+                    }
+                }
+                
+                await _dbContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+                
+                await _activityLogService.LogAsync("Document", $"Cập nhật document: {document.TitleVi}");
+                
+                return await GetDocumentByIdForAdmin(id);
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                _logger.LogError(ex, $"Error updating document {id}");
+                throw;
+            }
+        }
+
+        public async Task<PagingResult<NewsDto>> GetPublishedDocumentsForClient(PagingRequestBaseDto input)
+        {
+            var query = _dbContext.News
+                .Include(n => n.NewsCategory)
+                .Where(n => n.IsDocument && n.Status == 1 && !n.Deleted)
+                .OrderByDescending(n => n.TimePosted);
+            var totalCount = await query.CountAsync();
+            var news = await query
+                .Skip((input.Page - 1) * input.PageSize)
+                .Take(input.PageSize)
+                .Select(n => new NewsDto
+                {
+                    Id = n.Id,
+                    SlugVi = n.SlugVi,
+                    SlugEn = n.SlugEn,
+                    TitleVi = n.TitleVi,
+                    TitleEn = n.TitleEn,
+                    DescriptionVi = n.DescriptionVi,
+                    DescriptionEn = n.DescriptionEn,
+                    NewsCategoryId = n.NewsCategoryId,
+                    NewsCategoryTitleVi = n.NewsCategory.TitleVi,
+                    NewsCategoryTitleEn = n.NewsCategory.TitleEn,
+                    TimePosted = n.TimePosted,
+                    Status = n.Status,
+                    IsOutstanding = n.IsOutstanding,
+                    ImageUrl = n.ImageUrl,
+                    FeaturedImageId = n.FeaturedImageId
+                })
+                .ToListAsync();
+            return new PagingResult<NewsDto>
+            {
+                Items = news,
+                TotalItems = totalCount,
+                Page = input.Page,
+                PageSize = input.PageSize
+            };
+        }
+
+        public async Task<DocumentDetailDto> GetPublishedDocumentBySlugForClient(string slug)
+        {
+            var document = await _dbContext.News
+                .Include(n => n.NewsCategory)
+                .Where(n => (n.SlugVi == slug || n.SlugEn == slug) && n.IsDocument && n.Status == 1 && !n.Deleted)
+                .FirstOrDefaultAsync();
+            
+            if (document == null)
+            {
+                throw new UserFriendlyException(ErrorCode.NewsNotFound);
+            }
+            
+            // Get document attachments
+            var documents = await _dbContext.Attachments
+                .Where(a => a.ObjectType == ObjectType.Document && a.ObjectId == document.Id && !a.Deleted)
+                .Select(a => new AttachmentDto
+                {
+                    Id = a.Id,
+                    OriginalFileName = a.OriginalFileName,
+                    FilePath = a.FilePath,
+                    Url = a.Url,
+                    FileSize = a.FileSize,
+                    ContentType = a.ContentType,
+                    ObjectType = a.ObjectType,
+                    ObjectId = a.ObjectId,
+                    CreatedDate = a.CreatedDate
+                })
+                .OrderBy(a => a.CreatedDate)
+                .ToListAsync();
+            
+            // Get featured image if exists
+            AttachmentDto? featuredImage = null;
+            if (document.FeaturedImageId.HasValue)
+            {
+                featuredImage = await _dbContext.Attachments
+                    .Where(a => a.Id == document.FeaturedImageId.Value && !a.Deleted)
+                    .Select(a => new AttachmentDto
+                    {
+                        Id = a.Id,
+                        OriginalFileName = a.OriginalFileName,
+                        FilePath = a.FilePath,
+                        Url = a.Url,
+                        FileSize = a.FileSize,
+                        ContentType = a.ContentType,
+                        ObjectType = a.ObjectType,
+                        ObjectId = a.ObjectId,
+                        CreatedDate = a.CreatedDate
+                    })
+                    .FirstOrDefaultAsync();
+            }
+            
+            return new DocumentDetailDto
+            {
+                Id = document.Id,
+                SlugVi = document.SlugVi,
+                SlugEn = document.SlugEn,
+                TitleVi = document.TitleVi,
+                TitleEn = document.TitleEn,
+                DescriptionVi = document.DescriptionVi,
+                DescriptionEn = document.DescriptionEn,
+                TimePosted = document.TimePosted,
+                Status = document.Status,
+                NewsCategoryId = document.NewsCategoryId,
+                NewsCategoryNameVi = document.NewsCategory.TitleVi,
+                NewsCategoryNameEn = document.NewsCategory.TitleEn,
+                ImageUrl = document.ImageUrl,
+                FeaturedImageId = document.FeaturedImageId,
+                FeaturedImage = featuredImage,
+                Documents = documents,
+                CreatedDate = document.CreatedDate,
+                ModifiedDate = document.ModifiedDate
+            };
+        }
+
+        public async Task<PagingResult<NewsDto>> GetPublishedDocumentsByCategoryForClient(string categorySlug, PagingRequestBaseDto input)
+        {
+            var category = await _dbContext.NewsCategories
+                .Where(c => (c.SlugVi == categorySlug || c.SlugEn == categorySlug) && !c.Deleted)
+                .FirstOrDefaultAsync();
+            
+            if (category == null)
+            {
+                throw new UserFriendlyException(ErrorCode.NewsCategoryNotFound);
+            }
+            
+            var query = _dbContext.News
+                .Include(n => n.NewsCategory)
+                .Where(n => n.NewsCategoryId == category.Id && n.IsDocument && n.Status == 1 && !n.Deleted)
+                .OrderByDescending(n => n.TimePosted);
+            var totalCount = await query.CountAsync();
+            var news = await query
+                .Skip((input.Page - 1) * input.PageSize)
+                .Take(input.PageSize)
+                .Select(n => new NewsDto
+                {
+                    Id = n.Id,
+                    SlugVi = n.SlugVi,
+                    SlugEn = n.SlugEn,
+                    TitleVi = n.TitleVi,
+                    TitleEn = n.TitleEn,
+                    DescriptionVi = n.DescriptionVi,
+                    DescriptionEn = n.DescriptionEn,
+                    NewsCategoryId = n.NewsCategoryId,
+                    NewsCategoryTitleVi = n.NewsCategory.TitleVi,
+                    NewsCategoryTitleEn = n.NewsCategory.TitleEn,
+                    TimePosted = n.TimePosted,
+                    Status = n.Status,
+                    IsOutstanding = n.IsOutstanding,
+                    ImageUrl = n.ImageUrl,
+                    FeaturedImageId = n.FeaturedImageId
+                })
+                .ToListAsync();
+            return new PagingResult<NewsDto>
+            {
+                Items = news,
+                TotalItems = totalCount,
+                Page = input.Page,
+                PageSize = input.PageSize
+            };
+        }
+
+        public async Task<PagingResult<NewsDto>> GetFeaturedDocumentsForClient(PagingRequestBaseDto input)
+        {
+            var query = _dbContext.News
+                .Include(n => n.NewsCategory)
+                .Where(n => n.IsDocument && n.Status == 1 && n.IsOutstanding && !n.Deleted)
+                .OrderByDescending(n => n.TimePosted);
+            var totalCount = await query.CountAsync();
+            var news = await query
+                .Skip((input.Page - 1) * input.PageSize)
+                .Take(input.PageSize)
+                .Select(n => new NewsDto
+                {
+                    Id = n.Id,
+                    SlugVi = n.SlugVi,
+                    SlugEn = n.SlugEn,
+                    TitleVi = n.TitleVi,
+                    TitleEn = n.TitleEn,
+                    DescriptionVi = n.DescriptionVi,
+                    DescriptionEn = n.DescriptionEn,
+                    NewsCategoryId = n.NewsCategoryId,
+                    NewsCategoryTitleVi = n.NewsCategory.TitleVi,
+                    NewsCategoryTitleEn = n.NewsCategory.TitleEn,
+                    TimePosted = n.TimePosted,
+                    Status = n.Status,
+                    IsOutstanding = n.IsOutstanding,
+                    ImageUrl = n.ImageUrl,
+                    FeaturedImageId = n.FeaturedImageId
+                })
+                .ToListAsync();
+            return new PagingResult<NewsDto>
+            {
+                Items = news,
+                TotalItems = totalCount,
+                Page = input.Page,
+                PageSize = input.PageSize
+            };
+        }
+
+        #endregion
     }
 } 

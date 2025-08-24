@@ -23,9 +23,7 @@ namespace AttechServer.Applications.UserModules.Dtos.User
         
         public int Status { get; set; }
         
-        [IntegerRange(AllowableValues = new int[] { UserLevels.SYSTEM, UserLevels.MANAGER, UserLevels.STAFF })]
-        public int UserLevel { get; set; }
-        
-        public List<int> RoleIds { get; set; } = new();
+        [IntegerRange(AllowableValues = new int[] { 1, 2, 3 })]
+        public int RoleId { get; set; }
     }
 }

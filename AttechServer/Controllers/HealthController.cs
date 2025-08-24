@@ -27,7 +27,7 @@ namespace AttechServer.Controllers
                 var healthInfo = new
                 {
                     status = "healthy",
-                    timestamp = DateTime.UtcNow,
+                    timestamp = DateTime.Now,
                     environment = _env.EnvironmentName,
                     version = GetType().Assembly.GetName().Version?.ToString() ?? "1.0.0",
                     uptime = Environment.TickCount64,
@@ -58,7 +58,7 @@ namespace AttechServer.Controllers
                 var healthInfo = new
                 {
                     status = "healthy",
-                    timestamp = DateTime.UtcNow,
+                    timestamp = DateTime.Now,
                     environment = _env.EnvironmentName,
                     version = GetType().Assembly.GetName().Version?.ToString() ?? "1.0.0",
                     uptime = Environment.TickCount64,

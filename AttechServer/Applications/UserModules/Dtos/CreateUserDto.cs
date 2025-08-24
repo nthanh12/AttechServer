@@ -38,11 +38,9 @@ namespace AttechServer.Applications.UserModules.Dtos
         [MaxLength(20)]
         public string? Phone { get; set; }
         
-        [IntegerRange(AllowableValues = new int[] { UserLevels.SYSTEM, UserLevels.MANAGER, UserLevels.STAFF })]
-        public int UserLevel { get; set; }
+        [IntegerRange(AllowableValues = new int[] { 1, 2, 3 })]
+        public int RoleId { get; set; } = 3; // Default to Editor
         
         public int Status { get; set; } = 1; // Active by default
-        
-        public List<int> RoleIds { get; set; } = new();
     }
 }

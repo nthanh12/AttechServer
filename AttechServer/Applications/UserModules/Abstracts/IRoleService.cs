@@ -40,11 +40,5 @@ namespace AttechServer.Applications.UserModules.Abstracts
         /// <returns></returns>
         public Task Delete(int id);
 
-        /// <summary>
-        /// Lấy danh sách permissions của role
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public Task<List<string>> GetRolePermissions(int id);
     }
 }

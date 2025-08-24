@@ -55,6 +55,7 @@ namespace AttechServer.Domains.Entities.Main
         public NewsCategory NewsCategory { get; set; } = null!;
         public bool IsOutstanding { get; set; } = false;
         public bool IsAlbum { get; set; } = false;
+        public bool IsDocument { get; set; } = false;
         public string ImageUrl { get; set; } = string.Empty;
         public int? FeaturedImageId { get; set; }
 

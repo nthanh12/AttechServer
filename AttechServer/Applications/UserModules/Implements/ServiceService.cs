@@ -41,6 +41,34 @@ namespace AttechServer.Applications.UserModules.Implements
             return description.Length <= maxLength ? description : description.Substring(0, maxLength - 3) + "...";
         }
 
+        private IQueryable<Service> ApplySorting(IQueryable<Service> query, PagingRequestBaseDto input)
+        {
+            if (!string.IsNullOrEmpty(input.SortBy))
+            {
+                switch (input.SortBy.ToLower())
+                {
+                    case "id":
+                        return input.IsAscending ? query.OrderBy(x => x.Id) : query.OrderByDescending(x => x.Id);
+                    case "titlevi":
+                        return input.IsAscending ? query.OrderBy(x => x.TitleVi) : query.OrderByDescending(x => x.TitleVi);
+                    case "titleen":
+                        return input.IsAscending ? query.OrderBy(x => x.TitleEn) : query.OrderByDescending(x => x.TitleEn);
+                    case "timeposted":
+                        return input.IsAscending ? query.OrderBy(x => x.TimePosted) : query.OrderByDescending(x => x.TimePosted);
+                    case "status":
+                        return input.IsAscending ? query.OrderBy(x => x.Status) : query.OrderByDescending(x => x.Status);
+                    case "isoutstanding":
+                        return input.IsAscending ? query.OrderBy(x => x.IsOutstanding) : query.OrderByDescending(x => x.IsOutstanding);
+                    default:
+                        return query.OrderByDescending(x => x.TimePosted); // default sort
+                }
+            }
+            else
+            {
+                return query.OrderByDescending(x => x.TimePosted); // default sort
+            }
+        }
+
         public async Task<ServiceDto> Create(CreateServiceDto input)
         {
             _logger.LogInformation($"{nameof(Create)}: Creating service with all data in one atomic operation");
@@ -55,13 +83,24 @@ namespace AttechServer.Applications.UserModules.Implements
                         throw new ArgumentException("Tiêu đề và nội dung là bắt buộc.");
                     }
 
+                    // Validate title length
+                    if (input.TitleVi.Length > 300)
+                    {
+                        throw new UserFriendlyException(ErrorCode.TitleTooLong);
+                    }
+                    if (!string.IsNullOrEmpty(input.TitleEn) && input.TitleEn.Length > 300)
+                    {
+                        throw new UserFriendlyException(ErrorCode.TitleTooLong);
+                    }
+
+                    // Validate description length
                     if (!string.IsNullOrEmpty(input.DescriptionVi) && input.DescriptionVi.Length > 700)
                     {
-                        input.DescriptionVi = input.DescriptionVi.Substring(0, 697) + "...";
+                        throw new UserFriendlyException(ErrorCode.DescriptionTooLong);
                     }
                     if (!string.IsNullOrEmpty(input.DescriptionEn) && input.DescriptionEn.Length > 700)
                     {
-                        input.DescriptionEn = input.DescriptionEn.Substring(0, 697) + "...";
+                        throw new UserFriendlyException(ErrorCode.DescriptionTooLong);
                     }
 
                     if (input.TimePosted > DateTime.Now)
@@ -76,7 +115,7 @@ namespace AttechServer.Applications.UserModules.Implements
                     var titleViExists = await _dbContext.Services.AnyAsync(n => n.TitleVi == input.TitleVi && !n.Deleted);
                     if (titleViExists)
                     {
-                        throw new ArgumentException("Tiêu đề tiếng Việt đã tồn tại.");
+                        throw new UserFriendlyException(ErrorCode.ServiceTitleViExists);
                     }
 
                     if (!string.IsNullOrEmpty(input.TitleEn))
@@ -84,7 +123,7 @@ namespace AttechServer.Applications.UserModules.Implements
                         var titleEnExists = await _dbContext.Services.AnyAsync(n => n.TitleEn == input.TitleEn && !n.Deleted);
                         if (titleEnExists)
                         {
-                            throw new ArgumentException("Tiêu đề tiếng Anh đã tồn tại.");
+                            throw new UserFriendlyException(ErrorCode.ServiceTitleEnExists);
                         }
                     }
 
@@ -303,6 +342,28 @@ namespace AttechServer.Applications.UserModules.Implements
             var baseQuery = _dbContext.Services.AsNoTracking()
                 .Where(n => !n.Deleted);
 
+            // Filter by status
+            if (input.Status.HasValue)
+            {
+                baseQuery = baseQuery.Where(n => n.Status == input.Status.Value);
+            }
+
+            // Filter by date range
+            if (input.DateFrom.HasValue)
+            {
+                baseQuery = baseQuery.Where(n => n.TimePosted >= input.DateFrom.Value);
+            }
+            if (input.DateTo.HasValue)
+            {
+                baseQuery = baseQuery.Where(n => n.TimePosted <= input.DateTo.Value);
+            }
+
+            // Filter by outstanding
+            if (input.IsOutstanding.HasValue)
+            {
+                baseQuery = baseQuery.Where(n => n.IsOutstanding == input.IsOutstanding.Value);
+            }
+
             // Tìm kiếm
             if (!string.IsNullOrEmpty(input.Keyword))
             {
@@ -317,12 +378,8 @@ namespace AttechServer.Applications.UserModules.Implements
 
             var totalItems = await baseQuery.CountAsync();
 
-            // Sắp xếp
-            var query = baseQuery.OrderByDescending(n => n.TimePosted);
-            if (input.Sort.Any())
-            {
-                // TODO: Implement dynamic sorting based on input.Sort
-            }
+            // Apply sorting
+            var query = ApplySorting(baseQuery, input);
 
             var pagedItems = await query
                 .Skip(input.GetSkip())
@@ -481,6 +538,27 @@ namespace AttechServer.Applications.UserModules.Implements
                     {
                         throw new ArgumentException("Tiêu đề và nội dung là bắt buộc.");
                     }
+
+                    // Validate title length
+                    if (input.TitleVi.Length > 300)
+                    {
+                        throw new UserFriendlyException(ErrorCode.TitleTooLong);
+                    }
+                    if (!string.IsNullOrEmpty(input.TitleEn) && input.TitleEn.Length > 300)
+                    {
+                        throw new UserFriendlyException(ErrorCode.TitleTooLong);
+                    }
+
+                    // Validate description length
+                    if (!string.IsNullOrEmpty(input.DescriptionVi) && input.DescriptionVi.Length > 700)
+                    {
+                        throw new UserFriendlyException(ErrorCode.DescriptionTooLong);
+                    }
+                    if (!string.IsNullOrEmpty(input.DescriptionEn) && input.DescriptionEn.Length > 700)
+                    {
+                        throw new UserFriendlyException(ErrorCode.DescriptionTooLong);
+                    }
+
                     if (input.TimePosted > DateTime.Now)
                     {
                         throw new ArgumentException("Thời gian đăng bài không phù hợp.");
@@ -497,7 +575,7 @@ namespace AttechServer.Applications.UserModules.Implements
                     var titleViExists = await _dbContext.Services.AnyAsync(n => n.TitleVi == input.TitleVi && n.Id != id && !n.Deleted);
                     if (titleViExists)
                     {
-                        throw new ArgumentException("Tiêu đề tiếng Việt đã tồn tại.");
+                        throw new UserFriendlyException(ErrorCode.ServiceTitleViExists);
                     }
 
                     if (!string.IsNullOrEmpty(input.TitleEn))
@@ -505,7 +583,7 @@ namespace AttechServer.Applications.UserModules.Implements
                         var titleEnExists = await _dbContext.Services.AnyAsync(n => n.TitleEn == input.TitleEn && n.Id != id && !n.Deleted);
                         if (titleEnExists)
                         {
-                            throw new ArgumentException("Tiêu đề tiếng Anh đã tồn tại.");
+                            throw new UserFriendlyException(ErrorCode.ServiceTitleEnExists);
                         }
                     }
 
@@ -667,7 +745,7 @@ namespace AttechServer.Applications.UserModules.Implements
 
             var services = await query
                 .OrderByDescending(s => s.IsOutstanding)
-                .ThenByDescending(s => s.TimePosted)
+                .ThenBy(s => s.Id)
                 .Skip(input.GetSkip())
                 .Take(input.PageSize == -1 ? totalCount : input.PageSize)
                 .Select(s => new ServiceDto

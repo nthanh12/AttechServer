@@ -24,6 +24,7 @@ namespace AttechServer.Shared.Consts.Exceptions
         public const int KeyPermissionHasBeenExist = 1011;
         public const int KeyPermissionOrderFailed = 1012;
         public const int ApiEndpointNotFound = 1013;
+        public const int ApiEndpointAlreadyExists = 1035;
 
         public const int PostCategoryNotFound = 1014;
         public const int PostNotFound = 1015;
@@ -34,6 +35,7 @@ namespace AttechServer.Shared.Consts.Exceptions
         public const int ProductCategoryNotFound = 1020;
         public const int ProductNotFound = 1021;
         public const int ServiceNotFound = 1022;
+        public const int ContactNotFound = 1047;
 
         public const int InvalidClientRequest = 1023;
         public const int InvalidRefreshToken = 1024;
@@ -50,6 +52,24 @@ namespace AttechServer.Shared.Consts.Exceptions
         public const int NewsCategoryContainsNews = 1034;
         public const int NotificationCategoryContainsNotifications = 1035;
         public const int ProductCategoryContainsProducts = 1036;
+        
+        // Title duplicate errors
+        public const int NewsTitleViExists = 1037;
+        public const int NewsTitleEnExists = 1038;
+        public const int ProductTitleViExists = 1039;
+        public const int ProductTitleEnExists = 1040;
+        public const int NotificationTitleViExists = 1041;
+        public const int NotificationTitleEnExists = 1042;
+        public const int ServiceTitleViExists = 1043;
+        public const int ServiceTitleEnExists = 1044;
+        
+        // Field length validation errors
+        public const int TitleTooLong = 1045;
+        public const int DescriptionTooLong = 1046;
+        
+        // Contact specific errors
+        public const int ContactRateLimitExceeded = 1048;
+        public const int ContactSpamDetected = 1049;
 
 
         //T? di?n l?i
@@ -84,6 +104,7 @@ namespace AttechServer.Shared.Consts.Exceptions
             {ProductCategoryNotFound, ErrorMessage.ProductCategoryNotFound },
             {ProductNotFound, ErrorMessage.ProductNotFound },
             {ServiceNotFound, ErrorMessage.ServiceNotFound },
+            {ContactNotFound, ErrorMessage.ContactNotFound },
             {InvalidClientRequest, ErrorMessage.InvalidClientRequest },
             {InvalidRefreshToken, ErrorMessage.InvalidRefreshToken },
             
@@ -100,6 +121,18 @@ namespace AttechServer.Shared.Consts.Exceptions
             {NewsCategoryContainsNews, ErrorMessage.NewsCategoryContainsNews },
             {NotificationCategoryContainsNotifications, ErrorMessage.NotificationCategoryContainsNotifications },
             {ProductCategoryContainsProducts, ErrorMessage.ProductCategoryContainsProducts },
+            {NewsTitleViExists, ErrorMessage.NewsTitleViExists },
+            {NewsTitleEnExists, ErrorMessage.NewsTitleEnExists },
+            {ProductTitleViExists, ErrorMessage.ProductTitleViExists },
+            {ProductTitleEnExists, ErrorMessage.ProductTitleEnExists },
+            {NotificationTitleViExists, ErrorMessage.NotificationTitleViExists },
+            {NotificationTitleEnExists, ErrorMessage.NotificationTitleEnExists },
+            {ServiceTitleViExists, ErrorMessage.ServiceTitleViExists },
+            {ServiceTitleEnExists, ErrorMessage.ServiceTitleEnExists },
+            {TitleTooLong, ErrorMessage.TitleTooLong },
+            {DescriptionTooLong, ErrorMessage.DescriptionTooLong },
+            {ContactRateLimitExceeded, ErrorMessage.ContactRateLimitExceeded },
+            {ContactSpamDetected, ErrorMessage.ContactSpamDetected },
         };
 
         public static string GetMessage(int errorCode)

@@ -4,7 +4,7 @@ using AttechServer.Shared.WebAPIBase;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AttechServer.Shared.Filters;
-using AttechServer.Shared.Consts.Permissions;
+using AttechServer.Shared.Consts;
 
 namespace AttechServer.Controllers
 {
@@ -26,7 +26,7 @@ namespace AttechServer.Controllers
         /// Get api endpoint list
         /// </summary>
         [HttpGet("find-all")]
-        [PermissionFilter(PermissionKeys.ViewApiEndpoints)]
+        [RoleFilter(2)]
         public async Task<ApiResponse> FindAll()
         {
             try
@@ -43,7 +43,7 @@ namespace AttechServer.Controllers
         /// Get API Endpoint by ID
         /// </summary>
         [HttpGet("find-by-id/{id}")]
-        [PermissionFilter(PermissionKeys.ViewApiEndpoints)]
+        [RoleFilter(2)]
         public async Task<ApiResponse> FindById(int id)
         {
             try
@@ -60,7 +60,7 @@ namespace AttechServer.Controllers
         /// Create new API Endpoint
         /// </summary>
         [HttpPost("create")]
-        [PermissionFilter(PermissionKeys.CreateApiEndpoint)]
+        [RoleFilter(2)]
         public async Task<ApiResponse> Create([FromBody] CreateApiEndpointDto input)
         {
             try
@@ -77,13 +77,13 @@ namespace AttechServer.Controllers
         /// <summary>
         /// Update API Endpoint
         /// </summary>
-        [HttpPut("update")]
-        [PermissionFilter(PermissionKeys.EditApiEndpoint)]
-        public async Task<ApiResponse> Update([FromBody] UpdateApiEndpointDto input)
+        [HttpPut("update/{id}")]
+        [RoleFilter(2)]
+        public async Task<ApiResponse> Update(int id, [FromBody] CreateApiEndpointDto input)
         {
             try
             {
-                await _apiEndpointService.Update(input);
+                await _apiEndpointService.Update(id, input);
                 return new();
             }
             catch (Exception ex)
@@ -96,7 +96,7 @@ namespace AttechServer.Controllers
         /// Delete API Endpoint
         /// </summary>
         [HttpDelete("delete/{id}")]
-        [PermissionFilter(PermissionKeys.DeleteApiEndpoint)]
+        [RoleFilter(2)]
         public async Task<ApiResponse> Delete(int id)
         {
             try

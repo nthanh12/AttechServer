@@ -5,7 +5,7 @@ using AttechServer.Shared.Attributes;
 using AttechServer.Shared.WebAPIBase;
 using Microsoft.AspNetCore.Mvc;
 using AttechServer.Shared.Filters;
-using AttechServer.Shared.Consts.Permissions;
+using AttechServer.Shared.Consts;
 using Microsoft.AspNetCore.Authorization;
 
 namespace AttechServer.Controllers
@@ -110,7 +110,7 @@ namespace AttechServer.Controllers
         /// Create new notification with all data in one request (FormData)
         /// </summary>
         [HttpPost("create")]
-        [PermissionFilter(PermissionKeys.CreateNotification)]
+        [RoleFilter(2)]
         public async Task<ApiResponse> Create([FromBody] CreateNotificationDto input)
         {
             try
@@ -164,7 +164,7 @@ namespace AttechServer.Controllers
         /// ID được truyền qua route parameter, FE không cần gửi ID trong body
         /// </summary>
         [HttpPut("update/{id}")]
-        [PermissionFilter(PermissionKeys.EditNotification)]
+        [RoleFilter(2)]
         public async Task<ApiResponse> Update(int id, [FromBody] UpdateNotificationDto input)
         {
             try
@@ -187,7 +187,7 @@ namespace AttechServer.Controllers
         /// Delete notification
         /// </summary>
         [HttpDelete("delete/{id}")]
-        [PermissionFilter(PermissionKeys.DeleteNotification)]
+        [RoleFilter(2)]
         public async Task<ApiResponse> Delete(int id)
         {
             try

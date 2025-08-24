@@ -73,8 +73,56 @@ namespace AttechServer.Shared.ApplicationBase.Common
         }
 
         /// <summary>
-        /// Sort parameters
+        /// Sort field name
         /// </summary>
+        [FromQuery(Name = "sortBy")]
+        public string? SortBy { get; set; }
+
+        /// <summary>
+        /// Sort direction: "asc" or "desc"
+        /// </summary>
+        [FromQuery(Name = "sortDirection")]
+        public string SortDirection { get; set; } = "desc";
+
+        /// <summary>
+        /// Multiple sort parameters (format: "field1:asc,field2:desc")
+        /// </summary>
+        [FromQuery(Name = "sort")]
         public List<string> Sort { get; set; } = new();
+
+        /// <summary>
+        /// Check if sort direction is ascending
+        /// </summary>
+        public bool IsAscending => SortDirection?.ToLower() == "asc";
+
+        /// <summary>
+        /// Filter by category ID
+        /// </summary>
+        [FromQuery(Name = "categoryId")]
+        public int? CategoryId { get; set; }
+
+        /// <summary>
+        /// Filter by status
+        /// </summary>
+        [FromQuery(Name = "status")]
+        public int? Status { get; set; }
+
+        /// <summary>
+        /// Filter by date from
+        /// </summary>
+        [FromQuery(Name = "dateFrom")]
+        public DateTime? DateFrom { get; set; }
+
+        /// <summary>
+        /// Filter by date to
+        /// </summary>
+        [FromQuery(Name = "dateTo")]
+        public DateTime? DateTo { get; set; }
+
+        /// <summary>
+        /// Filter by outstanding items
+        /// </summary>
+        [FromQuery(Name = "isOutstanding")]
+        public bool? IsOutstanding { get; set; }
     }
 }

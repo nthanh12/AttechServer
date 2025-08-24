@@ -36,6 +36,7 @@ namespace AttechServer.Shared.Consts.Exceptions
         public const string ProductCategoryNotFound = "Danh mục sản phẩm không tồn tại";
         public const string ProductNotFound = "Sản phẩm không tồn tại";
         public const string ServiceNotFound = "Dịch vụ không tồn tại";
+        public const string ContactNotFound = "Liên hệ không tồn tại";
 
         public const string InvalidClientRequest = "Yêu cầu không hợp lệ";
         public const string InvalidRefreshToken = "Mã làm mới không hợp lệ";
@@ -53,6 +54,24 @@ namespace AttechServer.Shared.Consts.Exceptions
         public const string NewsCategoryContainsNews = "Không thể xóa danh mục đang chứa tin tức";
         public const string NotificationCategoryContainsNotifications = "Không thể xóa danh mục đang chứa thông báo";
         public const string ProductCategoryContainsProducts = "Không thể xóa danh mục đang chứa sản phẩm";
+        
+        // Title duplicate error messages
+        public const string NewsTitleViExists = "Tiêu đề tiếng Việt đã tồn tại trong hệ thống";
+        public const string NewsTitleEnExists = "Tiêu đề tiếng Anh đã tồn tại trong hệ thống";
+        public const string ProductTitleViExists = "Tiêu đề sản phẩm tiếng Việt đã tồn tại trong hệ thống";
+        public const string ProductTitleEnExists = "Tiêu đề sản phẩm tiếng Anh đã tồn tại trong hệ thống";
+        public const string NotificationTitleViExists = "Tiêu đề thông báo tiếng Việt đã tồn tại trong hệ thống";
+        public const string NotificationTitleEnExists = "Tiêu đề thông báo tiếng Anh đã tồn tại trong hệ thống";
+        public const string ServiceTitleViExists = "Tiêu đề dịch vụ tiếng Việt đã tồn tại trong hệ thống";
+        public const string ServiceTitleEnExists = "Tiêu đề dịch vụ tiếng Anh đã tồn tại trong hệ thống";
+        
+        // Field length validation error messages
+        public const string TitleTooLong = "Tiêu đề không được vượt quá 300 ký tự";
+        public const string DescriptionTooLong = "Mô tả không được vượt quá 700 ký tự";
+        
+        // Contact specific error messages
+        public const string ContactRateLimitExceeded = "Bạn đã gửi quá nhiều yêu cầu liên hệ. Vui lòng thử lại sau";
+        public const string ContactSpamDetected = "Yêu cầu liên hệ của bạn có dấu hiệu spam và đã bị từ chối";
 
     }
 }

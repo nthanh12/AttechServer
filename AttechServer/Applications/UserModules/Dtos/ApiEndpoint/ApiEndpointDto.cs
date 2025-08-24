@@ -9,6 +9,7 @@ namespace AttechServer.Applications.UserModules.Dtos.ApiEndpoint
         public string HttpMethod { get; set; } = null!;
         public string? Description { get; set; }
         public bool RequireAuthentication { get; set; }
-        public List<int> PermissionIds { get; set; } = new();
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
     }
 }

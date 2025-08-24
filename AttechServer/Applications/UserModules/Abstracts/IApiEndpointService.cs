@@ -7,8 +7,7 @@ namespace AttechServer.Applications.UserModules.Abstracts
         Task<List<ApiEndpointDto>> FindAll();
         Task<ApiEndpointDto> FindById(int id);
         Task Create(CreateApiEndpointDto input);
-        Task Update(UpdateApiEndpointDto input);
+        Task Update(int id, CreateApiEndpointDto input);
         Task Delete(int id);
-        Task<bool> CheckApiPermission(string path, string method, int userId);
     }
 }

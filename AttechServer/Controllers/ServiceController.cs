@@ -6,7 +6,7 @@ using AttechServer.Shared.Attributes;
 using AttechServer.Shared.WebAPIBase;
 using Microsoft.AspNetCore.Mvc;
 using AttechServer.Shared.Filters;
-using AttechServer.Shared.Consts.Permissions;
+using AttechServer.Shared.Consts;
 using Microsoft.AspNetCore.Authorization;
 
 namespace AttechServer.Controllers
@@ -89,7 +89,7 @@ namespace AttechServer.Controllers
         /// Create new service with all data in one request
         /// </summary>
         [HttpPost("create")]
-        [PermissionFilter(PermissionKeys.CreateService)]
+        [RoleFilter(2)]
         public async Task<ApiResponse> Create([FromBody] CreateServiceDto input)
         {
             try
@@ -141,7 +141,7 @@ namespace AttechServer.Controllers
         /// ID được truyền qua route parameter, FE không cần gửi ID trong body
         /// </summary>
         [HttpPut("update/{id}")]
-        [PermissionFilter(PermissionKeys.EditService)]
+        [RoleFilter(2)]
         public async Task<ApiResponse> Update(int id, [FromBody] UpdateServiceDto input)
         {
             try
@@ -163,7 +163,7 @@ namespace AttechServer.Controllers
         /// Delete service
         /// </summary>
         [HttpDelete("delete/{id}")]
-        [PermissionFilter(PermissionKeys.DeleteService)]
+        [RoleFilter(2)]
         public async Task<ApiResponse> Delete(int id)
         {
             try

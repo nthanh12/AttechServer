@@ -233,7 +233,7 @@ namespace AttechServer.Infrastructures.ContentProcessing
                 
                 // Soft delete
                 file.Deleted = true;
-                file.ModifiedDate = DateTime.UtcNow;
+                file.ModifiedDate = DateTime.Now;
             }
 
             await _dbContext.SaveChangesAsync();

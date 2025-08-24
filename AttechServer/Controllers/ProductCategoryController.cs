@@ -5,7 +5,7 @@ using AttechServer.Shared.Attributes;
 using AttechServer.Shared.WebAPIBase;
 using Microsoft.AspNetCore.Mvc;
 using AttechServer.Shared.Filters;
-using AttechServer.Shared.Consts.Permissions;
+using AttechServer.Shared.Consts;
 using Microsoft.AspNetCore.Authorization;
 
 namespace AttechServer.Controllers
@@ -24,11 +24,11 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Get all product categories with caching
+        /// Get all product categories with caching (Admin only)
         /// </summary>
         [HttpGet("find-all")]
-        [AllowAnonymous]
-        [CacheResponse(CacheProfiles.ShortCache, "product-categories", varyByQueryString: true)]
+        [RoleFilter(2)]
+        [CacheResponse(CacheProfiles.ShortCache, "admin-product-categories", varyByQueryString: true)]
         public async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
         {
             try
@@ -44,11 +44,11 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Get product category by ID with caching
+        /// Get product category by ID with caching (Admin only)
         /// </summary>
         [HttpGet("find-by-id/{id}")]
-        [AllowAnonymous]
-        [CacheResponse(CacheProfiles.MediumCache, "product-category-detail")]
+        [RoleFilter(2)]
+        [CacheResponse(CacheProfiles.MediumCache, "admin-product-category-detail")]
         public async Task<ApiResponse> FindById(int id)
         {
             try
@@ -67,13 +67,13 @@ namespace AttechServer.Controllers
         /// Create new product category
         /// </summary>
         [HttpPost("create")]
-        [PermissionFilter(PermissionKeys.CreateProductCategory)]
+        [RoleFilter(2)]
         public async Task<ApiResponse> Create([FromBody] CreateProductCategoryDto input)
         {
             try
             {
                 var result = await _productCategoryService.Create(input);
-                return new ApiResponse(ApiStatusCode.Success, result, 200, "T?o thành công");
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "T?o thï¿½nh cï¿½ng");
             }
             catch (Exception ex)
             {
@@ -86,13 +86,13 @@ namespace AttechServer.Controllers
         /// Update product category
         /// </summary>
         [HttpPut("update")]
-        [PermissionFilter(PermissionKeys.EditProductCategory)]
+        [RoleFilter(2)]
         public async Task<ApiResponse> Update([FromBody] UpdateProductCategoryDto input)
         {
             try
             {
                 var result = await _productCategoryService.Update(input);
-                return new ApiResponse(ApiStatusCode.Success, result, 200, "C?p nh?t danh m?c s?n ph?m thành công");
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "C?p nh?t danh m?c s?n ph?m thï¿½nh cï¿½ng");
             }
             catch (Exception ex)
             {
@@ -105,13 +105,13 @@ namespace AttechServer.Controllers
         /// Delete product category
         /// </summary>
         [HttpDelete("delete/{id}")]
-        [PermissionFilter(PermissionKeys.DeleteProductCategory)]
+        [RoleFilter(2)]
         public async Task<ApiResponse> Delete(int id)
         {
             try
             {
                 await _productCategoryService.Delete(id);
-                return new ApiResponse(ApiStatusCode.Success, null, 200, "Xóa danh m?c s?n ph?m thành công");
+                return new ApiResponse(ApiStatusCode.Success, null, 200, "Xï¿½a danh m?c s?n ph?m thï¿½nh cï¿½ng");
             }
             catch (Exception ex)
             {

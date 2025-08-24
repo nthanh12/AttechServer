@@ -12,7 +12,6 @@ namespace AttechServer.Applications.UserModules.Dtos.Role
 
         public int UserCount { get; set; }
 
-        public int PermissionCount { get; set; }
 
         public DateTime CreatedAt { get; set; }
 

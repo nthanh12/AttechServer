@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xác nhận liên hệ</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background: #f8f9fa;
+            padding: 30px;
+            border: 1px solid #e9ecef;
+        }
+        .footer {
+            background: #343a40;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-radius: 0 0 10px 10px;
+        }
+        .highlight {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            background: #007bff;
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Cảm ơn bạn đã liên hệ!</h1>
+    </div>
+    
+    <div class="content">
+        <p>Chào <strong>{{CustomerName}}</strong>,</p>
+        
+        <p>Chúng tôi đã nhận được yêu cầu liên hệ của bạn với nội dung:</p>
+        
+        <div class="highlight">
+            <p><strong>Tiêu đề:</strong> {{Subject}}</p>
+            <p><strong>Nội dung:</strong> {{Message}}</p>
+            <p><strong>Email:</strong> {{Email}}</p>
+            {{#if PhoneNumber}}
+            <p><strong>Số điện thoại:</strong> {{PhoneNumber}}</p>
+            {{/if}}
+            <p><strong>Thời gian gửi:</strong> {{SubmittedAt}}</p>
+        </div>
+        
+        <p>Chúng tôi sẽ phản hồi yêu cầu của bạn trong vòng <strong>24 giờ</strong> trong thời gian làm việc (Thứ 2 - Thứ 6, 8:00 - 17:00).</p>
+        
+        <p>Nếu có thắc mắc gấp, vui lòng liên hệ hotline: <strong>{{SupportHotline}}</strong></p>
+        
+        <p>Trân trọng,<br>
+        <strong>Đội ngũ Hỗ trợ khách hàng</strong></p>
+    </div>
+    
+    <div class="footer">
+        <p>&copy; {{Year}} {{CompanyName}}. All rights reserved.</p>
+        <p>Mã tham chiếu: #{{ContactId}}</p>
+    </div>
+</body>
+</html>

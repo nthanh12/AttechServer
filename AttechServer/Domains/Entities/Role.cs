@@ -16,12 +16,11 @@ namespace AttechServer.Domains.Entities
         public string Name { get; set; } = null!;
         public string? Description { get; set; }
         /// <summary>
-        /// Tr?ng thái role
+        /// Tr?ng thï¿½i role
         /// <see cref="CommonStatus"/>
         /// </summary>
         public int Status { get; set; }
-        public List<UserRole> UserRoles { get; set; } = new();
-        public List<RolePermission> RolePermissions { get; set; } = new();
+        public List<User> Users { get; set; } = new();
         #region audit
         public DateTime? CreatedDate { get; set; }
         public int? CreatedBy { get; set; }

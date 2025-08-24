@@ -153,13 +153,22 @@
         }
       }
     },
-    "/api/api-endpoint/update": {
+    "/api/api-endpoint/update/{id}": {
       "put": {
         "tags": [
           "ApiEndpoint"
         ],
         "summary": "Update API Endpoint",
         "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
           {
             "name": "permission",
             "in": "query",
@@ -173,17 +182,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateApiEndpointDto"
+                "$ref": "#/components/schemas/CreateApiEndpointDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateApiEndpointDto"
+                "$ref": "#/components/schemas/CreateApiEndpointDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateApiEndpointDto"
+                "$ref": "#/components/schemas/CreateApiEndpointDto"
               }
             }
           }
@@ -880,6 +889,584 @@
         }
       }
     },
+    "/api/client/albums": {
+      "get": {
+        "tags": [
+          "ClientAlbum"
+        ],
+        "summary": "Get all published albums (status = 1) for client",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Number of items per page. Use -1 to get all items",
+            "schema": {
+              "maximum": 100,
+              "minimum": -1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "description": "Page number (1-based)",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "description": "Page property for backward compatibility",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "Search keyword",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/client/albums/{slug}": {
+      "get": {
+        "tags": [
+          "ClientAlbum"
+        ],
+        "summary": "Get album detail by slug (published only)",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/client/albums/{slug}/gallery": {
+      "get": {
+        "tags": [
+          "ClientAlbum"
+        ],
+        "summary": "Get album gallery by slug",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/client/albums/category/{categorySlug}": {
+      "get": {
+        "tags": [
+          "ClientAlbum"
+        ],
+        "summary": "Get albums by category (published only)",
+        "parameters": [
+          {
+            "name": "categorySlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Number of items per page. Use -1 to get all items",
+            "schema": {
+              "maximum": 100,
+              "minimum": -1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "description": "Page number (1-based)",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "description": "Page property for backward compatibility",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "Search keyword",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/client/albums/featured": {
+      "get": {
+        "tags": [
+          "ClientAlbum"
+        ],
+        "summary": "Get featured/outstanding albums (published only)",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Number of items per page. Use -1 to get all items",
+            "schema": {
+              "maximum": 100,
+              "minimum": -1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "description": "Page number (1-based)",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "description": "Page property for backward compatibility",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "Search keyword",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/news/client/find-all": {
       "get": {
         "tags": [
@@ -927,14 +1514,82 @@
             }
           },
           {
-            "name": "Sort",
+            "name": "sortBy",
             "in": "query",
-            "description": "Sort parameters",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string"
               }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
             }
           },
           {
@@ -1065,14 +1720,82 @@
             }
           },
           {
-            "name": "Sort",
+            "name": "sortBy",
             "in": "query",
-            "description": "Sort parameters",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string"
               }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
             }
           },
           {
@@ -1163,14 +1886,337 @@
             }
           },
           {
-            "name": "Sort",
+            "name": "sortBy",
             "in": "query",
-            "description": "Sort parameters",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string"
               }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/news-category/client/find-all": {
+      "get": {
+        "tags": [
+          "ClientNewsCategory"
+        ],
+        "summary": "Get all news categories for client with caching",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Number of items per page. Use -1 to get all items",
+            "schema": {
+              "maximum": 100,
+              "minimum": -1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "description": "Page number (1-based)",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "description": "Page property for backward compatibility",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "Search keyword",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/news-category/client/find-by-id/{id}": {
+      "get": {
+        "tags": [
+          "ClientNewsCategory"
+        ],
+        "summary": "Get news category by ID for client with caching",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/news-category/client/find-by-slug/{slug}": {
+      "get": {
+        "tags": [
+          "ClientNewsCategory"
+        ],
+        "summary": "Get news category by slug for client with caching",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -1253,14 +2299,82 @@
             }
           },
           {
-            "name": "Sort",
+            "name": "sortBy",
             "in": "query",
-            "description": "Sort parameters",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string"
               }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
             }
           },
           {
@@ -1391,14 +2505,82 @@
             }
           },
           {
-            "name": "Sort",
+            "name": "sortBy",
             "in": "query",
-            "description": "Sort parameters",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string"
               }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
             }
           },
           {
@@ -1489,14 +2671,337 @@
             }
           },
           {
-            "name": "Sort",
+            "name": "sortBy",
             "in": "query",
-            "description": "Sort parameters",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string"
               }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/notification-category/client/find-all": {
+      "get": {
+        "tags": [
+          "ClientNotificationCategory"
+        ],
+        "summary": "Get all notification categories for client with caching",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Number of items per page. Use -1 to get all items",
+            "schema": {
+              "maximum": 100,
+              "minimum": -1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "description": "Page number (1-based)",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "description": "Page property for backward compatibility",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "Search keyword",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/notification-category/client/find-by-id/{id}": {
+      "get": {
+        "tags": [
+          "ClientNotificationCategory"
+        ],
+        "summary": "Get notification category by ID for client with caching",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/notification-category/client/find-by-slug/{slug}": {
+      "get": {
+        "tags": [
+          "ClientNotificationCategory"
+        ],
+        "summary": "Get notification category by slug for client with caching",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -1579,14 +3084,82 @@
             }
           },
           {
-            "name": "Sort",
+            "name": "sortBy",
             "in": "query",
-            "description": "Sort parameters",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string"
               }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
             }
           },
           {
@@ -1717,14 +3290,82 @@
             }
           },
           {
-            "name": "Sort",
+            "name": "sortBy",
             "in": "query",
-            "description": "Sort parameters",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string"
               }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
             }
           },
           {
@@ -1815,14 +3456,337 @@
             }
           },
           {
-            "name": "Sort",
+            "name": "sortBy",
             "in": "query",
-            "description": "Sort parameters",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string"
               }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/product-category/client/find-all": {
+      "get": {
+        "tags": [
+          "ClientProductCategory"
+        ],
+        "summary": "Get all product categories for client with caching",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Number of items per page. Use -1 to get all items",
+            "schema": {
+              "maximum": 100,
+              "minimum": -1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "description": "Page number (1-based)",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "description": "Page property for backward compatibility",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "Search keyword",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/product-category/client/find-by-id/{id}": {
+      "get": {
+        "tags": [
+          "ClientProductCategory"
+        ],
+        "summary": "Get product category by ID for client with caching",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/product-category/client/find-by-slug/{slug}": {
+      "get": {
+        "tags": [
+          "ClientProductCategory"
+        ],
+        "summary": "Get product category by slug for client with caching",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -1905,14 +3869,82 @@
             }
           },
           {
-            "name": "Sort",
+            "name": "sortBy",
             "in": "query",
-            "description": "Sort parameters",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string"
               }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
             }
           },
           {
@@ -2043,14 +4075,82 @@
             }
           },
           {
-            "name": "Sort",
+            "name": "sortBy",
             "in": "query",
-            "description": "Sort parameters",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string"
               }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
             }
           },
           {
@@ -2086,7 +4186,528 @@
         }
       }
     },
-    "/api/Dashboard/overview": {
+    "/api/contact/submit": {
+      "post": {
+        "tags": [
+          "Contact"
+        ],
+        "summary": "Submit contact form (Public API)",
+        "parameters": [
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateContactDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateContactDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateContactDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/contact/find-all": {
+      "get": {
+        "tags": [
+          "Contact"
+        ],
+        "summary": "Get all contact messages with filtering and sorting (Admin only)",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Number of items per page. Use -1 to get all items",
+            "schema": {
+              "maximum": 100,
+              "minimum": -1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "description": "Page number (1-based)",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "description": "Page property for backward compatibility",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "Search keyword",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/contact/find-by-id/{id}": {
+      "get": {
+        "tags": [
+          "Contact"
+        ],
+        "summary": "Get contact message detail by ID (Admin only)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/contact/update-status/{id}": {
+      "put": {
+        "tags": [
+          "Contact"
+        ],
+        "summary": "Update contact message status (Admin only)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateContactStatusDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateContactStatusDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateContactStatusDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/contact/mark-as-read/{id}": {
+      "put": {
+        "tags": [
+          "Contact"
+        ],
+        "summary": "Mark contact message as read (Admin only)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/contact/mark-as-unread/{id}": {
+      "put": {
+        "tags": [
+          "Contact"
+        ],
+        "summary": "Mark contact message as unread (Admin only)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/contact/delete/{id}": {
+      "delete": {
+        "tags": [
+          "Contact"
+        ],
+        "summary": "Delete contact message (Admin only)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/contact/unread-count": {
+      "get": {
+        "tags": [
+          "Contact"
+        ],
+        "summary": "Get unread contact count (Admin only)",
+        "parameters": [
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard/overview": {
       "get": {
         "tags": [
           "Dashboard"
@@ -2103,12 +4724,29 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/api/Dashboard/users": {
+    "/api/dashboard/users": {
       "get": {
         "tags": [
           "Dashboard"
@@ -2125,12 +4763,29 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/api/Dashboard/content": {
+    "/api/dashboard/content": {
       "get": {
         "tags": [
           "Dashboard"
@@ -2147,12 +4802,29 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/api/Dashboard/system": {
+    "/api/dashboard/contacts": {
       "get": {
         "tags": [
           "Dashboard"
@@ -2169,12 +4841,68 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/api/Dashboard/activities": {
+    "/api/dashboard/system": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "parameters": [
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard/activities": {
       "get": {
         "tags": [
           "Dashboard"
@@ -2200,50 +4928,29 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/api/Dashboard/monitoring": {
-      "get": {
-        "tags": [
-          "Dashboard"
-        ],
-        "parameters": [
-          {
-            "name": "category",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "hours",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 24
-            }
-          },
-          {
-            "name": "permission",
-            "in": "query",
-            "description": "Used for permissions in an API that is called in many places",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Dashboard/health": {
+    "/api/dashboard/realtime": {
       "get": {
         "tags": [
           "Dashboard"
@@ -2260,12 +4967,68 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/api/Dashboard/charts/{chartType}": {
+    "/api/dashboard/comprehensive": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "parameters": [
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard/charts/{chartType}": {
       "get": {
         "tags": [
           "Dashboard"
@@ -2280,6 +5043,15 @@
             }
           },
           {
+            "name": "days",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 7
+            }
+          },
+          {
             "name": "permission",
             "in": "query",
             "description": "Used for permissions in an API that is called in many places",
@@ -2290,12 +5062,29 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/api/Dashboard/all": {
+    "/api/dashboard/all": {
       "get": {
         "tags": [
           "Dashboard"
@@ -2312,29 +5101,24 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Dashboard/realtime": {
-      "get": {
-        "tags": [
-          "Dashboard"
-        ],
-        "parameters": [
-          {
-            "name": "permission",
-            "in": "query",
-            "description": "Used for permissions in an API that is called in many places",
-            "schema": {
-              "type": "string"
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
             }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
           }
         }
       }
@@ -2432,14 +5216,82 @@
             }
           },
           {
-            "name": "Sort",
+            "name": "sortBy",
             "in": "query",
-            "description": "Sort parameters",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string"
               }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
             }
           },
           {
@@ -2522,14 +5374,82 @@
             }
           },
           {
-            "name": "Sort",
+            "name": "sortBy",
             "in": "query",
-            "description": "Sort parameters",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string"
               }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
             }
           },
           {
@@ -2864,48 +5784,19 @@
         ],
         "requestBody": {
           "content": {
-            "multipart/form-data": {
+            "application/json": {
               "schema": {
-                "required": [
-                  "AttachmentIds",
-                  "TitleVi"
-                ],
-                "type": "object",
-                "properties": {
-                  "TitleVi": {
-                    "type": "string"
-                  },
-                  "TitleEn": {
-                    "type": "string"
-                  },
-                  "NewsCategoryId": {
-                    "maximum": 2147483647,
-                    "minimum": 1,
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "AttachmentIds": {
-                    "type": "array",
-                    "items": {
-                      "type": "integer",
-                      "format": "int32"
-                    }
-                  }
-                }
-              },
-              "encoding": {
-                "TitleVi": {
-                  "style": "form"
-                },
-                "TitleEn": {
-                  "style": "form"
-                },
-                "NewsCategoryId": {
-                  "style": "form"
-                },
-                "AttachmentIds": {
-                  "style": "form"
-                }
+                "$ref": "#/components/schemas/CreateAlbumDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAlbumDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAlbumDto"
               }
             }
           }
@@ -2939,7 +5830,7 @@
         "tags": [
           "News"
         ],
-        "summary": "Get all albums (news where IsAlbum = true)",
+        "summary": "Get all albums for admin management (all status)",
         "parameters": [
           {
             "name": "pageSize",
@@ -2981,14 +5872,82 @@
             }
           },
           {
-            "name": "Sort",
+            "name": "sortBy",
             "in": "query",
-            "description": "Sort parameters",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string"
               }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
             }
           },
           {
@@ -3024,19 +5983,20 @@
         }
       }
     },
-    "/api/news/albums/slug/{slug}": {
+    "/api/news/albums/{id}": {
       "get": {
         "tags": [
           "News"
         ],
-        "summary": "Get album detail by slug (SEO friendly)",
+        "summary": "Get album detail by ID for admin",
         "parameters": [
           {
-            "name": "slug",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer",
+              "format": "int32"
             }
           },
           {
@@ -3120,12 +6080,139 @@
         }
       }
     },
-    "/api/news-category/find-all": {
+    "/api/news/update-album/{id}": {
+      "put": {
+        "tags": [
+          "News"
+        ],
+        "summary": "Update album (simplified version for albums only)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAlbumDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAlbumDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAlbumDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/news/create-document": {
+      "post": {
+        "tags": [
+          "News"
+        ],
+        "summary": "Create document (news với IsDocument = true)",
+        "parameters": [
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDocumentDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDocumentDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDocumentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/news/documents": {
       "get": {
         "tags": [
-          "NewsCategory"
+          "News"
         ],
-        "summary": "Get all news categories with caching",
+        "summary": "Get all documents for admin management (all status)",
         "parameters": [
           {
             "name": "pageSize",
@@ -3167,14 +6254,357 @@
             }
           },
           {
-            "name": "Sort",
+            "name": "sortBy",
             "in": "query",
-            "description": "Sort parameters",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string"
               }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/news/documents/{id}": {
+      "get": {
+        "tags": [
+          "News"
+        ],
+        "summary": "Get document detail by ID for admin",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/news/update-document/{id}": {
+      "put": {
+        "tags": [
+          "News"
+        ],
+        "summary": "Update document (simplified version for documents only)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "permission",
+            "in": "query",
+            "description": "Used for permissions in an API that is called in many places",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDocumentDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDocumentDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDocumentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/news-category/find-all": {
+      "get": {
+        "tags": [
+          "NewsCategory"
+        ],
+        "summary": "Get all news categories with caching (Admin only)",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Number of items per page. Use -1 to get all items",
+            "schema": {
+              "maximum": 100,
+              "minimum": -1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "description": "Page number (1-based)",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "description": "Page property for backward compatibility",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "Search keyword",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
             }
           },
           {
@@ -3215,7 +6645,7 @@
         "tags": [
           "NewsCategory"
         ],
-        "summary": "Get news category by ID with caching",
+        "summary": "Get news category by ID with caching (Admin only)",
         "parameters": [
           {
             "name": "id",
@@ -3473,14 +6903,82 @@
             }
           },
           {
-            "name": "Sort",
+            "name": "sortBy",
             "in": "query",
-            "description": "Sort parameters",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string"
               }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
             }
           },
           {
@@ -3563,14 +7061,82 @@
             }
           },
           {
-            "name": "Sort",
+            "name": "sortBy",
             "in": "query",
-            "description": "Sort parameters",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string"
               }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
             }
           },
           {
@@ -3892,7 +7458,7 @@
         "tags": [
           "NotificationCategory"
         ],
-        "summary": "Get all notification categories with caching",
+        "summary": "Get all notification categories with caching (Admin only)",
         "parameters": [
           {
             "name": "pageSize",
@@ -3934,14 +7500,82 @@
             }
           },
           {
-            "name": "Sort",
+            "name": "sortBy",
             "in": "query",
-            "description": "Sort parameters",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string"
               }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
             }
           },
           {
@@ -3982,7 +7616,7 @@
         "tags": [
           "NotificationCategory"
         ],
-        "summary": "Get notification category by ID with caching",
+        "summary": "Get notification category by ID with caching (Admin only)",
         "parameters": [
           {
             "name": "id",
@@ -4193,668 +7827,6 @@
         }
       }
     },
-    "/api/permission/list": {
-      "get": {
-        "tags": [
-          "Permission"
-        ],
-        "summary": "Role list",
-        "parameters": [
-          {
-            "name": "permission",
-            "in": "query",
-            "description": "Used for permissions in an API that is called in many places",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/permission/current-user": {
-      "get": {
-        "tags": [
-          "Permission"
-        ],
-        "summary": "Get permissions by current user ID",
-        "parameters": [
-          {
-            "name": "permission",
-            "in": "query",
-            "description": "Used for permissions in an API that is called in many places",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/permission/check": {
-      "post": {
-        "tags": [
-          "Permission"
-        ],
-        "summary": "Check permission",
-        "parameters": [
-          {
-            "name": "permission",
-            "in": "query",
-            "description": "Used for permissions in an API that is called in many places",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              }
-            },
-            "text/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/permission/tree": {
-      "get": {
-        "tags": [
-          "Permission"
-        ],
-        "summary": "Get all key permissions in tree structure",
-        "parameters": [
-          {
-            "name": "permission",
-            "in": "query",
-            "description": "Used for permissions in an API that is called in many places",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/permission/{id}": {
-      "get": {
-        "tags": [
-          "Permission"
-        ],
-        "summary": "Get detail permission by ID",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "permission",
-            "in": "query",
-            "description": "Used for permissions in an API that is called in many places",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Permission"
-        ],
-        "summary": "Delete key permission",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "permission",
-            "in": "query",
-            "description": "Used for permissions in an API that is called in many places",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/permission": {
-      "post": {
-        "tags": [
-          "Permission"
-        ],
-        "summary": "Create key permission",
-        "parameters": [
-          {
-            "name": "permission",
-            "in": "query",
-            "description": "Used for permissions in an API that is called in many places",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateKeyPermissionDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateKeyPermissionDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateKeyPermissionDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Permission"
-        ],
-        "summary": "Update key permission",
-        "parameters": [
-          {
-            "name": "permission",
-            "in": "query",
-            "description": "Used for permissions in an API that is called in many places",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateKeyPermissionDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateKeyPermissionDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateKeyPermissionDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/permission/api-endpoint": {
-      "post": {
-        "tags": [
-          "Permission"
-        ],
-        "summary": "Add permission with endpoint",
-        "parameters": [
-          {
-            "name": "permission",
-            "in": "query",
-            "description": "Used for permissions in an API that is called in many places",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreatePermissionApiDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreatePermissionApiDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreatePermissionApiDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Permission"
-        ],
-        "summary": "Update api endpoint with permission key",
-        "parameters": [
-          {
-            "name": "permission",
-            "in": "query",
-            "description": "Used for permissions in an API that is called in many places",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdatePermissionConfigDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdatePermissionConfigDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdatePermissionConfigDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/permission/api-endpoints": {
-      "get": {
-        "tags": [
-          "Permission"
-        ],
-        "summary": "Api endpoint list",
-        "parameters": [
-          {
-            "name": "pageSize",
-            "in": "query",
-            "description": "Number of items per page. Use -1 to get all items",
-            "schema": {
-              "maximum": 100,
-              "minimum": -1,
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "pageNumber",
-            "in": "query",
-            "description": "Page number (1-based)",
-            "schema": {
-              "maximum": 2147483647,
-              "minimum": 1,
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "Page",
-            "in": "query",
-            "description": "Page property for backward compatibility",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "keyword",
-            "in": "query",
-            "description": "Search keyword",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Sort",
-            "in": "query",
-            "description": "Sort parameters",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          {
-            "name": "permission",
-            "in": "query",
-            "description": "Used for permissions in an API that is called in many places",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/permission/api-endpoints/{id}": {
-      "get": {
-        "tags": [
-          "Permission"
-        ],
-        "summary": "Get api endpoint detail",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "permission",
-            "in": "query",
-            "description": "Used for permissions in an API that is called in many places",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/product/find-all": {
       "get": {
         "tags": [
@@ -4902,14 +7874,82 @@
             }
           },
           {
-            "name": "Sort",
+            "name": "sortBy",
             "in": "query",
-            "description": "Sort parameters",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string"
               }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
             }
           },
           {
@@ -4992,14 +8032,82 @@
             }
           },
           {
-            "name": "Sort",
+            "name": "sortBy",
             "in": "query",
-            "description": "Sort parameters",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string"
               }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
             }
           },
           {
@@ -5321,7 +8429,7 @@
         "tags": [
           "ProductCategory"
         ],
-        "summary": "Get all product categories with caching",
+        "summary": "Get all product categories with caching (Admin only)",
         "parameters": [
           {
             "name": "pageSize",
@@ -5363,14 +8471,82 @@
             }
           },
           {
-            "name": "Sort",
+            "name": "sortBy",
             "in": "query",
-            "description": "Sort parameters",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string"
               }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
             }
           },
           {
@@ -5411,7 +8587,7 @@
         "tags": [
           "ProductCategory"
         ],
-        "summary": "Get product category by ID with caching",
+        "summary": "Get product category by ID with caching (Admin only)",
         "parameters": [
           {
             "name": "id",
@@ -5669,14 +8845,82 @@
             }
           },
           {
-            "name": "Sort",
+            "name": "sortBy",
             "in": "query",
-            "description": "Sort parameters",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string"
               }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
             }
           },
           {
@@ -5718,56 +8962,6 @@
           "Role"
         ],
         "summary": "Role details",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "permission",
-            "in": "query",
-            "description": "Used for permissions in an API that is called in many places",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/role/permissions/{id}": {
-      "get": {
-        "tags": [
-          "Role"
-        ],
-        "summary": "Get permission by role id",
         "parameters": [
           {
             "name": "id",
@@ -6029,14 +9223,82 @@
             }
           },
           {
-            "name": "Sort",
+            "name": "sortBy",
             "in": "query",
-            "description": "Sort parameters",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string"
               }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
             }
           },
           {
@@ -6642,14 +9904,82 @@
             }
           },
           {
-            "name": "Sort",
+            "name": "sortBy",
             "in": "query",
-            "description": "Sort parameters",
+            "description": "Sort field name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Sort direction: \"asc\" or \"desc\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Multiple sort parameters (format: \"field1:asc,field2:desc\")",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string"
               }
+            }
+          },
+          {
+            "name": "IsAscending",
+            "in": "query",
+            "description": "Check if sort direction is ascending",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by status",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter by date from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter by date to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "isOutstanding",
+            "in": "query",
+            "description": "Filter by outstanding items",
+            "schema": {
+              "type": "boolean"
             }
           },
           {
@@ -6837,120 +10167,6 @@
           }
         }
       }
-    },
-    "/api/user/{userId}/roles/{roleId}": {
-      "post": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Add role to user",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "roleId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "permission",
-            "in": "query",
-            "description": "Used for permissions in an API that is called in many places",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Remove role from user",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "roleId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "permission",
-            "in": "query",
-            "description": "Used for permissions in an API that is called in many places",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              }
-            }
-          }
-        }
-      }
     }
   },
   "components": {
@@ -7027,6 +10243,44 @@
         },
         "additionalProperties": false
       },
+      "CreateAlbumDto": {
+        "required": [
+          "titleEn",
+          "titleVi"
+        ],
+        "type": "object",
+        "properties": {
+          "titleVi": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "titleEn": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "newsCategoryId": {
+            "maximum": 2147483647,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "featuredImageId": {
+            "maximum": 2147483647,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "attachmentIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CreateApiEndpointDto": {
         "required": [
           "httpMethod",
@@ -7063,28 +10317,83 @@
         },
         "additionalProperties": false
       },
-      "CreateKeyPermissionDto": {
+      "CreateContactDto": {
+        "required": [
+          "email",
+          "message",
+          "name",
+          "subject"
+        ],
         "type": "object",
         "properties": {
-          "permissionKey": {
+          "name": {
+            "maxLength": 255,
+            "minLength": 0,
+            "type": "string"
+          },
+          "email": {
+            "maxLength": 255,
+            "minLength": 0,
             "type": "string",
-            "nullable": true
+            "format": "email"
           },
-          "permissionLabel": {
-            "maxLength": 50,
+          "phoneNumber": {
+            "maxLength": 20,
+            "minLength": 0,
             "type": "string",
+            "format": "tel",
             "nullable": true
           },
-          "parentId": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
+          "subject": {
+            "maxLength": 500,
+            "minLength": 0,
+            "type": "string"
           },
-          "orderPriority": {
+          "message": {
+            "maxLength": 5000,
+            "minLength": 0,
+            "type": "string"
+          },
+          "submittedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateDocumentDto": {
+        "required": [
+          "attachmentIds",
+          "titleEn",
+          "titleVi"
+        ],
+        "type": "object",
+        "properties": {
+          "titleVi": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "titleEn": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "newsCategoryId": {
             "maximum": 2147483647,
             "minimum": 1,
             "type": "integer",
             "format": "int32"
+          },
+          "featuredImageId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "attachmentIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
           }
         },
         "additionalProperties": false
@@ -7349,29 +10658,6 @@
         },
         "additionalProperties": false
       },
-      "CreatePermissionApiDto": {
-        "type": "object",
-        "properties": {
-          "path": {
-            "maxLength": 500,
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "maxLength": 500,
-            "type": "string",
-            "nullable": true
-          },
-          "permissionKeys": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CreateKeyPermissionDto"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "CreateProductCategoryDto": {
         "required": [
           "titleVi"
@@ -7507,14 +10793,6 @@
             "type": "string",
             "nullable": true
           },
-          "permissionIds": {
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "nullable": true
-          },
           "status": {
             "type": "integer",
             "format": "int32"
@@ -7633,21 +10911,13 @@
             "format": "tel",
             "nullable": true
           },
-          "userLevel": {
+          "roleId": {
             "type": "integer",
             "format": "int32"
           },
           "status": {
             "type": "integer",
             "format": "int32"
-          },
-          "roleIds": {
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -7701,32 +10971,121 @@
         },
         "additionalProperties": false
       },
-      "UpdateApiEndpointDto": {
+      "UpdateAlbumDto": {
         "required": [
-          "httpMethod",
-          "path"
+          "slugEn",
+          "slugVi",
+          "titleEn",
+          "titleVi"
         ],
         "type": "object",
         "properties": {
-          "path": {
-            "maxLength": 500,
-            "minLength": 1,
+          "titleVi": {
+            "maxLength": 200,
+            "minLength": 0,
             "type": "string"
           },
-          "httpMethod": {
-            "maxLength": 10,
-            "minLength": 1,
+          "titleEn": {
+            "maxLength": 200,
+            "minLength": 0,
             "type": "string"
           },
-          "description": {
+          "descriptionVi": {
             "maxLength": 500,
+            "minLength": 0,
             "type": "string",
             "nullable": true
           },
-          "requireAuthentication": {
+          "descriptionEn": {
+            "maxLength": 500,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "newsCategoryId": {
+            "maximum": 2147483647,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "maximum": 1,
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32"
+          },
+          "isOutstanding": {
             "type": "boolean"
           },
-          "permissionIds": {
+          "slugVi": {
+            "maxLength": 200,
+            "minLength": 0,
+            "type": "string"
+          },
+          "slugEn": {
+            "maxLength": 200,
+            "minLength": 0,
+            "type": "string"
+          },
+          "featuredImageId": {
+            "maximum": 2147483647,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "attachmentIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateContactStatusDto": {
+        "required": [
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "maximum": 1,
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateDocumentDto": {
+        "required": [
+          "titleEn",
+          "titleVi"
+        ],
+        "type": "object",
+        "properties": {
+          "titleVi": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "titleEn": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "newsCategoryId": {
+            "maximum": 2147483647,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "featuredImageId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "attachmentIds": {
             "type": "array",
             "items": {
               "type": "integer",
@@ -7734,38 +11093,11 @@
             },
             "nullable": true
           },
-          "id": {
+          "status": {
+            "maximum": 2,
+            "minimum": 0,
             "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "UpdateKeyPermissionDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "permissionKey": {
-            "type": "string",
-            "nullable": true
-          },
-          "permissionLabel": {
-            "maxLength": 50,
-            "type": "string",
-            "nullable": true
-          },
-          "parentId": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "orderPriority": {
-            "maximum": 2147483647,
-            "minimum": 1,
-            "type": "integer",
+            "description": "Trạng thái\r\n0 = Nháp, 1 = Xuất bản, 2 = Ẩn",
             "format": "int32"
           }
         },
@@ -8041,41 +11373,6 @@
         },
         "additionalProperties": false
       },
-      "UpdatePermissionConfigDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "path": {
-            "maxLength": 500,
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "maxLength": 500,
-            "type": "string",
-            "nullable": true
-          },
-          "permissionKeys": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/UpdateKeyPermissionDto"
-            },
-            "nullable": true
-          },
-          "permissionIds": {
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "UpdateProductCategoryDto": {
         "required": [
           "titleVi"
@@ -8219,14 +11516,6 @@
             "type": "string",
             "nullable": true
           },
-          "permissionIds": {
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "nullable": true
-          },
           "status": {
             "type": "integer",
             "format": "int32"
@@ -8344,17 +11633,9 @@
             "type": "integer",
             "format": "int32"
           },
-          "userLevel": {
+          "roleId": {
             "type": "integer",
             "format": "int32"
-          },
-          "roleIds": {
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "nullable": true
           }
         },
         "additionalProperties": false

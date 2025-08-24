@@ -55,6 +55,11 @@ namespace AttechServer.Applications.UserModules.Abstracts
         Task<PagingResult<NewsDto>> GetAlbums(PagingRequestBaseDto input);
 
         /// <summary>
+        /// Lấy chi tiết album theo ID cho admin
+        /// </summary>
+        Task<AlbumDetailDto> GetAlbumByIdForAdmin(int id);
+
+        /// <summary>
         /// Lấy chi tiết album theo slug
         /// </summary>
         Task<DetailNewsDto> FindAlbumBySlug(string slug);
@@ -63,6 +68,11 @@ namespace AttechServer.Applications.UserModules.Abstracts
         /// Lấy thông tin gallery của tin tức theo slug
         /// </summary>
         Task<NewsGalleryDto> GetGalleryBySlug(string slug);
+
+        /// <summary>
+        /// Cập nhật album (simplified version for albums only)
+        /// </summary>
+        Task<AlbumDetailDto> UpdateAlbum(int id, UpdateAlbumDto input);
 
         /// <summary>
         /// Lấy danh sách tin tức đã xuất bản (status = 1) cho client
@@ -83,5 +93,72 @@ namespace AttechServer.Applications.UserModules.Abstracts
         /// Tìm kiếm tin tức đã xuất bản (chỉ status = 1) cho client
         /// </summary>
         Task<PagingResult<NewsDto>> SearchForClient(PagingRequestBaseDto input);
+
+        // Client Album methods
+        /// <summary>
+        /// Lấy danh sách albums đã xuất bản (chỉ status = 1) cho client
+        /// </summary>
+        Task<PagingResult<NewsDto>> GetPublishedAlbumsForClient(PagingRequestBaseDto input);
+
+        /// <summary>
+        /// Lấy chi tiết album đã xuất bản theo slug cho client
+        /// </summary>
+        Task<DetailNewsDto> GetPublishedAlbumBySlugForClient(string slug);
+
+        /// <summary>
+        /// Lấy gallery album cho client
+        /// </summary>
+        Task<NewsGalleryDto> GetAlbumGalleryForClient(string slug);
+
+        /// <summary>
+        /// Lấy albums theo category đã xuất bản cho client
+        /// </summary>
+        Task<PagingResult<NewsDto>> GetPublishedAlbumsByCategoryForClient(string categorySlug, PagingRequestBaseDto input);
+
+        /// <summary>
+        /// Lấy albums nổi bật đã xuất bản cho client
+        /// </summary>
+        Task<PagingResult<NewsDto>> GetFeaturedAlbumsForClient(PagingRequestBaseDto input);
+
+        // Document methods (similar to Album methods)
+        /// <summary>
+        /// Tạo document (news với IsDocument = true)
+        /// </summary>
+        Task<NewsDto> CreateDocument(CreateDocumentDto input);
+
+        /// <summary>
+        /// Lấy danh sách documents (news với IsDocument = true)
+        /// </summary>
+        Task<PagingResult<NewsDto>> GetDocuments(PagingRequestBaseDto input);
+
+        /// <summary>
+        /// Lấy chi tiết document theo ID cho admin
+        /// </summary>
+        Task<DocumentDetailDto> GetDocumentByIdForAdmin(int id);
+
+        /// <summary>
+        /// Cập nhật document (simplified version for documents only)
+        /// </summary>
+        Task<DocumentDetailDto> UpdateDocument(int id, UpdateDocumentDto input);
+
+        /// <summary>
+        /// Lấy danh sách documents đã xuất bản (chỉ status = 1) cho client
+        /// </summary>
+        Task<PagingResult<NewsDto>> GetPublishedDocumentsForClient(PagingRequestBaseDto input);
+
+        /// <summary>
+        /// Lấy chi tiết document đã xuất bản theo slug cho client
+        /// </summary>
+        Task<DocumentDetailDto> GetPublishedDocumentBySlugForClient(string slug);
+
+        /// <summary>
+        /// Lấy documents theo category đã xuất bản cho client
+        /// </summary>
+        Task<PagingResult<NewsDto>> GetPublishedDocumentsByCategoryForClient(string categorySlug, PagingRequestBaseDto input);
+
+        /// <summary>
+        /// Lấy documents nổi bật đã xuất bản cho client
+        /// </summary>
+        Task<PagingResult<NewsDto>> GetFeaturedDocumentsForClient(PagingRequestBaseDto input);
     }
 }

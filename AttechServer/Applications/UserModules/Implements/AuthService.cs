@@ -39,8 +39,7 @@ namespace AttechServer.Applications.UserModules.Implements
             {
                 _logger.LogInformation($"{nameof(Login)}: input = {JsonSerializer.Serialize(userInput)}");
                 var user = _context.Users
-                    .Include(u => u.UserRoles.Where(ur => !ur.Deleted))
-                    .ThenInclude(ur => ur.Role)
+                    .Include(u => u.Role)
                     .FirstOrDefault(x => x.Username == userInput.Username);
                 if (user == null)
                 {
@@ -66,7 +65,7 @@ namespace AttechServer.Applications.UserModules.Implements
 
                 _logger.LogInformation("Getting user permissions...");
                 var permissions = await GetUserPermissions(user.Id);
-                _logger.LogInformation($"Found {permissions.Count} permissions for user");
+                _logger.LogInformation($"Found {permissions?.Count ?? 0} permissions for user");
 
                 return new LoginResponseDto
                 {
@@ -79,33 +78,16 @@ namespace AttechServer.Applications.UserModules.Implements
                         FullName = user.FullName,
                         Email = user.Email,
                         Phone = user.Phone,
-                        UserLevel = user.UserLevel switch
+                        RoleId = user.RoleId,
+                        RoleName = user.RoleId switch
                         {
-                            UserLevels.SYSTEM => "system",
-                            UserLevels.MANAGER => "manager",
-                            UserLevels.STAFF => "staff",
+                            1 => "superadmin",
+                            2 => "admin", 
+                            3 => "editor",
                             _ => "unknown"
                         },
                         Status = user.Status == CommonStatus.ACTIVE ? "active" : "inactive",
-                        LastLogin = user.LastLogin,
-                        RoleIds = user.UserRoles
-                            .Where(ur => !ur.Deleted)
-                            .Select(ur => ur.RoleId)
-                            .ToList(),
-                        RoleNames = user.UserRoles
-                            .Where(ur => !ur.Deleted)
-                            .Select(ur => ur.Role.Name)
-                            .ToList(),
-                        Roles = user.UserRoles
-                            .Where(ur => !ur.Deleted)
-                            .Select(ur => new UserRoleDto
-                            {
-                                Id = ur.Role.Id,
-                                Name = ur.Role.Name,
-                                Status = ur.Role.Status
-                            })
-                            .ToList(),
-                        Permissions = permissions
+                        LastLogin = user.LastLogin
                     }
                 };
             }
@@ -121,12 +103,8 @@ namespace AttechServer.Applications.UserModules.Implements
 
             var currentUserLevel = _httpContext.GetCurrentUserLevel();
             
-            if (user.UserLevel == UserLevels.SYSTEM && currentUserLevel != UserLevels.SYSTEM)
-            {
-                throw new UserFriendlyException(ErrorCode.AccessDenied);
-            }
-
-            if (user.UserLevel == UserLevels.MANAGER && currentUserLevel != UserLevels.SYSTEM)
+            // Role hierarchy validation: 1=superadmin, 2=admin, 3=editor
+            if (user.RoleId <= currentUserLevel)
             {
                 throw new UserFriendlyException(ErrorCode.AccessDenied);
             }
@@ -164,31 +142,13 @@ namespace AttechServer.Applications.UserModules.Implements
                 FullName = user.FullName,
                 Email = user.Email,
                 Phone = user.Phone,
-                UserLevel = user.UserLevel,
+                RoleId = user.RoleId,
                 Status = user.Status
             };
             
             _context.Users.Add(newUser);
             _context.SaveChanges();
             
-            // Add roles to user if provided
-            if (user.RoleIds != null && user.RoleIds.Any())
-            {
-                foreach (var roleId in user.RoleIds)
-                {
-                    // Verify role exists and is active
-                    var role = _context.Roles.FirstOrDefault(r => r.Id == roleId && !r.Deleted && r.Status == CommonStatus.ACTIVE);
-                    if (role != null)
-                    {
-                        _context.UserRoles.Add(new UserRole
-                        {
-                            UserId = newUser.Id,
-                            RoleId = roleId
-                        });
-                    }
-                }
-                _context.SaveChanges();
-            }
         }
         public async Task<TokenApiDto> RefreshToken(TokenApiDto input)
         {
@@ -237,7 +197,7 @@ namespace AttechServer.Applications.UserModules.Implements
                 var claims = new List<Claim> {
                 new Claim(JwtRegisteredClaimNames.Sub, $"{userId.Id}"),
                 new Claim(ClaimTypes.Name, user.Username),
-                new Claim("user_level", userId.UserLevel.ToString()),
+                new Claim("user_level", userId.RoleId.ToString()),
                 new Claim("user_id", userId.Id.ToString())
             };
 
@@ -304,8 +264,7 @@ namespace AttechServer.Applications.UserModules.Implements
             try
             {
                 var user = await _context.Users
-                    .Include(u => u.UserRoles.Where(ur => !ur.Deleted))
-                    .ThenInclude(ur => ur.Role)
+                    .Include(u => u.Role)
                     .Where(u => u.Id == userId && !u.Deleted)
                     .FirstOrDefaultAsync();
 
@@ -321,33 +280,10 @@ namespace AttechServer.Applications.UserModules.Implements
                     FullName = user.FullName,
                     Email = user.Email,
                     Phone = user.Phone,
-                    UserLevel = user.UserLevel switch
-                    {
-                        UserLevels.SYSTEM => "system",
-                        UserLevels.MANAGER => "manager",
-                        UserLevels.STAFF => "staff",
-                        _ => "unknown"
-                    },
+                    RoleId = user.RoleId,
+                    RoleName = user.Role.Name,
                     Status = user.Status == CommonStatus.ACTIVE ? "active" : "inactive",
-                    LastLogin = user.LastLogin,
-                    RoleIds = user.UserRoles
-                        .Where(ur => !ur.Deleted)
-                        .Select(ur => ur.RoleId)
-                        .ToList(),
-                    RoleNames = user.UserRoles
-                        .Where(ur => !ur.Deleted)
-                        .Select(ur => ur.Role.Name)
-                        .ToList(),
-                    Roles = user.UserRoles
-                        .Where(ur => !ur.Deleted)
-                        .Select(ur => new UserRoleDto
-                        {
-                            Id = ur.Role.Id,
-                            Name = ur.Role.Name,
-                            Status = ur.Role.Status
-                        })
-                        .ToList(),
-                    Permissions = permissions
+                    LastLogin = user.LastLogin
                 };
             }
             catch (Exception ex)
@@ -398,21 +334,17 @@ namespace AttechServer.Applications.UserModules.Implements
         {
             try
             {
-                var permissions = await _context.Users
+                // Với hệ thống mới chỉ dùng Role, trả về danh sách role names thay vì permissions
+                var roles = await _context.Users
                     .Where(u => u.Id == userId && !u.Deleted)
-                    .SelectMany(u => u.UserRoles
-                        .Where(ur => !ur.Deleted && ur.Role != null && !ur.Role.Deleted && ur.Role.Status == CommonStatus.ACTIVE)
-                        .SelectMany(ur => ur.Role!.RolePermissions
-                            .Where(rp => !rp.Deleted && rp.Permission != null && !rp.Permission.Deleted)
-                            .Select(rp => rp.Permission!.PermissionKey)))
-                    .Distinct()
+                    .Select(u => u.Role.Name)
                     .ToListAsync();
 
-                return permissions;
+                return roles;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error getting permissions for user {userId}");
+                _logger.LogError(ex, $"Error getting roles for user {userId}");
                 return new List<string>();
             }
         }

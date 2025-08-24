@@ -28,7 +28,6 @@ namespace AttechServer.Domains.Entities
 
         public bool RequireAuthentication { get; set; } = true;
 
-        public List<PermissionForApiEndpoint> PermissionForApiEndpoints { get; set; } = new();
 
         #region audit
         public DateTime? CreatedDate { get; set; }

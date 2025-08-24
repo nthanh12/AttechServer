@@ -6,45 +6,52 @@ namespace AttechServer.Applications.UserModules.Abstracts
     public interface IProductCategoryService
     {
         /// <summary>
-        /// L?y danh sách danh m?c bài vi?t v?i phân trang
+        /// L?y danh sï¿½ch danh m?c bï¿½i vi?t v?i phï¿½n trang
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
         Task<PagingResult<ProductCategoryDto>> FindAll(PagingRequestBaseDto input);
 
         /// <summary>
-        /// L?y thông tin chi ti?t danh m?c bài vi?t
+        /// L?y thï¿½ng tin chi ti?t danh m?c bï¿½i vi?t
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         Task<DetailProductCategoryDto> FindById(int id);
 
         /// <summary>
-        /// Thêm m?i danh m?c bài vi?t
+        /// L?y thï¿½ng tin chi ti?t danh m?c bï¿½i vi?t theo slug
+        /// </summary>
+        /// <param name="slug"></param>
+        /// <returns></returns>
+        Task<DetailProductCategoryDto> FindBySlug(string slug);
+
+        /// <summary>
+        /// Thï¿½m m?i danh m?c bï¿½i vi?t
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
         Task<ProductCategoryDto> Create(CreateProductCategoryDto input);
 
         /// <summary>
-        /// C?p nh?t danh m?c bài vi?t
+        /// C?p nh?t danh m?c bï¿½i vi?t
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
         Task<ProductCategoryDto> Update(UpdateProductCategoryDto input);
 
         /// <summary>
-        /// Xóa nhóm bài vi?t
+        /// Xï¿½a nhï¿½m bï¿½i vi?t
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         Task Delete(int id);
 
         /// <summary>
-        /// Khóa/M? khóa nhóm bài vi?t
+        /// Khï¿½a/M? khï¿½a nhï¿½m bï¿½i vi?t
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="status">Tr?ng thái m?i</param>
+        /// <param name="status">Tr?ng thï¿½i m?i</param>
         /// <returns></returns>
         Task UpdateStatusProductCategory(int id, int status);
     }

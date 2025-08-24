@@ -16,7 +16,6 @@ namespace AttechServer.Applications.UserModules.Implements
         private readonly ApplicationDbContext _dbContext;
         private readonly IMemoryCache _cache;
         private const string API_ENDPOINTS_CACHE_KEY = "api_endpoints";
-        private const string API_PERMISSIONS_CACHE_KEY = "api_permissions_{0}_{1}";
 
         public ApiEndpointService(
             ILogger<ApiEndpointService> logger,
@@ -37,7 +36,6 @@ namespace AttechServer.Applications.UserModules.Implements
                 entry.SlidingExpiration = TimeSpan.FromMinutes(30);
 
                 var endpoints = await _dbContext.ApiEndpoints
-                    .Include(a => a.PermissionForApiEndpoints)
                     .Where(a => !a.Deleted)
                     .OrderBy(a => a.Path)
                     .ThenBy(a => a.HttpMethod)
@@ -50,10 +48,8 @@ namespace AttechServer.Applications.UserModules.Implements
                     HttpMethod = e.HttpMethod,
                     Description = e.Description,
                     RequireAuthentication = e.RequireAuthentication,
-                    PermissionIds = e.PermissionForApiEndpoints
-                        .Where(p => !p.Deleted)
-                        .Select(p => p.PermissionId)
-                        .ToList()
+                    CreatedAt = e.CreatedDate ?? DateTime.MinValue,
+                    UpdatedAt = e.ModifiedDate
                 }).ToList();
             }) ?? new List<ApiEndpointDto>();
         }
@@ -63,8 +59,8 @@ namespace AttechServer.Applications.UserModules.Implements
             _logger.LogInformation($"{nameof(FindById)}: id = {id}");
 
             var endpoint = await _dbContext.ApiEndpoints
-                .Include(a => a.PermissionForApiEndpoints)
-                .FirstOrDefaultAsync(a => !a.Deleted && a.Id == id)
+                .Where(a => !a.Deleted && a.Id == id)
+                .FirstOrDefaultAsync()
                 ?? throw new UserFriendlyException(ErrorCode.ApiEndpointNotFound);
 
             return new ApiEndpointDto
@@ -74,104 +70,72 @@ namespace AttechServer.Applications.UserModules.Implements
                 HttpMethod = endpoint.HttpMethod,
                 Description = endpoint.Description,
                 RequireAuthentication = endpoint.RequireAuthentication,
-                PermissionIds = endpoint.PermissionForApiEndpoints
-                    .Where(p => !p.Deleted)
-                    .Select(p => p.PermissionId)
-                    .ToList()
+                CreatedAt = endpoint.CreatedDate ?? DateTime.MinValue,
+                UpdatedAt = endpoint.ModifiedDate
             };
         }
 
         public async Task Create(CreateApiEndpointDto input)
         {
-            _logger.LogInformation($"{nameof(Create)}: input = {System.Text.Json.JsonSerializer.Serialize(input)}");
+            _logger.LogInformation($"{nameof(Create)}: Creating endpoint {input.HttpMethod} {input.Path}");
 
-            using var transaction = await _dbContext.Database.BeginTransactionAsync();
-            try
+            var existingEndpoint = await _dbContext.ApiEndpoints
+                .Where(a => !a.Deleted && 
+                           a.Path.ToLower() == input.Path.ToLower() && 
+                           a.HttpMethod.ToUpper() == input.HttpMethod.ToUpper())
+                .FirstOrDefaultAsync();
+
+            if (existingEndpoint != null)
             {
-                var endpoint = new ApiEndpoint
-                {
-                    Path = input.Path,
-                    HttpMethod = input.HttpMethod,
-                    Description = input.Description,
-                    RequireAuthentication = input.RequireAuthentication
-                };
-
-                _dbContext.ApiEndpoints.Add(endpoint);
-                await _dbContext.SaveChangesAsync();
-
-                if (input.PermissionIds?.Any() == true)
-                {
-                    var permissions = input.PermissionIds.Select(pid => new PermissionForApiEndpoint
-                    {
-                        ApiEndpointId = endpoint.Id,
-                        PermissionId = pid,
-                        IsRequired = true
-                    });
-
-                    _dbContext.PermissionForApiEndpoints.AddRange(permissions);
-                    await _dbContext.SaveChangesAsync();
-                }
-
-                await transaction.CommitAsync();
-                _cache.Remove(API_ENDPOINTS_CACHE_KEY);
+                throw new UserFriendlyException(ErrorCode.ApiEndpointAlreadyExists);
             }
-            catch
+
+            var endpoint = new ApiEndpoint
             {
-                await transaction.RollbackAsync();
-                throw;
-            }
+                Path = input.Path,
+                HttpMethod = input.HttpMethod.ToUpper(),
+                Description = input.Description,
+                RequireAuthentication = input.RequireAuthentication
+            };
+
+            _dbContext.ApiEndpoints.Add(endpoint);
+            await _dbContext.SaveChangesAsync();
+            
+            // Clear cache
+            _cache.Remove(API_ENDPOINTS_CACHE_KEY);
         }
 
-        public async Task Update(UpdateApiEndpointDto input)
+        public async Task Update(int id, CreateApiEndpointDto input)
         {
-            _logger.LogInformation($"{nameof(Update)}: input = {System.Text.Json.JsonSerializer.Serialize(input)}");
+            _logger.LogInformation($"{nameof(Update)}: id = {id}");
 
-            using var transaction = await _dbContext.Database.BeginTransactionAsync();
-            try
+            var endpoint = await _dbContext.ApiEndpoints
+                .Where(a => !a.Deleted && a.Id == id)
+                .FirstOrDefaultAsync()
+                ?? throw new UserFriendlyException(ErrorCode.ApiEndpointNotFound);
+
+            // Check for conflicts with other endpoints
+            var existingEndpoint = await _dbContext.ApiEndpoints
+                .Where(a => !a.Deleted && 
+                           a.Id != id &&
+                           a.Path.ToLower() == input.Path.ToLower() && 
+                           a.HttpMethod.ToUpper() == input.HttpMethod.ToUpper())
+                .FirstOrDefaultAsync();
+
+            if (existingEndpoint != null)
             {
-                var endpoint = await _dbContext.ApiEndpoints
-                    .Include(a => a.PermissionForApiEndpoints)
-                    .FirstOrDefaultAsync(a => !a.Deleted && a.Id == input.Id)
-                    ?? throw new UserFriendlyException(ErrorCode.ApiEndpointNotFound);
-
-                endpoint.Path = input.Path;
-                endpoint.HttpMethod = input.HttpMethod;
-                endpoint.Description = input.Description;
-                endpoint.RequireAuthentication = input.RequireAuthentication;
-
-                // Update permissions
-                var existingPermissions = endpoint.PermissionForApiEndpoints
-                    .Where(p => !p.Deleted)
-                    .ToList();
-
-                var permissionsToAdd = input.PermissionIds
-                    .Where(pid => !existingPermissions.Any(p => p.PermissionId == pid))
-                    .Select(pid => new PermissionForApiEndpoint
-                    {
-                        ApiEndpointId = endpoint.Id,
-                        PermissionId = pid,
-                        IsRequired = true
-                    });
-
-                var permissionsToRemove = existingPermissions
-                    .Where(p => !input.PermissionIds.Contains(p.PermissionId));
-
-                foreach (var permission in permissionsToRemove)
-                {
-                    permission.Deleted = true;
-                }
-
-                _dbContext.PermissionForApiEndpoints.AddRange(permissionsToAdd);
-                await _dbContext.SaveChangesAsync();
-
-                await transaction.CommitAsync();
-                _cache.Remove(API_ENDPOINTS_CACHE_KEY);
+                throw new UserFriendlyException(ErrorCode.ApiEndpointAlreadyExists);
             }
-            catch
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
+
+            endpoint.Path = input.Path;
+            endpoint.HttpMethod = input.HttpMethod.ToUpper();
+            endpoint.Description = input.Description;
+            endpoint.RequireAuthentication = input.RequireAuthentication;
+
+            await _dbContext.SaveChangesAsync();
+            
+            // Clear cache
+            _cache.Remove(API_ENDPOINTS_CACHE_KEY);
         }
 
         public async Task Delete(int id)
@@ -179,69 +143,15 @@ namespace AttechServer.Applications.UserModules.Implements
             _logger.LogInformation($"{nameof(Delete)}: id = {id}");
 
             var endpoint = await _dbContext.ApiEndpoints
-                .FirstOrDefaultAsync(a => !a.Deleted && a.Id == id)
+                .Where(a => !a.Deleted && a.Id == id)
+                .FirstOrDefaultAsync()
                 ?? throw new UserFriendlyException(ErrorCode.ApiEndpointNotFound);
 
             endpoint.Deleted = true;
             await _dbContext.SaveChangesAsync();
+            
+            // Clear cache
             _cache.Remove(API_ENDPOINTS_CACHE_KEY);
-        }
-
-        public async Task<bool> CheckApiPermission(string path, string method, int userId)
-        {
-            if (string.IsNullOrEmpty(path) || string.IsNullOrEmpty(method))
-                return false;
-
-            // Clear cache temporarily for debugging
-            var cacheKey = string.Format(API_PERMISSIONS_CACHE_KEY, path, method);
-            _cache.Remove(cacheKey);
-
-            return await _cache.GetOrCreateAsync(cacheKey, async entry =>
-            {
-                entry.SlidingExpiration = TimeSpan.FromMinutes(5);
-
-                // Normalize paths by removing leading slash for comparison
-                var normalizedPath = path.TrimStart('/').ToLower();
-                
-                _logger.LogInformation($"CheckApiPermission: path='{path}', normalizedPath='{normalizedPath}', method='{method}', userId={userId}");
-                
-                var endpoint = await _dbContext.ApiEndpoints
-                    .Include(a => a.PermissionForApiEndpoints)
-                    .FirstOrDefaultAsync(a => !a.Deleted
-                        && a.Path.TrimStart('/').ToLower() == normalizedPath
-                        && a.HttpMethod.ToUpper() == method.ToUpper());
-
-                _logger.LogInformation($"Found endpoint: {endpoint?.Path} {endpoint?.HttpMethod}, RequireAuth: {endpoint?.RequireAuthentication}");
-
-                if (endpoint == null)
-                    return false;
-
-                if (!endpoint.RequireAuthentication)
-                    return true;
-
-                var userPermissions = await _dbContext.UserRoles
-                    .Include(ur => ur.Role)
-                    .Where(ur => !ur.Deleted
-                        && ur.UserId == userId
-                        && ur.Role != null
-                        && ur.Role.Status == CommonStatus.ACTIVE
-                        && !ur.Role.Deleted)
-                    .Join(_dbContext.RolePermissions,
-                        ur => ur.RoleId,
-                        rp => rp.RoleId,
-                        (ur, rp) => new { UserRole = ur, RolePermission = rp })
-                    .Where(x => !x.RolePermission.Deleted)
-                    .Select(x => x.RolePermission.PermissionId)
-                    .Distinct()
-                    .ToListAsync();
-
-                var requiredPermissions = endpoint.PermissionForApiEndpoints
-                    .Where(p => !p.Deleted && p.IsRequired)
-                    .Select(p => p.PermissionId)
-                    .ToList();
-
-                return requiredPermissions.All(p => userPermissions.Contains(p));
-            });
         }
     }
 }

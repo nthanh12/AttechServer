@@ -31,7 +31,7 @@ namespace AttechServer.Shared.Filters
                 var targetUser = userService.FindById(targetUserId.Value).Result;
                 
                 // SuperAdmin: chỉ SuperAdmin mới được thay đổi SuperAdmin khác
-                if (targetUser.UserLevel == "system" && currentUserLevel != UserLevels.SYSTEM)
+                if (targetUser.RoleId == 1 && currentUserLevel != 1)
                 {
                     var response = new ApiResponse(
                         ApiStatusCode.Error, 
@@ -45,7 +45,7 @@ namespace AttechServer.Shared.Filters
                 }
 
                 // Admin: không được thay đổi Admin khác (chỉ quản lý STAFF)
-                if (targetUser.UserLevel == "manager" && currentUserLevel == UserLevels.MANAGER)
+                if (targetUser.RoleId == 2 && currentUserLevel == 2)
                 {
                     var response = new ApiResponse(
                         ApiStatusCode.Error,
@@ -64,13 +64,13 @@ namespace AttechServer.Shared.Filters
                 .FirstOrDefault(arg => arg?.GetType().Name.Contains("CreateUserDto") == true);
             if (createUserDto != null)
             {
-                var userLevelProperty = createUserDto.GetType().GetProperty("UserLevel");
+                var userLevelProperty = createUserDto.GetType().GetProperty("RoleId");
                 if (userLevelProperty != null)
                 {
                     var userLevel = (int)userLevelProperty.GetValue(createUserDto);
                     
                     // Chỉ SuperAdmin mới có thể tạo SuperAdmin khác
-                    if (userLevel == UserLevels.SYSTEM && currentUserLevel != UserLevels.SYSTEM)
+                    if (userLevel == 1 && currentUserLevel != 1)
                     {
                         var response = new ApiResponse(
                             ApiStatusCode.Error,
@@ -84,7 +84,7 @@ namespace AttechServer.Shared.Filters
                     }
 
                     // Chỉ SuperAdmin mới có thể tạo Admin (Admin không thể tạo Admin khác)
-                    if (userLevel == UserLevels.MANAGER && currentUserLevel != UserLevels.SYSTEM)
+                    if (userLevel == 2 && currentUserLevel != 1)
                     {
                         var response = new ApiResponse(
                             ApiStatusCode.Error,
@@ -104,13 +104,13 @@ namespace AttechServer.Shared.Filters
                 .FirstOrDefault(arg => arg?.GetType().Name.Contains("UpdateUserDto") == true);
             if (updateUserDto != null)
             {
-                var userLevelProperty = updateUserDto.GetType().GetProperty("UserLevel");
+                var userLevelProperty = updateUserDto.GetType().GetProperty("RoleId");
                 if (userLevelProperty != null)
                 {
                     var userLevel = (int)userLevelProperty.GetValue(updateUserDto);
                     
                     // Chỉ SuperAdmin mới có thể nâng cấp user lên SuperAdmin
-                    if (userLevel == UserLevels.SYSTEM && currentUserLevel != UserLevels.SYSTEM)
+                    if (userLevel == 1 && currentUserLevel != 1)
                     {
                         var response = new ApiResponse(
                             ApiStatusCode.Error,
@@ -124,7 +124,7 @@ namespace AttechServer.Shared.Filters
                     }
 
                     // Chỉ SuperAdmin mới có thể nâng cấp user lên Admin
-                    if (userLevel == UserLevels.MANAGER && currentUserLevel != UserLevels.SYSTEM)
+                    if (userLevel == 2 && currentUserLevel != 1)
                     {
                         var response = new ApiResponse(
                             ApiStatusCode.Error,

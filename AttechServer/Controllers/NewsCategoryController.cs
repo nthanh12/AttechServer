@@ -5,7 +5,7 @@ using AttechServer.Shared.Attributes;
 using AttechServer.Shared.WebAPIBase;
 using Microsoft.AspNetCore.Mvc;
 using AttechServer.Shared.Filters;
-using AttechServer.Shared.Consts.Permissions;
+using AttechServer.Shared.Consts;
 using Microsoft.AspNetCore.Authorization;
 
 namespace AttechServer.Controllers
@@ -24,11 +24,11 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Get all news categories with caching
+        /// Get all news categories with caching (Admin only)
         /// </summary>
         [HttpGet("find-all")]
-        [AllowAnonymous]
-        [CacheResponse(CacheProfiles.ShortCache, "news-categories", varyByQueryString: true)]
+        [RoleFilter(2)]
+        [CacheResponse(CacheProfiles.ShortCache, "admin-news-categories", varyByQueryString: true)]
         public async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
         {
             try
@@ -44,11 +44,11 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Get news category by ID with caching
+        /// Get news category by ID with caching (Admin only)
         /// </summary>
         [HttpGet("find-by-id/{id}")]
-        [AllowAnonymous]
-        [CacheResponse(CacheProfiles.MediumCache, "news-category-detail")]
+        [RoleFilter(2)]
+        [CacheResponse(CacheProfiles.MediumCache, "admin-news-category-detail")]
         public async Task<ApiResponse> FindById(int id)
         {
             try
@@ -67,7 +67,7 @@ namespace AttechServer.Controllers
         /// Create new news category
         /// </summary>
         [HttpPost("create")]
-        [PermissionFilter(PermissionKeys.CreateNewsCategory)]
+        [RoleFilter(2)]
         public async Task<ApiResponse> Create([FromBody] CreateNewsCategoryDto input)
         {
             try
@@ -86,7 +86,7 @@ namespace AttechServer.Controllers
         /// Update news category
         /// </summary>
         [HttpPut("update")]
-        [PermissionFilter(PermissionKeys.EditNewsCategory)]
+        [RoleFilter(2)]
         public async Task<ApiResponse> Update([FromBody] UpdateNewsCategoryDto input)
         {
             try
@@ -105,7 +105,7 @@ namespace AttechServer.Controllers
         /// Delete news category
         /// </summary>
         [HttpDelete("delete/{id}")]
-        [PermissionFilter(PermissionKeys.DeleteNewsCategory)]
+        [RoleFilter(2)]
         public async Task<ApiResponse> Delete(int id)
         {
             try

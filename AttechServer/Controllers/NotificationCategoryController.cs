@@ -2,7 +2,7 @@ using AttechServer.Applications.UserModules.Abstracts;
 using AttechServer.Applications.UserModules.Dtos.NotificationCategory;
 using AttechServer.Shared.ApplicationBase.Common;
 using AttechServer.Shared.Attributes;
-using AttechServer.Shared.Consts.Permissions;
+using AttechServer.Shared.Consts;
 using AttechServer.Shared.Filters;
 using AttechServer.Shared.WebAPIBase;
 using Microsoft.AspNetCore.Authorization;
@@ -24,11 +24,11 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Get all notification categories with caching
+        /// Get all notification categories with caching (Admin only)
         /// </summary>
         [HttpGet("find-all")]
-        [AllowAnonymous]
-        [CacheResponse(CacheProfiles.ShortCache, "notification-categories", varyByQueryString: true)]
+        [RoleFilter(2)]
+        [CacheResponse(CacheProfiles.ShortCache, "admin-notification-categories", varyByQueryString: true)]
         public async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
         {
             try
@@ -44,11 +44,11 @@ namespace AttechServer.Controllers
         }
 
         /// <summary>
-        /// Get notification category by ID with caching
+        /// Get notification category by ID with caching (Admin only)
         /// </summary>
         [HttpGet("find-by-id/{id}")]
-        [AllowAnonymous]
-        [CacheResponse(CacheProfiles.MediumCache, "notification-category-detail")]
+        [RoleFilter(2)]
+        [CacheResponse(CacheProfiles.MediumCache, "admin-notification-category-detail")]
         public async Task<ApiResponse> FindById(int id)
         {
             try
@@ -67,13 +67,13 @@ namespace AttechServer.Controllers
         /// Create new notification category
         /// </summary>
         [HttpPost("create")]
-        [PermissionFilter(PermissionKeys.CreateNotificationCategory)]
+        [RoleFilter(2)]
         public async Task<ApiResponse> Create([FromBody] CreateNotificationCategoryDto input)
         {
             try
             {
                 var result = await _notificationCategoryService.Create(input);
-                return new ApiResponse(ApiStatusCode.Success, result, 200, "T?o thành công");
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "T?o thï¿½nh cï¿½ng");
             }
             catch (Exception ex)
             {
@@ -86,13 +86,13 @@ namespace AttechServer.Controllers
         /// Update notification category
         /// </summary>
         [HttpPut("update")]
-        [PermissionFilter(PermissionKeys.EditNotificationCategory)]
+        [RoleFilter(2)]
         public async Task<ApiResponse> Update([FromBody] UpdateNotificationCategoryDto input)
         {
             try
             {
                 var result = await _notificationCategoryService.Update(input);
-                return new ApiResponse(ApiStatusCode.Success, result, 200, "C?p nh?t danh m?c thông báo thành công");
+                return new ApiResponse(ApiStatusCode.Success, result, 200, "C?p nh?t danh m?c thï¿½ng bï¿½o thï¿½nh cï¿½ng");
             }
             catch (Exception ex)
             {
@@ -105,13 +105,13 @@ namespace AttechServer.Controllers
         /// Delete notification category
         /// </summary>
         [HttpDelete("delete/{id}")]
-        [PermissionFilter(PermissionKeys.DeleteNotificationCategory)]
+        [RoleFilter(2)]
         public async Task<ApiResponse> Delete(int id)
         {
             try
             {
                 await _notificationCategoryService.Delete(id);
-                return new ApiResponse(ApiStatusCode.Success, null, 200, "Xóa danh m?c thông báo thành công");
+                return new ApiResponse(ApiStatusCode.Success, null, 200, "Xï¿½a danh m?c thï¿½ng bï¿½o thï¿½nh cï¿½ng");
             }
             catch (Exception ex)
             {

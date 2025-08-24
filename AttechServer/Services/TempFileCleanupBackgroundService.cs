@@ -42,7 +42,7 @@ namespace AttechServer.Services
                 }
 
                 // Tính toán thời gian đến lần chạy tiếp theo (2:00 AM hôm sau)
-                var now = DateTime.UtcNow;
+                var now = DateTime.Now;
                 var nextRun = now.Date.AddDays(1).AddHours(2); // 2:00 AM UTC tomorrow
                 if (now.Hour < 2) // Nếu chưa đến 2:00 AM hôm nay
                 {
@@ -63,7 +63,7 @@ namespace AttechServer.Services
             using var scope = _serviceProvider.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-            var cutoffDate = DateTime.UtcNow.AddHours(-_tempFileExpiryHours);
+            var cutoffDate = DateTime.Now.AddHours(-_tempFileExpiryHours);
             var filesDeleted = 0;
             var recordsDeleted = 0;
 
@@ -95,7 +95,7 @@ namespace AttechServer.Services
 
                         // Đánh dấu record là deleted (soft delete)
                         file.Deleted = true;
-                        file.ModifiedDate = DateTime.UtcNow;
+                        file.ModifiedDate = DateTime.Now;
                         recordsDeleted++;
                     }
                     catch (Exception ex)
@@ -128,7 +128,7 @@ namespace AttechServer.Services
                             filesDeleted++;
                         }
                         file.Deleted = true;
-                        file.ModifiedDate = DateTime.UtcNow;
+                        file.ModifiedDate = DateTime.Now;
                         recordsDeleted++;
                     }
                     catch (Exception ex)
@@ -176,7 +176,7 @@ namespace AttechServer.Services
                         var fileInfo = new FileInfo(tempFile);
                         
                         // Nếu file quá cũ (7 ngày) 
-                        if (fileInfo.CreationTimeUtc < DateTime.UtcNow.AddDays(-7))
+                        if (fileInfo.CreationTimeUtc < DateTime.Now.AddDays(-7))
                         {
                             var relativePath = Path.GetRelativePath(
                                 Path.Combine(Directory.GetCurrentDirectory(), "AttechServer"), 

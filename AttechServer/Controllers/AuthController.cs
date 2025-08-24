@@ -73,11 +73,11 @@ namespace AttechServer.Controllers
                 _authService.RegisterUser(input);
                 
                 // Log successful registration
-                var userTypeString = input.UserLevel switch
+                var userTypeString = input.RoleId switch
                 {
-                    UserLevels.SYSTEM => "SuperAdmin",
-                    UserLevels.MANAGER => "Admin",
-                    UserLevels.STAFF => "Editor",
+                    1 => "SuperAdmin",
+                    2 => "Admin",
+                    3 => "Editor",
                     _ => "Unknown"
                 };
                 

@@ -55,13 +55,24 @@ namespace AttechServer.Applications.UserModules.Implements
                         throw new ArgumentException("Tiêu đề và nội dung là bắt buộc.");
                     }
 
+                    // Validate title length
+                    if (input.TitleVi.Length > 300)
+                    {
+                        throw new UserFriendlyException(ErrorCode.TitleTooLong);
+                    }
+                    if (!string.IsNullOrEmpty(input.TitleEn) && input.TitleEn.Length > 300)
+                    {
+                        throw new UserFriendlyException(ErrorCode.TitleTooLong);
+                    }
+
+                    // Validate description length
                     if (!string.IsNullOrEmpty(input.DescriptionVi) && input.DescriptionVi.Length > 700)
                     {
-                        input.DescriptionVi = input.DescriptionVi.Substring(0, 697) + "...";
+                        throw new UserFriendlyException(ErrorCode.DescriptionTooLong);
                     }
                     if (!string.IsNullOrEmpty(input.DescriptionEn) && input.DescriptionEn.Length > 700)
                     {
-                        input.DescriptionEn = input.DescriptionEn.Substring(0, 697) + "...";
+                        throw new UserFriendlyException(ErrorCode.DescriptionTooLong);
                     }
 
                     if (input.TimePosted > DateTime.Now)
@@ -85,7 +96,7 @@ namespace AttechServer.Applications.UserModules.Implements
                     var titleViExists = await _dbContext.Products.AnyAsync(n => n.TitleVi == input.TitleVi && !n.Deleted);
                     if (titleViExists)
                     {
-                        throw new ArgumentException("Tiêu đề tiếng Việt đã tồn tại.");
+                        throw new UserFriendlyException(ErrorCode.ProductTitleViExists);
                     }
 
                     if (!string.IsNullOrEmpty(input.TitleEn))
@@ -93,7 +104,7 @@ namespace AttechServer.Applications.UserModules.Implements
                         var titleEnExists = await _dbContext.Products.AnyAsync(n => n.TitleEn == input.TitleEn && !n.Deleted);
                         if (titleEnExists)
                         {
-                            throw new ArgumentException("Tiêu đề tiếng Anh đã tồn tại.");
+                            throw new UserFriendlyException(ErrorCode.ProductTitleEnExists);
                         }
                     }
 
@@ -314,6 +325,34 @@ namespace AttechServer.Applications.UserModules.Implements
             var baseQuery = _dbContext.Products.AsNoTracking()
                 .Where(n => !n.Deleted);
 
+            // Filter by category ID
+            if (input.CategoryId.HasValue)
+            {
+                baseQuery = baseQuery.Where(n => n.ProductCategoryId == input.CategoryId.Value);
+            }
+
+            // Filter by status
+            if (input.Status.HasValue)
+            {
+                baseQuery = baseQuery.Where(n => n.Status == input.Status.Value);
+            }
+
+            // Filter by date range
+            if (input.DateFrom.HasValue)
+            {
+                baseQuery = baseQuery.Where(n => n.TimePosted >= input.DateFrom.Value);
+            }
+            if (input.DateTo.HasValue)
+            {
+                baseQuery = baseQuery.Where(n => n.TimePosted <= input.DateTo.Value);
+            }
+
+            // Filter by outstanding
+            if (input.IsOutstanding.HasValue)
+            {
+                baseQuery = baseQuery.Where(n => n.IsOutstanding == input.IsOutstanding.Value);
+            }
+
             // Tìm kiếm
             if (!string.IsNullOrEmpty(input.Keyword))
             {
@@ -328,12 +367,8 @@ namespace AttechServer.Applications.UserModules.Implements
 
             var totalItems = await baseQuery.CountAsync();
 
-            // Sắp xếp
-            var query = baseQuery.OrderByDescending(n => n.TimePosted);
-            if (input.Sort.Any())
-            {
-                // TODO: Implement dynamic sorting based on input.Sort
-            }
+            // Apply sorting
+            var query = ApplySorting(baseQuery, input);
 
             var pagedItems = await query
                 .Skip(input.GetSkip())
@@ -581,6 +616,27 @@ namespace AttechServer.Applications.UserModules.Implements
                     {
                         throw new ArgumentException("Tiêu đề và nội dung là bắt buộc.");
                     }
+
+                    // Validate title length
+                    if (input.TitleVi.Length > 300)
+                    {
+                        throw new UserFriendlyException(ErrorCode.TitleTooLong);
+                    }
+                    if (!string.IsNullOrEmpty(input.TitleEn) && input.TitleEn.Length > 300)
+                    {
+                        throw new UserFriendlyException(ErrorCode.TitleTooLong);
+                    }
+
+                    // Validate description length
+                    if (!string.IsNullOrEmpty(input.DescriptionVi) && input.DescriptionVi.Length > 700)
+                    {
+                        throw new UserFriendlyException(ErrorCode.DescriptionTooLong);
+                    }
+                    if (!string.IsNullOrEmpty(input.DescriptionEn) && input.DescriptionEn.Length > 700)
+                    {
+                        throw new UserFriendlyException(ErrorCode.DescriptionTooLong);
+                    }
+
                     if (input.TimePosted > DateTime.Now)
                     {
                         throw new ArgumentException("Thời gian đăng bài không phù hợp.");
@@ -597,7 +653,7 @@ namespace AttechServer.Applications.UserModules.Implements
                     var titleViExists = await _dbContext.Products.AnyAsync(n => n.TitleVi == input.TitleVi && n.Id != id && !n.Deleted);
                     if (titleViExists)
                     {
-                        throw new ArgumentException("Tiêu đề tiếng Việt đã tồn tại.");
+                        throw new UserFriendlyException(ErrorCode.ProductTitleViExists);
                     }
 
                     if (!string.IsNullOrEmpty(input.TitleEn))
@@ -605,7 +661,7 @@ namespace AttechServer.Applications.UserModules.Implements
                         var titleEnExists = await _dbContext.Products.AnyAsync(n => n.TitleEn == input.TitleEn && n.Id != id && !n.Deleted);
                         if (titleEnExists)
                         {
-                            throw new ArgumentException("Tiêu đề tiếng Anh đã tồn tại.");
+                            throw new UserFriendlyException(ErrorCode.ProductTitleEnExists);
                         }
                     }
 
@@ -762,6 +818,70 @@ namespace AttechServer.Applications.UserModules.Implements
             return sanitizer.Sanitize(content);
         }
 
+        private IQueryable<Product> ApplySorting(IQueryable<Product> query, PagingRequestBaseDto input)
+        {
+            if (!string.IsNullOrEmpty(input.SortBy))
+            {
+                switch (input.SortBy.ToLower())
+                {
+                    case "id":
+                        return input.IsAscending ? query.OrderBy(x => x.Id) : query.OrderByDescending(x => x.Id);
+                    case "titlevi":
+                        return input.IsAscending ? query.OrderBy(x => x.TitleVi) : query.OrderByDescending(x => x.TitleVi);
+                    case "titleen":
+                        return input.IsAscending ? query.OrderBy(x => x.TitleEn) : query.OrderByDescending(x => x.TitleEn);
+                    case "timeposted":
+                        return input.IsAscending ? query.OrderBy(x => x.TimePosted) : query.OrderByDescending(x => x.TimePosted);
+                    case "status":
+                        return input.IsAscending ? query.OrderBy(x => x.Status) : query.OrderByDescending(x => x.Status);
+                    case "isoutstanding":
+                        return input.IsAscending ? query.OrderBy(x => x.IsOutstanding) : query.OrderByDescending(x => x.IsOutstanding);
+                    case "category":
+                    case "categoryvi":
+                        return input.IsAscending ? query.OrderBy(x => x.ProductCategory.TitleVi) : query.OrderByDescending(x => x.ProductCategory.TitleVi);
+                    case "categoryen":
+                        return input.IsAscending ? query.OrderBy(x => x.ProductCategory.TitleEn) : query.OrderByDescending(x => x.ProductCategory.TitleEn);
+                    default:
+                        return query.OrderByDescending(x => x.TimePosted); // default sort
+                }
+            }
+            else
+            {
+                return query.OrderByDescending(x => x.TimePosted); // default sort
+            }
+        }
+
+        private IQueryable<Product> ApplyClientSorting(IQueryable<Product> query, PagingRequestBaseDto input)
+        {
+            if (!string.IsNullOrEmpty(input.SortBy))
+            {
+                switch (input.SortBy.ToLower())
+                {
+                    case "id":
+                        return input.IsAscending ? query.OrderBy(x => x.Id) : query.OrderByDescending(x => x.Id);
+                    case "titlevi":
+                        return input.IsAscending ? query.OrderBy(x => x.TitleVi) : query.OrderByDescending(x => x.TitleVi);
+                    case "titleen":
+                        return input.IsAscending ? query.OrderBy(x => x.TitleEn) : query.OrderByDescending(x => x.TitleEn);
+                    case "timeposted":
+                        return input.IsAscending ? query.OrderBy(x => x.TimePosted) : query.OrderByDescending(x => x.TimePosted);
+                    case "isoutstanding":
+                        return input.IsAscending ? query.OrderBy(x => x.IsOutstanding) : query.OrderByDescending(x => x.IsOutstanding);
+                    case "category":
+                    case "categoryvi":
+                        return input.IsAscending ? query.OrderBy(x => x.ProductCategory.TitleVi) : query.OrderByDescending(x => x.ProductCategory.TitleVi);
+                    case "categoryen":
+                        return input.IsAscending ? query.OrderBy(x => x.ProductCategory.TitleEn) : query.OrderByDescending(x => x.ProductCategory.TitleEn);
+                    default:
+                        return query.OrderByDescending(x => x.IsOutstanding).ThenByDescending(x => x.TimePosted); // default client sort
+                }
+            }
+            else
+            {
+                return query.OrderByDescending(x => x.IsOutstanding).ThenByDescending(x => x.TimePosted); // default client sort
+            }
+        }
+
         public async Task<PagingResult<ProductDto>> FindAllForClient(PagingRequestBaseDto input)
         {
             _logger.LogInformation($"{nameof(FindAllForClient)}: Getting published products for client");
@@ -769,6 +889,28 @@ namespace AttechServer.Applications.UserModules.Implements
             var query = _dbContext.Products
                 .Include(p => p.ProductCategory)
                 .Where(p => !p.Deleted && p.Status == CommonStatus.ACTIVE);
+
+            // Filter by category ID
+            if (input.CategoryId.HasValue)
+            {
+                query = query.Where(p => p.ProductCategoryId == input.CategoryId.Value);
+            }
+
+            // Filter by date range
+            if (input.DateFrom.HasValue)
+            {
+                query = query.Where(p => p.TimePosted >= input.DateFrom.Value);
+            }
+            if (input.DateTo.HasValue)
+            {
+                query = query.Where(p => p.TimePosted <= input.DateTo.Value);
+            }
+
+            // Filter by outstanding
+            if (input.IsOutstanding.HasValue)
+            {
+                query = query.Where(p => p.IsOutstanding == input.IsOutstanding.Value);
+            }
 
             // Search by keyword if provided
             if (!string.IsNullOrWhiteSpace(input.Keyword))
@@ -781,9 +923,10 @@ namespace AttechServer.Applications.UserModules.Implements
 
             var totalCount = await query.CountAsync();
 
-            var products = await query
-                .OrderByDescending(p => p.IsOutstanding)
-                .ThenByDescending(p => p.TimePosted)
+            // Apply sorting for client (default: outstanding first, then by time)
+            var sortedQuery = ApplyClientSorting(query, input);
+
+            var products = await sortedQuery
                 .Skip(input.GetSkip())
                 .Take(input.PageSize == -1 ? totalCount : input.PageSize)
                 .Select(p => new ProductDto
@@ -900,7 +1043,7 @@ namespace AttechServer.Applications.UserModules.Implements
 
             var products = await query
                 .OrderByDescending(p => p.IsOutstanding)
-                .ThenByDescending(p => p.TimePosted)
+                .ThenBy(p => p.Id)
                 .Skip(input.GetSkip())
                 .Take(input.PageSize == -1 ? totalCount : input.PageSize)
                 .Select(p => new ProductDto

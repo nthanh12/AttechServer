@@ -1,7 +1,7 @@
 using AttechServer.Applications.UserModules.Abstracts;
 using AttechServer.Applications.UserModules.Dtos.Role;
 using AttechServer.Shared.ApplicationBase.Common;
-using AttechServer.Shared.Consts.Permissions;
+using AttechServer.Shared.Consts;
 using AttechServer.Shared.Filters;
 using AttechServer.Shared.WebAPIBase;
 using Microsoft.AspNetCore.Authorization;
@@ -27,7 +27,7 @@ namespace AttechServer.Controllers
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [PermissionFilter(PermissionKeys.MenuRoleManager)]
+        [RoleFilter(2)]
         [HttpGet("find-all")]
         public async Task<ApiResponse> FindAll([FromQuery] PagingRequestBaseDto input)
         {
@@ -46,7 +46,7 @@ namespace AttechServer.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [PermissionFilter(PermissionKeys.ViewRoles, PermissionKeys.EditRole)]
+        [RoleFilter(2)]
         [HttpGet("find-by-id/{id}")]
         public async Task<ApiResponse> FindById(int id)
         {
@@ -60,24 +60,6 @@ namespace AttechServer.Controllers
             }
         }
 
-        /// <summary>
-        /// Get permission by role id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [PermissionFilter(PermissionKeys.ViewRoles)]
-        [HttpGet("permissions/{id}")]
-        public async Task<ApiResponse> GetRolePermissions(int id)
-        {
-            try
-            {
-                return new(await _roleService.GetRolePermissions(id));
-            }
-            catch (Exception ex)
-            {
-                return OkException(ex);
-            }
-        }
 
         /// <summary>
         /// Create role
@@ -85,7 +67,7 @@ namespace AttechServer.Controllers
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost("create")]
-        [PermissionFilter(PermissionKeys.CreateRole)]
+        [RoleFilter(2)]
         public async Task<ApiResponse> Create([FromBody] CreateRoleDto input)
         {
             try
@@ -104,7 +86,7 @@ namespace AttechServer.Controllers
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [PermissionFilter(PermissionKeys.EditRole)]
+        [RoleFilter(2)]
         [HttpPut("update")]
         public async Task<ApiResponse> Update([FromBody] UpdateRoleDto input)
         {
@@ -125,7 +107,7 @@ namespace AttechServer.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("delete/{id}")]
-        [PermissionFilter(PermissionKeys.DeleteRole)]
+        [RoleFilter(2)]
         public async Task<ApiResponse> Delete(int id)
         {
             try

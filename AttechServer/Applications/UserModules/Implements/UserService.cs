@@ -24,122 +24,33 @@ namespace AttechServer.Applications.UserModules.Implements
             _httpContext = httpContext;
         }
 
-        public void AddRoleToUser(int roleId, int userId)
-        {
-            _logger.LogInformation($"{nameof(AddRoleToUser)}, roleId = {roleId}, userId = {userId}");
-
-            var user = _dbContext.Users.FirstOrDefault(u => !u.Deleted && u.Id == userId)
-                ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
-            
-            var currentUserLevel = _httpContext.GetCurrentUserLevel();
-            
-            if (user.UserLevel == UserLevels.SYSTEM && currentUserLevel != UserLevels.SYSTEM)
-            {
-                throw new UserFriendlyException(ErrorCode.AccessDenied);
-            }
-
-            if (user.UserLevel == UserLevels.MANAGER && currentUserLevel == UserLevels.MANAGER)
-            {
-                throw new UserFriendlyException(ErrorCode.AccessDenied);
-            }
-
-            if (_dbContext.UserRoles.Any(ur => !ur.Deleted && ur.UserId == userId && ur.RoleId == roleId))
-            {
-                var userRole = _dbContext.UserRoles.FirstOrDefault(ur => !ur.Deleted && ur.UserId == userId && ur.RoleId == roleId)
-                    ?? throw new UserFriendlyException(ErrorCode.RoleOrUserNotFound);
-                userRole.Deleted = false;
-            }
-            else
-            {
-                var userRole = new UserRole()
-                {
-                    RoleId = roleId,
-                    UserId = userId
-                };
-                _dbContext.UserRoles.Add(userRole);
-            }
-
-            _dbContext.SaveChanges();
-        }
-
-        public void RemoveRoleFromUser(int roleId, int userId)
-        {
-            _logger.LogInformation($"{nameof(RemoveRoleFromUser)}, roleId = {roleId}, userId = {userId}");
-
-            var user = _dbContext.Users.FirstOrDefault(u => !u.Deleted && u.Id == userId)
-                ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
-            
-            var currentUserLevel = _httpContext.GetCurrentUserLevel();
-            
-            if (user.UserLevel == UserLevels.SYSTEM && currentUserLevel != UserLevels.SYSTEM)
-            {
-                throw new UserFriendlyException(ErrorCode.AccessDenied);
-            }
-
-            if (user.UserLevel == UserLevels.MANAGER && currentUserLevel == UserLevels.MANAGER)
-            {
-                throw new UserFriendlyException(ErrorCode.AccessDenied);
-            }
-
-            var userRole = _dbContext.UserRoles.FirstOrDefault(ur => !ur.Deleted && ur.UserId == userId && ur.RoleId == roleId)
-                            ?? throw new UserFriendlyException(ErrorCode.RoleOrUserNotFound);
-            userRole.Deleted = true;
-            _dbContext.SaveChanges();
-        }
 
         public async Task<PagingResult<UserDto>> FindAll(PagingRequestBaseDto input)
         {
             _logger.LogInformation($"{nameof(FindAll)}: input = {JsonSerializer.Serialize(input)}");
 
             var baseQuery = _dbContext.Users.AsNoTracking()
-                .Include(u => u.UserRoles.Where(ur => !ur.Deleted))
-                .ThenInclude(ur => ur.Role)
-                .ThenInclude(r => r.RolePermissions.Where(rp => !rp.Deleted))
-                .ThenInclude(rp => rp.Permission)
-                .Where(u => !u.Deleted
-                    && (string.IsNullOrEmpty(input.Keyword) || u.Username.Contains(input.Keyword)));
+                .Join(_dbContext.Roles, u => u.RoleId, r => r.Id, (u, r) => new { User = u, Role = r })
+                .Where(ur => !ur.User.Deleted
+                    && (string.IsNullOrEmpty(input.Keyword) || ur.User.Username.Contains(input.Keyword)));
 
             var totalItems = await baseQuery.CountAsync();
 
             var pagedItems = await baseQuery
-                .OrderBy(u => u.Id)
+                .OrderBy(ur => ur.User.Id)
                 .Skip(input.GetSkip())
                 .Take(input.PageSize)
-                .Select(u => new UserDto
+                .Select(ur => new UserDto
                 {
-                    Id = u.Id,
-                    Username = u.Username,
-                    FullName = u.FullName,
-                    Email = u.Email,
-                    Phone = u.Phone,
-                    LastLogin = u.LastLogin,
-                    Status = u.Status == CommonStatus.ACTIVE ? "active" : "inactive",
-                    UserLevel = u.UserLevel == UserLevels.SYSTEM ? "system" :
-                               u.UserLevel == UserLevels.MANAGER ? "manager" :
-                               u.UserLevel == UserLevels.STAFF ? "staff" : "unknown",
-                    RoleIds = u.UserRoles
-                        .Where(ur => !ur.Deleted)
-                        .Select(ur => ur.RoleId)
-                        .ToList(),
-                    RoleNames = u.UserRoles
-                        .Where(ur => !ur.Deleted)
-                        .Select(ur => ur.Role.Name)
-                        .ToList(),
-                    Roles = u.UserRoles
-                        .Where(ur => !ur.Deleted)
-                        .Select(ur => new UserRoleDto
-                        {
-                            Id = ur.Role.Id,
-                            Name = ur.Role.Name,
-                            Status = ur.Role.Status
-                        })
-                        .ToList(),
-                    Permissions = u.UserRoles
-                        .Where(ur => !ur.Deleted)
-                        .SelectMany(ur => ur.Role.RolePermissions.Where(rp => !rp.Deleted))
-                        .Select(rp => rp.Permission.PermissionLabel)
-                        .Distinct()
-                        .ToList()
+                    Id = ur.User.Id,
+                    Username = ur.User.Username,
+                    FullName = ur.User.FullName,
+                    Email = ur.User.Email,
+                    Phone = ur.User.Phone,
+                    LastLogin = ur.User.LastLogin,
+                    Status = ur.User.Status == CommonStatus.ACTIVE ? "active" : "inactive",
+                    RoleId = ur.User.RoleId,
+                    RoleName = ur.Role.Name
                 })
                 .ToListAsync();
 
@@ -154,46 +65,22 @@ namespace AttechServer.Applications.UserModules.Implements
         {
             _logger.LogInformation($"{nameof(FindById)}: id = {id}");
 
-            var user = await _dbContext.Users
-                .Include(u => u.UserRoles.Where(ur => !ur.Deleted))
-                .ThenInclude(ur => ur.Role)
-                .ThenInclude(r => r.RolePermissions.Where(rp => !rp.Deleted))
-                .ThenInclude(rp => rp.Permission)
-                .FirstOrDefaultAsync(u => !u.Deleted && u.Id == id)
+            var result = await _dbContext.Users
+                .Join(_dbContext.Roles, u => u.RoleId, r => r.Id, (u, r) => new { User = u, Role = r })
+                .FirstOrDefaultAsync(ur => !ur.User.Deleted && ur.User.Id == id)
                 ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
 
             return new UserDto
             {
-                Id = user.Id,
-                Username = user.Username,
-                FullName = user.FullName,
-                Email = user.Email,
-                Phone = user.Phone,
-                Status = user.Status == CommonStatus.ACTIVE ? "active" : "inactive",
-                UserLevel = user.UserLevel == UserLevels.SYSTEM ? "system" :
-                           user.UserLevel == UserLevels.MANAGER ? "manager" :
-                           user.UserLevel == UserLevels.STAFF ? "staff" : "unknown",
-                LastLogin = user.LastLogin,
-                RoleIds = user.UserRoles.Select(ur => ur.RoleId).ToList(),
-                RoleNames = user.UserRoles
-                    .Where(ur => !ur.Deleted)
-                    .Select(ur => ur.Role.Name)
-                    .ToList(),
-                Roles = user.UserRoles
-                    .Where(ur => !ur.Deleted)
-                    .Select(ur => new UserRoleDto
-                    {
-                        Id = ur.Role.Id,
-                        Name = ur.Role.Name,
-                        Status = ur.Role.Status
-                    })
-                    .ToList(),
-                Permissions = user.UserRoles
-                    .Where(ur => !ur.Deleted)
-                    .SelectMany(ur => ur.Role.RolePermissions.Where(rp => !rp.Deleted))
-                    .Select(rp => rp.Permission.PermissionLabel)
-                    .Distinct()
-                    .ToList()
+                Id = result.User.Id,
+                Username = result.User.Username,
+                FullName = result.User.FullName,
+                Email = result.User.Email,
+                Phone = result.User.Phone,
+                Status = result.User.Status == CommonStatus.ACTIVE ? "active" : "inactive",
+                RoleId = result.User.RoleId,
+                RoleName = result.Role.Name,
+                LastLogin = result.User.LastLogin
             };
         }
 
@@ -202,34 +89,23 @@ namespace AttechServer.Applications.UserModules.Implements
             _logger.LogInformation($"{nameof(Update)}: input = {JsonSerializer.Serialize(input)}");
 
             var user = await _dbContext.Users
-                .Include(u => u.UserRoles)
                 .FirstOrDefaultAsync(u => !u.Deleted && u.Id == input.Id)
                 ?? throw new UserFriendlyException(ErrorCode.UserNotFound);
 
-            // B?o v? theo Strict Hierarchy
             var currentUserLevel = _httpContext.GetCurrentUserLevel();
             
-            // SuperAdmin: ch? SuperAdmin m?i du?c thay d?i SuperAdmin kh�c
-            if (user.UserLevel == UserLevels.SYSTEM && currentUserLevel != UserLevels.SYSTEM)
+            // Role hierarchy validation: 1=superadmin, 2=admin, 3=editor
+            // SuperAdmin (1): can modify anyone
+            // Admin (2): can only modify editors (3)
+            // Editor (3): cannot modify anyone
+            
+            if (user.RoleId <= currentUserLevel && user.Id != _httpContext.GetCurrentUserId())
             {
                 throw new UserFriendlyException(ErrorCode.AccessDenied);
             }
 
-            // Admin: kh�ng du?c thay d?i Admin kh�c (ch? qu?n l� STAFF)
-            if (user.UserLevel == UserLevels.MANAGER && 
-                currentUserLevel == UserLevels.MANAGER)
-            {
-                throw new UserFriendlyException(ErrorCode.AccessDenied);
-            }
-
-            // Kh�ng cho ph�p n�ng c?p l�n SuperAdmin n?u kh�ng ph?i SuperAdmin
-            if (input.UserLevel == UserLevels.SYSTEM && currentUserLevel != UserLevels.SYSTEM)
-            {
-                throw new UserFriendlyException(ErrorCode.AccessDenied);
-            }
-
-            // Kh�ng cho ph�p Admin n�ng c?p user l�n Admin (ch? SuperAdmin m?i du?c)
-            if (input.UserLevel == UserLevels.MANAGER && currentUserLevel != UserLevels.SYSTEM)
+            // Cannot assign higher role than current user
+            if (input.RoleId < currentUserLevel)
             {
                 throw new UserFriendlyException(ErrorCode.AccessDenied);
             }
@@ -254,22 +130,7 @@ namespace AttechServer.Applications.UserModules.Implements
             user.Email = input.Email;
             user.Phone = input.Phone;
             user.Status = input.Status;
-            user.UserLevel = input.UserLevel;
-
-            // Update roles
-            var currentRoleIds = user.UserRoles.Where(ur => !ur.Deleted).Select(ur => ur.RoleId).ToList();
-            var rolesToAdd = input.RoleIds.Except(currentRoleIds);
-            var rolesToRemove = currentRoleIds.Except(input.RoleIds);
-
-            foreach (var roleId in rolesToAdd)
-            {
-                AddRoleToUser(roleId, user.Id);
-            }
-
-            foreach (var roleId in rolesToRemove)
-            {
-                RemoveRoleFromUser(roleId, user.Id);
-            }
+            user.RoleId = input.RoleId;
 
             await _dbContext.SaveChangesAsync();
         }
@@ -286,14 +147,8 @@ namespace AttechServer.Applications.UserModules.Implements
             var currentUserLevel = _httpContext.GetCurrentUserLevel();
             var currentUserId = _httpContext.GetCurrentUserId();
             
-            // SuperAdmin: ch? SuperAdmin m?i du?c x�a SuperAdmin kh�c
-            if (user.UserLevel == UserLevels.SYSTEM && currentUserLevel != UserLevels.SYSTEM)
-            {
-                throw new UserFriendlyException(ErrorCode.AccessDenied);
-            }
-
-            // Admin: kh�ng du?c x�a Admin kh�c (ch? qu?n l� STAFF)
-            if (user.UserLevel == UserLevels.MANAGER && currentUserLevel == UserLevels.MANAGER)
+            // Role hierarchy validation: 1=superadmin, 2=admin, 3=editor
+            if (user.RoleId <= currentUserLevel)
             {
                 throw new UserFriendlyException(ErrorCode.AccessDenied);
             }

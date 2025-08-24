@@ -33,8 +33,8 @@ namespace AttechServer.Domains.Entities
         /// <see cref="Status"/>
         /// </summary>
         public int Status { get; set; }
-        public int UserLevel { get; set; }
-        public List<UserRole> UserRoles { get; set; } = new();
+        public int RoleId { get; set; }
+        public Role Role { get; set; } = null!;
 
         [MaxLength(512)]
         public string? RefreshToken { get; set; }

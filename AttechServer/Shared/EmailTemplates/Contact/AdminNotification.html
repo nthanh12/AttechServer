@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông báo liên hệ mới</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background: #ffffff;
+            padding: 30px;
+            border: 1px solid #e9ecef;
+        }
+        .footer {
+            background: #343a40;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-radius: 0 0 10px 10px;
+        }
+        .contact-info {
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .priority-high {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+        }
+        .button {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 15px 5px;
+        }
+        .button-secondary {
+            background: #6c757d;
+        }
+        .meta-info {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔔 Liên hệ mới từ website</h1>
+    </div>
+    
+    <div class="content">
+        <p><strong>Có yêu cầu liên hệ mới cần xử lý:</strong></p>
+        
+        <div class="contact-info {{#if IsUrgent}}priority-high{{/if}}">
+            <h3>Thông tin khách hàng:</h3>
+            <p><strong>Tên:</strong> {{CustomerName}}</p>
+            <p><strong>Email:</strong> <a href="mailto:{{Email}}">{{Email}}</a></p>
+            {{#if PhoneNumber}}
+            <p><strong>Số điện thoại:</strong> <a href="tel:{{PhoneNumber}}">{{PhoneNumber}}</a></p>
+            {{/if}}
+            <p><strong>Tiêu đề:</strong> {{Subject}}</p>
+            
+            <h4>Nội dung:</h4>
+            <div style="background: white; padding: 15px; border: 1px solid #dee2e6; border-radius: 5px;">
+                <p>{{Message}}</p>
+            </div>
+        </div>
+        
+        <div class="meta-info">
+            <p><strong>Thời gian gửi:</strong> {{SubmittedAt}}</p>
+            <p><strong>IP Address:</strong> {{IpAddress}}</p>
+            <p><strong>User Agent:</strong> {{UserAgent}}</p>
+            <p><strong>Mã tham chiếu:</strong> #{{ContactId}}</p>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="{{AdminUrl}}/contacts/{{ContactId}}" class="button">Xem chi tiết</a>
+            <a href="mailto:{{Email}}?subject=Re: {{Subject}}" class="button button-secondary">Trả lời ngay</a>
+        </div>
+        
+        <p><em>Vui lòng phản hồi trong vòng 24 giờ để đảm bảo chất lượng dịch vụ.</em></p>
+    </div>
+    
+    <div class="footer">
+        <p>Hệ thống quản lý liên hệ - {{CompanyName}}</p>
+        <p>Thời gian: {{CurrentTime}}</p>
+    </div>
+</body>
+</html>

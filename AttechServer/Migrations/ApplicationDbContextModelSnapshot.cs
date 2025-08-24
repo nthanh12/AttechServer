@@ -75,53 +75,6 @@ namespace AttechServer.Migrations
                     b.ToTable("ApiEndpoints", (string)null);
                 });
 
-            modelBuilder.Entity("AttechServer.Domains.Entities.KeyPermission", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("OrderPriority")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ParentId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PermissionKey")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("PermissionLabel")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex(new[] { "ParentId", "Deleted", "OrderPriority" }, "IX_KeyPermission");
-
-                    b.ToTable("KeyPermissions", (string)null);
-                });
-
             modelBuilder.Entity("AttechServer.Domains.Entities.Main.ActivityLog", b =>
                 {
                     b.Property<int>("Id")
@@ -267,6 +220,80 @@ namespace AttechServer.Migrations
                     b.ToTable("Attachments", (string)null);
                 });
 
+            modelBuilder.Entity("AttechServer.Domains.Entities.Main.Contact", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("IpAddress")
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(5000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("SubmittedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserAgent")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("SubmittedAt");
+
+                    b.HasIndex(new[] { "Id", "Deleted" }, "IX_Contact");
+
+                    b.ToTable("Contact");
+                });
+
             modelBuilder.Entity("AttechServer.Domains.Entities.Main.News", b =>
                 {
                     b.Property<int>("Id")
@@ -312,6 +339,9 @@ namespace AttechServer.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsAlbum")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDocument")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsOutstanding")
@@ -942,113 +972,6 @@ namespace AttechServer.Migrations
                     b.ToTable("SystemMonitorings", (string)null);
                 });
 
-            modelBuilder.Entity("AttechServer.Domains.Entities.Permission", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("OrderPriority")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ParentId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PermissionKey")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(128)");
-
-                    b.Property<string>("PermissionLabel")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ParentId");
-
-                    b.HasIndex(new[] { "Deleted", "PermissionKey" }, "IX_Permission");
-
-                    b.ToTable("Permissions", (string)null);
-                });
-
-            modelBuilder.Entity("AttechServer.Domains.Entities.PermissionForApiEndpoint", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ApiEndpointId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<bool>("IsRequired")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.Property<int?>("KeyPermissionId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("PermissionId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApiEndpointId");
-
-                    b.HasIndex("KeyPermissionId");
-
-                    b.HasIndex("PermissionId");
-
-                    b.HasIndex(new[] { "Deleted", "ApiEndpointId", "PermissionId" }, "IX_PermissionForApiEndpoint");
-
-                    b.ToTable("PermissionForApiEndpoints", (string)null);
-                });
-
             modelBuilder.Entity("AttechServer.Domains.Entities.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -1089,48 +1012,6 @@ namespace AttechServer.Migrations
                     b.HasIndex(new[] { "Deleted", "Name", "Status" }, "IX_Role");
 
                     b.ToTable("Roles", (string)null);
-                });
-
-            modelBuilder.Entity("AttechServer.Domains.Entities.RolePermission", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("PermissionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PermissionId");
-
-                    b.HasIndex("RoleId");
-
-                    b.HasIndex(new[] { "Deleted", "RoleId", "PermissionId" }, "IX_RolePermission");
-
-                    b.ToTable("RolePermissions", (string)null);
                 });
 
             modelBuilder.Entity("AttechServer.Domains.Entities.User", b =>
@@ -1185,10 +1066,10 @@ namespace AttechServer.Migrations
                     b.Property<DateTime?>("RefreshTokenExpiryTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Status")
+                    b.Property<int>("RoleId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserLevel")
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.Property<string>("Username")
@@ -1198,60 +1079,11 @@ namespace AttechServer.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("RoleId");
+
                     b.HasIndex(new[] { "Deleted", "Status" }, "IX_User");
 
                     b.ToTable("Users", (string)null);
-                });
-
-            modelBuilder.Entity("AttechServer.Domains.Entities.UserRole", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex(new[] { "Deleted", "UserId", "RoleId" }, "IX_UserRole");
-
-                    b.ToTable("UserRoles", (string)null);
-                });
-
-            modelBuilder.Entity("AttechServer.Domains.Entities.KeyPermission", b =>
-                {
-                    b.HasOne("AttechServer.Domains.Entities.KeyPermission", "Parent")
-                        .WithMany("Children")
-                        .HasForeignKey("ParentId");
-
-                    b.Navigation("Parent");
                 });
 
             modelBuilder.Entity("AttechServer.Domains.Entities.Main.News", b =>
@@ -1287,87 +1119,15 @@ namespace AttechServer.Migrations
                     b.Navigation("ProductCategory");
                 });
 
-            modelBuilder.Entity("AttechServer.Domains.Entities.Permission", b =>
+            modelBuilder.Entity("AttechServer.Domains.Entities.User", b =>
                 {
-                    b.HasOne("AttechServer.Domains.Entities.Permission", "Parent")
-                        .WithMany("Children")
-                        .HasForeignKey("ParentId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Parent");
-                });
-
-            modelBuilder.Entity("AttechServer.Domains.Entities.PermissionForApiEndpoint", b =>
-                {
-                    b.HasOne("AttechServer.Domains.Entities.ApiEndpoint", "ApiEndpoint")
-                        .WithMany("PermissionForApiEndpoints")
-                        .HasForeignKey("ApiEndpointId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("AttechServer.Domains.Entities.KeyPermission", null)
-                        .WithMany("PermissionForApiEndpoints")
-                        .HasForeignKey("KeyPermissionId");
-
-                    b.HasOne("AttechServer.Domains.Entities.Permission", "Permission")
-                        .WithMany("PermissionForApiEndpoints")
-                        .HasForeignKey("PermissionId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("ApiEndpoint");
-
-                    b.Navigation("Permission");
-                });
-
-            modelBuilder.Entity("AttechServer.Domains.Entities.RolePermission", b =>
-                {
-                    b.HasOne("AttechServer.Domains.Entities.Permission", "Permission")
-                        .WithMany("RolePermissions")
-                        .HasForeignKey("PermissionId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("AttechServer.Domains.Entities.Role", "Role")
-                        .WithMany("RolePermissions")
+                        .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Permission");
-
                     b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("AttechServer.Domains.Entities.UserRole", b =>
-                {
-                    b.HasOne("AttechServer.Domains.Entities.Role", "Role")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("AttechServer.Domains.Entities.User", "User")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Role");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("AttechServer.Domains.Entities.ApiEndpoint", b =>
-                {
-                    b.Navigation("PermissionForApiEndpoints");
-                });
-
-            modelBuilder.Entity("AttechServer.Domains.Entities.KeyPermission", b =>
-                {
-                    b.Navigation("Children");
-
-                    b.Navigation("PermissionForApiEndpoints");
                 });
 
             modelBuilder.Entity("AttechServer.Domains.Entities.Main.NewsCategory", b =>
@@ -1385,25 +1145,9 @@ namespace AttechServer.Migrations
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("AttechServer.Domains.Entities.Permission", b =>
-                {
-                    b.Navigation("Children");
-
-                    b.Navigation("PermissionForApiEndpoints");
-
-                    b.Navigation("RolePermissions");
-                });
-
             modelBuilder.Entity("AttechServer.Domains.Entities.Role", b =>
                 {
-                    b.Navigation("RolePermissions");
-
-                    b.Navigation("UserRoles");
-                });
-
-            modelBuilder.Entity("AttechServer.Domains.Entities.User", b =>
-                {
-                    b.Navigation("UserRoles");
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

@@ -160,5 +160,10 @@ namespace AttechServer.Shared.Attributes
         /// Extra long cache for very stable data (1 hour)
         /// </summary>
         public const int ExtraLongCache = 3600;
+
+        /// <summary>
+        /// Very short cache for highly dynamic data (30 seconds)
+        /// </summary>
+        public const int VeryShortCache = 30;
     }
 }

@@ -17,12 +17,7 @@ namespace AttechServer.Infrastructures.Persistances
         #region User
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
-        public DbSet<UserRole> UserRoles { get; set; }
-        public DbSet<RolePermission> RolePermissions { get; set; }
-        public DbSet<KeyPermission> KeyPermissions { get; set; }
-        public DbSet<Permission> Permissions { get; set; }
         public DbSet<ApiEndpoint> ApiEndpoints { get; set; }
-        public DbSet<PermissionForApiEndpoint> PermissionForApiEndpoints { get; set; }
         #endregion
 
         #region Main
@@ -33,6 +28,7 @@ namespace AttechServer.Infrastructures.Persistances
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<Service> Services { get; set; }
+        public DbSet<Contact> Contacts { get; set; }
         public DbSet<Attachment> Attachments { get; set; }
         public DbSet<ActivityLog> ActivityLogs { get; set; }
         public DbSet<SystemMonitoring> SystemMonitorings { get; set; }
@@ -147,65 +143,21 @@ namespace AttechServer.Infrastructures.Persistances
             {
                 e.ToTable("Users");
                 e.HasKey(i => i.Id);
-                e.HasMany(u => u.UserRoles)
-                    .WithOne(c => c.User)
-                    .HasForeignKey(u => u.UserId)
+                e.HasOne(u => u.Role)
+                    .WithMany(r => r.Users)
+                    .HasForeignKey(u => u.RoleId)
                     .OnDelete(DeleteBehavior.Restrict);
                 e.Property(u => u.Deleted).HasDefaultValue(false);
             });
 
-            modelBuilder.Entity<UserRole>(e =>
-            {
-                e.ToTable("UserRoles");
-                e.HasKey(ur => ur.Id);
-                e.Property(ur => ur.Deleted).HasDefaultValue(false);
-            });
 
             modelBuilder.Entity<Role>(e =>
             {
                 e.ToTable("Roles");
                 e.HasKey(r => r.Id);
-                e.HasMany(r => r.UserRoles)
-                    .WithOne(ur => ur.Role)
-                    .HasForeignKey(ur => ur.RoleId)
-                    .OnDelete(DeleteBehavior.Restrict);
-                e.HasMany(r => r.RolePermissions)
-                    .WithOne(rp => rp.Role)
-                    .HasForeignKey(rp => rp.RoleId)
-                    .OnDelete(DeleteBehavior.Restrict);
                 e.Property(r => r.Deleted).HasDefaultValue(false);
             });
 
-            modelBuilder.Entity<RolePermission>(e =>
-            {
-                e.ToTable("RolePermissions");
-                e.HasKey(rp => rp.Id);
-                e.Property(rp => rp.Deleted).HasDefaultValue(false);
-            });
-
-            modelBuilder.Entity<Permission>(e =>
-            {
-                e.ToTable("Permissions");
-                e.HasKey(p => p.Id);
-                e.Property(p => p.Deleted).HasDefaultValue(false);
-
-                e.HasOne(p => p.Parent)
-                    .WithMany(p => p.Children)
-                    .HasForeignKey(p => p.ParentId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
-                e.HasMany(p => p.RolePermissions)
-                    .WithOne(rp => rp.Permission)
-                    .HasForeignKey(rp => rp.PermissionId)
-                    .OnDelete(DeleteBehavior.Restrict);
-            });
-
-            modelBuilder.Entity<KeyPermission>(e =>
-            {
-                e.ToTable("KeyPermissions");
-                e.HasKey(c => c.Id);
-                e.Property(c => c.Deleted).HasDefaultValue(false);
-            });
 
             modelBuilder.Entity<ApiEndpoint>(e =>
             {
@@ -214,29 +166,8 @@ namespace AttechServer.Infrastructures.Persistances
                 e.Property(a => a.Deleted).HasDefaultValue(false);
                 e.Property(a => a.RequireAuthentication).HasDefaultValue(true);
 
-                e.HasMany(a => a.PermissionForApiEndpoints)
-                    .WithOne(p => p.ApiEndpoint)
-                    .HasForeignKey(p => p.ApiEndpointId)
-                    .OnDelete(DeleteBehavior.Restrict);
             });
 
-            modelBuilder.Entity<PermissionForApiEndpoint>(e =>
-            {
-                e.ToTable("PermissionForApiEndpoints");
-                e.HasKey(p => p.Id);
-                e.Property(p => p.Deleted).HasDefaultValue(false);
-                e.Property(p => p.IsRequired).HasDefaultValue(true);
-
-                e.HasOne(p => p.ApiEndpoint)
-                    .WithMany(a => a.PermissionForApiEndpoints)
-                    .HasForeignKey(p => p.ApiEndpointId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
-                e.HasOne(p => p.Permission)
-                    .WithMany(p => p.PermissionForApiEndpoints)
-                    .HasForeignKey(p => p.PermissionId)
-                    .OnDelete(DeleteBehavior.Restrict);
-            });
             #endregion
 
             #region Main Configuration

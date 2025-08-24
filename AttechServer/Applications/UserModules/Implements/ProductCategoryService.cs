@@ -40,11 +40,11 @@ namespace AttechServer.Applications.UserModules.Implements
                     // Validate input
                     if (string.IsNullOrWhiteSpace(input.TitleVi) || string.IsNullOrWhiteSpace(input.SlugVi))
                     {
-                        throw new ArgumentException("Tên danh m?c và Slug (VI) là b?t bu?c.");
+                        throw new ArgumentException("Tï¿½n danh m?c vï¿½ Slug (VI) lï¿½ b?t bu?c.");
                     }
                     if (string.IsNullOrWhiteSpace(input.TitleEn) || string.IsNullOrWhiteSpace(input.SlugEn))
                     {
-                        throw new ArgumentException("Tên danh m?c và Slug (EN) là b?t bu?c.");
+                        throw new ArgumentException("Tï¿½n danh m?c vï¿½ Slug (EN) lï¿½ b?t bu?c.");
                     }
                     if (input.DescriptionVi.Length > 160)
                     {
@@ -57,28 +57,28 @@ namespace AttechServer.Applications.UserModules.Implements
 
                     var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("user_id")?.Value, out var id) ? id : 0;
 
-                    // Ki?m tra trùng tên danh m?c
+                    // Ki?m tra trï¿½ng tï¿½n danh m?c
                     var TitleViExists = await _dbContext.ProductCategories.AnyAsync(c => c.TitleVi == input.TitleVi && !c.Deleted);
                     if (TitleViExists)
                     {
-                        throw new ArgumentException("Tên danh m?c (VI) dã t?n t?i.");
+                        throw new ArgumentException("Tï¿½n danh m?c (VI) dï¿½ t?n t?i.");
                     }
                     var nameEnExists = await _dbContext.ProductCategories.AnyAsync(c => c.TitleEn == input.TitleEn && !c.Deleted);
                     if (nameEnExists)
                     {
-                        throw new ArgumentException("Tên danh m?c (EN) dã t?n t?i.");
+                        throw new ArgumentException("Tï¿½n danh m?c (EN) dï¿½ t?n t?i.");
                     }
 
-                    // Ki?m tra trùng slug
+                    // Ki?m tra trï¿½ng slug
                     var slugViExists = await _dbContext.ProductCategories.AnyAsync(c => c.SlugVi == input.SlugVi && !c.Deleted);
                     if (slugViExists)
                     {
-                        throw new ArgumentException("Slug (VI) dã t?n t?i.");
+                        throw new ArgumentException("Slug (VI) dï¿½ t?n t?i.");
                     }
                     var slugEnExists = await _dbContext.ProductCategories.AnyAsync(c => c.SlugEn == input.SlugEn && !c.Deleted);
                     if (slugEnExists)
                     {
-                        throw new ArgumentException("Slug (EN) dã t?n t?i.");
+                        throw new ArgumentException("Slug (EN) dï¿½ t?n t?i.");
                     }
 
                     var newProductCategory = new ProductCategory
@@ -102,7 +102,7 @@ namespace AttechServer.Applications.UserModules.Implements
                     // Log activity
                     await _activityLogService.LogUserActionAsync(
                         "CREATE_PRODUCT_CATEGORY",
-                        $"Ðã t?o danh m?c s?n ph?m m?i: {input.TitleVi}",
+                        $"ï¿½ï¿½ t?o danh m?c s?n ph?m m?i: {input.TitleVi}",
                         userId,
                         JsonSerializer.Serialize(new { 
                             categoryId = newProductCategory.Id,
@@ -146,7 +146,7 @@ namespace AttechServer.Applications.UserModules.Implements
                         .FirstOrDefaultAsync(pc => pc.Id == id && !pc.Deleted)
                         ?? throw new UserFriendlyException(ErrorCode.ProductCategoryNotFound);
 
-                    // Xóa m?m các Product liên quan
+                    // Xï¿½a m?m cï¿½c Product liï¿½n quan
                     var Products = await _dbContext.Products
                         .Where(p => p.ProductCategoryId == id && !p.Deleted)
                         .ToListAsync();
@@ -249,6 +249,52 @@ namespace AttechServer.Applications.UserModules.Implements
             return productCategory;
         }
 
+        public async Task<DetailProductCategoryDto> FindBySlug(string slug)
+        {
+            _logger.LogInformation($"{nameof(FindBySlug)}: slug = {slug}");
+
+            var productCategory = await _dbContext.ProductCategories
+                .Where(pc => !pc.Deleted && (pc.SlugVi == slug || pc.SlugEn == slug) && pc.Status == CommonStatus.ACTIVE)
+                .Select(pc => new DetailProductCategoryDto
+                {
+                    Id = pc.Id,
+                    TitleVi = pc.TitleVi,
+                    TitleEn = pc.TitleEn,
+                    SlugVi = pc.SlugVi,
+                    SlugEn = pc.SlugEn,
+                    DescriptionVi = pc.DescriptionVi,
+                    DescriptionEn = pc.DescriptionEn,
+                    Status = pc.Status,
+                    Products = pc.Products
+                        .Where(p => !p.Deleted && p.Status == CommonStatus.ACTIVE)
+                        .Select(p => new ProductDto
+                        {
+                            Id = p.Id,
+                            TitleVi = p.TitleVi,
+                            TitleEn = p.TitleEn,
+                            SlugVi = p.SlugVi,
+                            SlugEn = p.SlugEn,
+                            DescriptionVi = p.DescriptionVi,
+                            DescriptionEn = p.DescriptionEn,
+                            TimePosted = p.TimePosted,
+                            Status = p.Status,
+                            ProductCategoryId = p.ProductCategoryId,
+                            ProductCategoryTitleVi = pc.TitleVi,
+                            ProductCategoryTitleEn = pc.TitleEn,
+                            ProductCategorySlugVi = pc.SlugVi,
+                            ProductCategorySlugEn = pc.SlugEn,
+                            ImageUrl = p.ImageUrl
+                        })
+                        .ToList()
+                })
+                .FirstOrDefaultAsync();
+
+            if (productCategory == null)
+                throw new UserFriendlyException(ErrorCode.ProductCategoryNotFound);
+
+            return productCategory;
+        }
+
         public async Task<ProductCategoryDto> Update(UpdateProductCategoryDto input)
         {
             _logger.LogInformation($"{nameof(Update)}: input = {JsonSerializer.Serialize(input)}");
@@ -261,11 +307,11 @@ namespace AttechServer.Applications.UserModules.Implements
                     // Validate input
                     if (string.IsNullOrWhiteSpace(input.TitleVi) || string.IsNullOrWhiteSpace(input.SlugVi))
                     {
-                        throw new ArgumentException("Tên danh m?c và Slug (VI) là b?t bu?c.");
+                        throw new ArgumentException("Tï¿½n danh m?c vï¿½ Slug (VI) lï¿½ b?t bu?c.");
                     }
                     if (string.IsNullOrWhiteSpace(input.TitleEn) || string.IsNullOrWhiteSpace(input.SlugEn))
                     {
-                        throw new ArgumentException("Tên danh m?c và Slug (EN) là b?t bu?c.");
+                        throw new ArgumentException("Tï¿½n danh m?c vï¿½ Slug (EN) lï¿½ b?t bu?c.");
                     }
                     if (input.DescriptionVi.Length > 160)
                     {
@@ -278,28 +324,28 @@ namespace AttechServer.Applications.UserModules.Implements
 
                     var userId = int.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("user_id")?.Value, out var id) ? id : 0;
 
-                    // Ki?m tra trùng tên danh m?c (tr? chính nó)
+                    // Ki?m tra trï¿½ng tï¿½n danh m?c (tr? chï¿½nh nï¿½)
                     var TitleViExists = await _dbContext.ProductCategories.AnyAsync(c => c.TitleVi == input.TitleVi && !c.Deleted && c.Id != input.Id);
                     if (TitleViExists)
                     {
-                        throw new ArgumentException("Tên danh m?c (VI) dã t?n t?i.");
+                        throw new ArgumentException("Tï¿½n danh m?c (VI) dï¿½ t?n t?i.");
                     }
                     var nameEnExists = await _dbContext.ProductCategories.AnyAsync(c => c.TitleEn == input.TitleEn && !c.Deleted && c.Id != input.Id);
                     if (nameEnExists)
                     {
-                        throw new ArgumentException("Tên danh m?c (EN) dã t?n t?i.");
+                        throw new ArgumentException("Tï¿½n danh m?c (EN) dï¿½ t?n t?i.");
                     }
 
-                    // Ki?m tra trùng slug (tr? chính nó)
+                    // Ki?m tra trï¿½ng slug (tr? chï¿½nh nï¿½)
                     var slugViExists = await _dbContext.ProductCategories.AnyAsync(c => c.SlugVi == input.SlugVi && !c.Deleted && c.Id != input.Id);
                     if (slugViExists)
                     {
-                        throw new ArgumentException("Slug (VI) dã t?n t?i.");
+                        throw new ArgumentException("Slug (VI) dï¿½ t?n t?i.");
                     }
                     var slugEnExists = await _dbContext.ProductCategories.AnyAsync(c => c.SlugEn == input.SlugEn && !c.Deleted && c.Id != input.Id);
                     if (slugEnExists)
                     {
-                        throw new ArgumentException("Slug (EN) dã t?n t?i.");
+                        throw new ArgumentException("Slug (EN) dï¿½ t?n t?i.");
                     }
 
                     productCategory.TitleVi = input.TitleVi;
